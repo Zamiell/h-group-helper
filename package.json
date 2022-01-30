@@ -12,6 +12,9 @@
   },
   "license": "GPL-3.0",
   "author": "Zamiell",
+  "scripts": {
+    "start": "ts-node src/main.ts"
+  },
   "dependencies": {
     "@discordjs/voice": "^0.8.0",
     "bufferutil": "^4.0.6",
@@ -24,9 +27,6 @@
     "ts-node": "^10.4.0",
     "utf-8-validate": "^5.0.8",
     "zlib-sync": "^0.1.7"
-  },
-  "scripts": {
-    "start": "ts-node src/main.ts"
   },
   "devDependencies": {
     "@types/source-map-support": "^0.5.4"
