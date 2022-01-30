@@ -1,3 +1,3 @@
 main();
 
-function main(): void {}
+function main() {}
