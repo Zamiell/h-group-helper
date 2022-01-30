@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { getLastMessage } from "../discordUtil";
+import { getLastMessage } from "../discordUtilChannels";
 import { parseIntSafe } from "../util";
 
 export async function deleteCommand(

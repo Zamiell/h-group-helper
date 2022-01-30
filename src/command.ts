@@ -3,19 +3,7 @@ import { deleteCommand } from "./commands/delete";
 
 const COMMAND_PREFIX = "/";
 
-export async function checkCommand(
-  message: Message,
-  ourID: string,
-  adminIDs: string[],
-) {
-  if (message.channel.type !== "GUILD_TEXT") {
-    return;
-  }
-
-  if (message.author.id === ourID) {
-    return;
-  }
-
+export async function checkCommand(message: Message, adminIDs: string[]) {
   const args = message.content.split(" ");
   let command = args.shift();
   if (command === undefined) {

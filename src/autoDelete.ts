@@ -4,7 +4,7 @@ import {
   getChannel,
   getChannelsInCategory,
   isVoiceChannelEmpty,
-} from "./discordUtil";
+} from "./discordUtilChannels";
 
 export async function autoDeleteEmptyVoiceChannels(
   guild: Guild,
@@ -36,7 +36,7 @@ export async function checkEmptyVoiceChannels(
     return;
   }
 
-  for (const channel of channels.values()) {
+  for (const channel of channels) {
     if (!channel.name.startsWith(VOICE_CHANNEL_PREFIX)) {
       continue;
     }

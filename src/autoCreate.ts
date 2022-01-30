@@ -4,27 +4,27 @@ import {
   createNewVoiceChannel,
   getChannelNamesInCategory,
   moveUserToVoiceChannel,
-} from "./discordUtil";
+} from "./discordUtilChannels";
 import { parseIntSafe } from "./util";
 
 export async function autoCreateVoiceChannels(
   guild: Guild,
   userID: string,
   channelID: string,
-  discordPickupGameCategoryID: string,
-  discordCreateVoiceChannelID: string,
+  categoryID: string,
+  joinChannelID: string,
 ) {
-  if (channelID !== discordCreateVoiceChannelID) {
+  if (channelID !== joinChannelID) {
     return;
   }
 
   const channelNamesInCategory = await getChannelNamesInCategory(
     guild,
-    discordPickupGameCategoryID,
+    categoryID,
   );
   if (channelNamesInCategory === null) {
     console.error(
-      `Failed to get the channel names for category: ${discordPickupGameCategoryID}`,
+      `Failed to get the channel names for category: ${categoryID}`,
     );
     return;
   }
@@ -37,8 +37,9 @@ export async function autoCreateVoiceChannels(
   const newChannel = await createNewVoiceChannel(
     guild,
     channelName,
-    discordPickupGameCategoryID,
+    categoryID,
   );
+
   await moveUserToVoiceChannel(guild, userID, newChannel.id);
 }
 
