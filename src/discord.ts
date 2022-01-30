@@ -8,8 +8,9 @@ import { autoStartThread } from "./autoStartThread";
 import { checkCommand } from "./command";
 import { getGuildByName } from "./discordUtil";
 import { getChannelIDByName } from "./discordUtilChannels";
-import { getEnvironmentVariables } from "./util";
+import { error, getEnvironmentVariables } from "./util";
 
+let discordClient: Client<boolean>;
 let serverName: string;
 let voiceCategoryName: string;
 let voiceCategoryID: string;
@@ -42,20 +43,24 @@ export async function discordInit() {
   questionChannelName = questionChannelNameString;
   adminIDs = adminIDsString.split(",");
 
-  const client = new Client({
+  discordClient = new Client({
     // Intents are needed for Discord to send specific types of data
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES],
+    intents: [
+      Intents.FLAGS.GUILDS,
+      Intents.FLAGS.GUILD_MEMBERS,
+      Intents.FLAGS.GUILD_MESSAGES,
+      Intents.FLAGS.GUILD_VOICE_STATES,
+    ],
   });
-  await client.login(discordToken);
+  await discordClient.login(discordToken);
+  console.log("Logging in to Discord...");
 
-  client.on("ready", onReady);
-  client.on("messageCreate", onMessageCreate);
-  client.on("voiceStateUpdate", onVoiceStateUpdate);
+  discordClient.on("ready", onReady);
+  discordClient.on("messageCreate", onMessageCreate);
+  discordClient.on("voiceStateUpdate", onVoiceStateUpdate);
 }
 
 async function onReady(client: Client) {
-  console.log("HELLO");
-
   if (client.user === null || client.application === null) {
     return;
   }
@@ -69,31 +74,25 @@ async function onReady(client: Client) {
 
   const guild = getGuildByName(client, serverName);
   if (guild === null) {
-    console.error(`Failed to find Discord server: ${serverName}`);
-    return;
+    error(`Failed to find Discord server: ${serverName}`);
   }
   console.log(`Connected to Discord server: ${guild.name}`);
 
   const categoryID = getChannelIDByName(guild, voiceCategoryName);
   if (categoryID === null) {
-    console.error(`Failed to find the voice category of: ${voiceCategoryName}`);
-    return;
+    error(`Failed to find the voice category of: ${voiceCategoryName}`);
   }
   voiceCategoryID = categoryID;
 
   const voiceChannelID = getChannelIDByName(guild, voiceJoinChannelName);
   if (voiceChannelID === null) {
-    console.error(
-      `Failed to find the voice channel of: ${voiceJoinChannelName}`,
-    );
-    return;
+    error(`Failed to find the voice channel of: ${voiceJoinChannelName}`);
   }
   voiceJoinChannelID = voiceChannelID;
 
   const textChannelID = getChannelIDByName(guild, questionChannelName);
   if (textChannelID === null) {
-    console.error(`Failed to find the text channel of: ${questionChannelName}`);
-    return;
+    error(`Failed to find the text channel of: ${questionChannelName}`);
   }
   questionChannelID = textChannelID;
 
@@ -155,4 +154,12 @@ async function onJoinedVoiceChannel(
 
 async function onLeftVoiceChannel(guild: Guild, channelID: string) {
   await autoDeleteEmptyVoiceChannels(guild, channelID);
+}
+
+export function discordShutdown() {
+  if (discordClient === undefined) {
+    return;
+  }
+
+  discordClient.destroy();
 }

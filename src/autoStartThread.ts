@@ -14,8 +14,9 @@ export async function autoStartThread(
     return;
   }
 
+  // Discord does not allow quotes in thread names, so this will appear as "Alices question"
   const suffix = message.author.username.endsWith("s") ? "" : "s";
-  const threadName = `${message.author.username}'${suffix} question`;
+  const threadName = `${message.author.username}${suffix} question`;
 
   await message.channel.threads.create({
     name: threadName,

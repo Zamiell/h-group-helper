@@ -2,7 +2,7 @@ import * as dotenv from "dotenv";
 import path from "path";
 import sourceMapSupport from "source-map-support";
 import { CWD, PROJECT_NAME } from "./constants";
-import { discordInit } from "./discord";
+import { discordInit, discordShutdown } from "./discord";
 import { error } from "./util";
 
 main().catch((err) => {
@@ -24,3 +24,9 @@ function loadEnvironmentVariables() {
 function printWelcomeMessage() {
   console.log(`${PROJECT_NAME} started.`);
 }
+
+process.on("SIGINT", () => {
+  console.log("SIGINT detect; shutting down.");
+  discordShutdown();
+  process.exit();
+});
