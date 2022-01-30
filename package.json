@@ -1,0 +1,19 @@
+{
+  "name": "h-group-helper",
+  "version": "0.0.0",
+  "description": "",
+  "homepage": "https://github.com/Zamiell/h-group-helper",
+  "bugs": {
+    "url": "https://github.com/Zamiell/h-group-helper/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zamiell/h-group-helper.git"
+  },
+  "license": "GPL-3.0",
+  "author": "Zamiell",
+  "dependencies": {
+    "isaacscript-lint": "^1.0.79",
+    "isaacscript-tsconfig": "^1.1.8"
+  }
+}
