@@ -1,7 +1,10 @@
 {
     "version": "0.2",
     "words": [
+        "bufferutil",
         "dbaeumer",
+        "discordjs",
+        "erlpack",
         "isaacscript",
         "sarisia",
         "technote",

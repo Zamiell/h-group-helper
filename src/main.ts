@@ -1,3 +1,26 @@
-main();
+import * as dotenv from "dotenv";
+import path from "path";
+import sourceMapSupport from "source-map-support";
+import { CWD, PROJECT_NAME } from "./constants";
+import { discordInit } from "./discord";
+import { error } from "./util";
 
-function main() {}
+main().catch((err) => {
+  error(`${PROJECT_NAME} failed:`, err);
+});
+
+async function main() {
+  sourceMapSupport.install();
+  loadEnvironmentVariables();
+  printWelcomeMessage();
+  await discordInit();
+}
+
+function loadEnvironmentVariables() {
+  const envFile = path.join(CWD, ".env");
+  dotenv.config({ path: envFile });
+}
+
+function printWelcomeMessage() {
+  console.log(`${PROJECT_NAME} started.`);
+}
