@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 
 const NEW_THREAD_AUTO_MESSAGE = `Please make sure that your question satisfies all of the rules here:
-https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>
+<https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>
 If it doesn't, please edit your question now to fix any rule violations.`;
 
 export async function autoStartThread(
