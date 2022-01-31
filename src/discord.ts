@@ -52,12 +52,13 @@ export async function discordInit() {
       Intents.FLAGS.GUILD_VOICE_STATES,
     ],
   });
-  await discordClient.login(discordToken);
-  console.log("Logging in to Discord...");
 
   discordClient.on("ready", onReady);
   discordClient.on("messageCreate", onMessageCreate);
   discordClient.on("voiceStateUpdate", onVoiceStateUpdate);
+
+  await discordClient.login(discordToken);
+  console.log("Logging in to Discord...");
 }
 
 async function onReady(client: Client) {

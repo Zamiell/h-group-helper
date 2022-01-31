@@ -26,7 +26,7 @@ function printWelcomeMessage() {
 }
 
 process.on("SIGINT", () => {
-  console.log("SIGINT detect; shutting down.");
+  console.log("SIGINT detected; shutting down.");
   discordShutdown();
   process.exit();
 });
