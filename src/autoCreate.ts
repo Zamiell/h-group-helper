@@ -17,7 +17,9 @@ export async function autoCreateVoiceChannels(
     return;
   }
 
-  const channelName = `${VOICE_CHANNEL_PREFIX}#`; // It will be renamed post-creation
+  // This is a temporary name; it will be renamed post-creation, based on its position in the list
+  const channelName = `${VOICE_CHANNEL_PREFIX}#`;
+
   const newChannel = await createNewVoiceChannel(
     guild,
     channelName,
