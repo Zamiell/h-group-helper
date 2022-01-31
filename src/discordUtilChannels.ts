@@ -50,18 +50,6 @@ export async function getChannelsInCategory(
   return channels.filter((channel) => channel.parentId === categoryID);
 }
 
-export async function getChannelNamesInCategory(
-  guild: Guild,
-  categoryID: string,
-): Promise<string[] | null> {
-  const channelsInCategory = await getChannelsInCategory(guild, categoryID);
-  if (channelsInCategory === null) {
-    return null;
-  }
-
-  return channelsInCategory.map((channel) => channel.name);
-}
-
 export async function getLastMessage(
   channel: TextChannel,
 ): Promise<Message<boolean> | undefined> {

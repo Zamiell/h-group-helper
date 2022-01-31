@@ -1,4 +1,4 @@
-import { Guild } from "discord.js";
+import { Guild, GuildChannel } from "discord.js";
 import { VOICE_CHANNEL_PREFIX } from "./constants";
 import {
   getChannel,
@@ -26,6 +26,11 @@ export async function autoDeleteEmptyVoiceChannels(
   await channel.delete();
 }
 
+/**
+ * Normally, the bot will delete empty voice channels. So, when the bot first starts, we want to
+ * check for any existing empty voice channels and delete them in case they transitioned to being
+ * empty when the bot was offline.
+ */
 export async function checkEmptyVoiceChannels(
   guild: Guild,
   categoryID: string,
@@ -36,15 +41,17 @@ export async function checkEmptyVoiceChannels(
     return;
   }
 
+  const promises: Array<Promise<GuildChannel>> = [];
   for (const channel of channels) {
     if (!channel.name.startsWith(VOICE_CHANNEL_PREFIX)) {
       continue;
     }
 
     if (isVoiceChannelEmpty(channel)) {
-      channel.delete().catch((err) => {
-        console.error(`Failed to delete channel "${channel.name}":`, err);
-      });
+      const promise = channel.delete();
+      promises.push(promise);
     }
   }
+
+  await Promise.all(promises);
 }

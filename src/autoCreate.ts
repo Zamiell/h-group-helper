@@ -1,11 +1,10 @@
 import { Guild } from "discord.js";
-import { MAX_NUM_VOICE_CHANNELS, VOICE_CHANNEL_PREFIX } from "./constants";
+import { VOICE_CHANNEL_PREFIX } from "./constants";
 import {
   createNewVoiceChannel,
-  getChannelNamesInCategory,
+  getChannelsInCategory,
   moveUserToVoiceChannel,
 } from "./discordUtilChannels";
-import { parseIntSafe } from "./util";
 
 export async function autoCreateVoiceChannels(
   guild: Guild,
@@ -18,22 +17,7 @@ export async function autoCreateVoiceChannels(
     return;
   }
 
-  const channelNamesInCategory = await getChannelNamesInCategory(
-    guild,
-    categoryID,
-  );
-  if (channelNamesInCategory === null) {
-    console.error(
-      `Failed to get the channel names for category: ${categoryID}`,
-    );
-    return;
-  }
-
-  const channelName = getNewChannelName(channelNamesInCategory);
-  if (channelName === null) {
-    return;
-  }
-
+  const channelName = `${VOICE_CHANNEL_PREFIX}#`; // It will be renamed post-creation
   const newChannel = await createNewVoiceChannel(
     guild,
     channelName,
@@ -41,39 +25,31 @@ export async function autoCreateVoiceChannels(
   );
 
   await moveUserToVoiceChannel(guild, userID, newChannel.id);
+  await renameAllChannelsAccordingToOrder(guild, categoryID, joinChannelID);
 }
 
-function getNewChannelName(channelNames: string[]): string | null {
-  const number = getLowestAvailableNumber(channelNames);
-  if (number === null) {
-    return null;
+async function renameAllChannelsAccordingToOrder(
+  guild: Guild,
+  categoryID: string,
+  voiceJoinChannelID: string,
+) {
+  const channelsInCategory = await getChannelsInCategory(guild, categoryID);
+  if (channelsInCategory === null) {
+    console.error(`Failed to get the channels for category: ${categoryID}`);
+    return;
   }
 
-  return `${VOICE_CHANNEL_PREFIX}${number}`;
-}
-
-function getLowestAvailableNumber(channelNames: string[]): number | null {
-  const numberSet = getChannelNumbers(channelNames);
-  for (let i = 1; i <= MAX_NUM_VOICE_CHANNELS; i++) {
-    if (!numberSet.has(i)) {
-      return i;
+  const promises = [];
+  for (const channel of channelsInCategory) {
+    // Don't rename the "Create New Voice Channel" channel
+    if (channel.id === voiceJoinChannelID) {
+      continue;
     }
+
+    const name = `${VOICE_CHANNEL_PREFIX}${channel.position}`;
+    const promise = channel.setName(name);
+    promises.push(promise);
   }
 
-  return null;
-}
-
-function getChannelNumbers(channelNames: string[]): Set<number> {
-  const numbers = new Set<number>();
-  for (const channelName of channelNames) {
-    if (channelName.startsWith(VOICE_CHANNEL_PREFIX)) {
-      const numberString = channelName.slice(VOICE_CHANNEL_PREFIX.length);
-      const number = parseIntSafe(numberString);
-      if (!Number.isNaN(number)) {
-        numbers.add(number);
-      }
-    }
-  }
-
-  return numbers;
+  await Promise.all(promises);
 }
