@@ -11,6 +11,7 @@ import { getChannelIDByName } from "./discordUtilChannels";
 import { checkEmptyVoiceChannels } from "./onReady";
 import { error, getEnvironmentVariables } from "./util";
 
+let ready = false;
 let discordClient: Client<boolean>;
 let serverName: string;
 let voiceCategoryName: string;
@@ -78,6 +79,8 @@ async function onReady(client: Client) {
     voiceCategoryID,
     voiceJoinChannelID,
   );
+
+  ready = true;
 }
 
 function initDiscordVariables(client: Client) {
@@ -112,6 +115,10 @@ function initDiscordVariables(client: Client) {
 }
 
 async function onMessageCreate(message: Message) {
+  if (!ready) {
+    return;
+  }
+
   logMessage(message);
 
   // Ignore anything not in a text channel
@@ -138,6 +145,10 @@ function logMessage(message: Message) {
 }
 
 async function onVoiceStateUpdate(oldState: VoiceState, newState: VoiceState) {
+  if (!ready) {
+    return;
+  }
+
   const { guild } = newState;
   const userID = newState.id;
   const oldChannelID = oldState.channelId;
