@@ -2,8 +2,8 @@ import { Client, Guild, Intents, Message, VoiceState } from "discord.js";
 import {
   autoCreateVoiceChannels,
   renameAllChannelsAccordingToOrder,
-} from "./autoCreate";
-import { autoDeleteEmptyVoiceChannels } from "./autoDelete";
+} from "./autoCreateVoiceChannels";
+import { autoDeleteEmptyVoiceChannels } from "./autoDeleteEmptyVoiceChannels";
 import { autoStartThread } from "./autoStartThread";
 import { checkCommand } from "./command";
 import { getGuildByName } from "./discordUtil";

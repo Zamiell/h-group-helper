@@ -1,5 +1,9 @@
 import { Message } from "discord.js";
 
+const NEW_THREAD_AUTO_MESSAGE = `Please make sure that your question satisfies all of the rules here:
+https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>
+If it doesn't, please edit your question now to fix any rule violations.`;
+
 export async function autoStartThread(
   message: Message,
   questionChannelID: string,
@@ -18,8 +22,10 @@ export async function autoStartThread(
   const suffix = message.author.username.endsWith("s") ? "" : "s";
   const threadName = `${message.author.username}${suffix} question`;
 
-  await message.channel.threads.create({
+  const threadChannel = await message.channel.threads.create({
     name: threadName,
     startMessage: message,
   });
+
+  await threadChannel.send(NEW_THREAD_AUTO_MESSAGE);
 }
