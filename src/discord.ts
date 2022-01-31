@@ -1,13 +1,14 @@
 import { Client, Guild, Intents, Message, VoiceState } from "discord.js";
-import { autoCreateVoiceChannels } from "./autoCreate";
 import {
-  autoDeleteEmptyVoiceChannels,
-  checkEmptyVoiceChannels,
-} from "./autoDelete";
+  autoCreateVoiceChannels,
+  renameAllChannelsAccordingToOrder,
+} from "./autoCreate";
+import { autoDeleteEmptyVoiceChannels } from "./autoDelete";
 import { autoStartThread } from "./autoStartThread";
 import { checkCommand } from "./command";
 import { getGuildByName } from "./discordUtil";
 import { getChannelIDByName } from "./discordUtilChannels";
+import { checkEmptyVoiceChannels } from "./onReady";
 import { error, getEnvironmentVariables } from "./util";
 
 let discordClient: Client<boolean>;
@@ -63,16 +64,23 @@ export async function discordInit() {
 
 async function onReady(client: Client) {
   if (client.user === null || client.application === null) {
-    return;
+    error("Failed to connect to Discord.");
   }
 
   console.log(
     `Connected to Discord with a username of: ${client.user.username}`,
   );
 
-  // Store our user ID for later
-  botID = client.user.id;
+  const guild = initDiscordVariables(client);
+  await checkEmptyVoiceChannels(guild, voiceCategoryID);
+  await renameAllChannelsAccordingToOrder(
+    guild,
+    voiceCategoryID,
+    voiceJoinChannelID,
+  );
+}
 
+function initDiscordVariables(client: Client) {
   const guild = getGuildByName(client, serverName);
   if (guild === null) {
     error(`Failed to find Discord server: ${serverName}`);
@@ -97,7 +105,10 @@ async function onReady(client: Client) {
   }
   questionChannelID = textChannelID;
 
-  await checkEmptyVoiceChannels(guild, voiceCategoryID);
+  // Store our user ID for later
+  botID = client.user === null ? "" : client.user.id;
+
+  return guild;
 }
 
 async function onMessageCreate(message: Message) {

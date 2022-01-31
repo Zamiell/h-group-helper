@@ -12,7 +12,7 @@ export async function autoCreateVoiceChannels(
   channelID: string,
   categoryID: string,
   joinChannelID: string,
-) {
+): Promise<void> {
   if (channelID !== joinChannelID) {
     return;
   }
@@ -28,11 +28,11 @@ export async function autoCreateVoiceChannels(
   await renameAllChannelsAccordingToOrder(guild, categoryID, joinChannelID);
 }
 
-async function renameAllChannelsAccordingToOrder(
+export async function renameAllChannelsAccordingToOrder(
   guild: Guild,
   categoryID: string,
   voiceJoinChannelID: string,
-) {
+): Promise<void> {
   const channelsInCategory = await getChannelsInCategory(guild, categoryID);
   if (channelsInCategory === null) {
     console.error(`Failed to get the channels for category: ${categoryID}`);
