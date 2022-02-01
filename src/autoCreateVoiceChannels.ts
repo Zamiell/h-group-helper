@@ -5,15 +5,14 @@ import {
   getChannelsInCategory,
   moveUserToVoiceChannel,
 } from "./discordUtilChannels";
+import g from "./globals";
 
 export async function autoCreateVoiceChannels(
   guild: Guild,
   userID: string,
   channelID: string,
-  categoryID: string,
-  joinChannelID: string,
 ): Promise<void> {
-  if (channelID !== joinChannelID) {
+  if (channelID !== g.voiceJoinChannelID) {
     return;
   }
 
@@ -23,28 +22,31 @@ export async function autoCreateVoiceChannels(
   const newChannel = await createNewVoiceChannel(
     guild,
     channelName,
-    categoryID,
+    g.voiceCategoryID,
   );
 
   await moveUserToVoiceChannel(guild, userID, newChannel.id);
-  await renameAllChannelsAccordingToOrder(guild, categoryID, joinChannelID);
+  await renameAllChannelsAccordingToOrder(guild);
 }
 
 export async function renameAllChannelsAccordingToOrder(
   guild: Guild,
-  categoryID: string,
-  voiceJoinChannelID: string,
 ): Promise<void> {
-  const channelsInCategory = await getChannelsInCategory(guild, categoryID);
+  const channelsInCategory = await getChannelsInCategory(
+    guild,
+    g.voiceCategoryID,
+  );
   if (channelsInCategory === null) {
-    console.error(`Failed to get the channels for category: ${categoryID}`);
+    console.error(
+      `Failed to get the channels for category: ${g.voiceCategoryID}`,
+    );
     return;
   }
 
   const promises = [];
   for (const channel of channelsInCategory) {
     // Don't rename the "Create New Voice Channel" channel
-    if (channel.id === voiceJoinChannelID) {
+    if (channel.id === g.voiceJoinChannelID) {
       continue;
     }
 

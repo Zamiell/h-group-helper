@@ -6,8 +6,6 @@ import { getChannel, isVoiceChannelEmpty } from "./discordUtilChannels";
 export async function autoDeleteEmptyVoiceChannels(
   guild: Guild,
   channelID: string,
-  categoryID: string,
-  voiceJoinChannelID: string,
 ) {
   const channel = await getChannel(guild, channelID);
   if (channel === null) {
@@ -23,9 +21,5 @@ export async function autoDeleteEmptyVoiceChannels(
   }
 
   await channel.delete();
-  await renameAllChannelsAccordingToOrder(
-    guild,
-    categoryID,
-    voiceJoinChannelID,
-  );
+  await renameAllChannelsAccordingToOrder(guild);
 }
