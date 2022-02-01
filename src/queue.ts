@@ -30,21 +30,25 @@ export function addQueue(
   const queueTuple: QueueTuple = [queueFunction, guild, userID, channelID];
   queue.push(queueTuple);
 
-  // If the queue was previously empty, schedule work to begin
+  // If the queue was previously empty, asynchronously schedule work to begin
   if (queue.length === 1) {
-    setTimeout(processQueue, 0); // eslint-disable-line @typescript-eslint/no-misused-promises
+    setTimeout(() => {
+      processQueue().catch((err) => {
+        console.error("Failed to process the queue:", err);
+      });
+    }, 0);
   }
 }
 
 async function processQueue() {
   let queueEmpty = false;
   do {
-    queueEmpty = await processOneQueueElement(); // eslint-disable-line no-await-in-loop
+    queueEmpty = await processQueueElement(); // eslint-disable-line no-await-in-loop
   } while (!queueEmpty);
 }
 
 /** Returns whether or not the queue is currently empty. */
-async function processOneQueueElement() {
+async function processQueueElement() {
   const queueTuple = queue.shift();
   if (queueTuple === undefined) {
     return true;
