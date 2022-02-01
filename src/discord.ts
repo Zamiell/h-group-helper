@@ -176,7 +176,12 @@ async function onJoinedVoiceChannel(
 }
 
 async function onLeftVoiceChannel(guild: Guild, channelID: string) {
-  await autoDeleteEmptyVoiceChannels(guild, channelID);
+  await autoDeleteEmptyVoiceChannels(
+    guild,
+    channelID,
+    voiceCategoryID,
+    voiceJoinChannelID,
+  );
 }
 
 export function discordShutdown() {
