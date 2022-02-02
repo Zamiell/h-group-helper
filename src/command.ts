@@ -1,5 +1,4 @@
 import { Message } from "discord.js";
-import { deleteCommand } from "./commands/delete";
 
 const COMMAND_PREFIX = "/";
 
@@ -33,10 +32,4 @@ const commandFunctions = new Map<
   ) => Promise<void>
 >();
 
-commandFunctions.set("d", deleteCommand);
-commandFunctions.set("d1", deleteCommand);
-commandFunctions.set("d2", deleteCommand);
-commandFunctions.set("d3", deleteCommand);
-commandFunctions.set("d4", deleteCommand);
-commandFunctions.set("d5", deleteCommand);
-commandFunctions.set("d6", deleteCommand);
+// commandFunctions.set("asdf", asdf);
