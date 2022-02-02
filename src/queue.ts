@@ -41,7 +41,7 @@ export function addQueue(
 }
 
 async function processQueue() {
-  let queueEmpty = false;
+  let queueEmpty: boolean;
   do {
     queueEmpty = await processQueueElement(); // eslint-disable-line no-await-in-loop
   } while (!queueEmpty);
