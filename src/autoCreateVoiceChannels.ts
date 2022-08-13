@@ -16,7 +16,7 @@ export async function autoCreateVoiceChannels(
     return;
   }
 
-  // This is a temporary name; it will be renamed post-creation, based on its position in the list
+  // This is a temporary name; it will be renamed post-creation, based on its position in the list.
   const channelName = `${VOICE_CHANNEL_PREFIX}#`;
 
   const newChannel = await createNewVoiceChannel(
@@ -36,16 +36,16 @@ export async function renameAllChannelsAccordingToOrder(
     guild,
     g.voiceCategoryID,
   );
-  if (channelsInCategory === null) {
+  if (channelsInCategory === undefined) {
     console.error(
       `Failed to get the channels for category: ${g.voiceCategoryID}`,
     );
     return;
   }
 
-  const promises = [];
+  const promises: Array<Promise<unknown>> = [];
   for (const channel of channelsInCategory) {
-    // Don't rename the "Create New Voice Channel" channel
+    // Don't rename the "Create New Voice Channel" channel.
     if (channel.id === g.voiceJoinChannelID) {
       continue;
     }

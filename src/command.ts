@@ -2,7 +2,10 @@ import { Message } from "discord.js";
 
 const COMMAND_PREFIX = "/";
 
-export async function checkCommand(message: Message, adminIDs: string[]) {
+export async function checkCommand(
+  message: Message,
+  adminIDs: string[],
+): Promise<void> {
   const args = message.content.split(" ");
   let command = args.shift();
   if (command === undefined) {
@@ -11,7 +14,7 @@ export async function checkCommand(message: Message, adminIDs: string[]) {
   if (!command.startsWith(COMMAND_PREFIX)) {
     return;
   }
-  command = command.substring(COMMAND_PREFIX.length); // Remove the command prefix
+  command = command.substring(COMMAND_PREFIX.length); // Remove the command prefix.
   command = command.toLowerCase();
 
   const commandFunction = commandFunctions.get(command);
@@ -31,5 +34,3 @@ const commandFunctions = new Map<
     adminIDs: string[],
   ) => Promise<void>
 >();
-
-// commandFunctions.set("asdf", asdf);

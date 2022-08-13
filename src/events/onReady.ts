@@ -10,7 +10,7 @@ import {
 import g from "../globals";
 import { error } from "../util";
 
-export async function onReady(client: Client) {
+export async function onReady(client: Client): Promise<void> {
   if (client.user === null || client.application === null) {
     error("Failed to connect to Discord.");
   }
@@ -28,30 +28,30 @@ export async function onReady(client: Client) {
 
 function initDiscordVariables(client: Client): Guild {
   const guild = getGuildByName(client, g.discordServerName);
-  if (guild === null) {
+  if (guild === undefined) {
     error(`Failed to find Discord server: ${g.discordServerName}`);
   }
   console.log(`Connected to Discord server: ${guild.name}`);
 
   const categoryID = getChannelIDByName(guild, g.voiceCategoryName);
-  if (categoryID === null) {
+  if (categoryID === undefined) {
     error(`Failed to find the voice category of: ${g.voiceCategoryName}`);
   }
   g.voiceCategoryID = categoryID;
 
   const voiceChannelID = getChannelIDByName(guild, g.voiceJoinChannelName);
-  if (voiceChannelID === null) {
+  if (voiceChannelID === undefined) {
     error(`Failed to find the voice channel of: ${g.voiceJoinChannelName}`);
   }
   g.voiceJoinChannelID = voiceChannelID;
 
   const textChannelID = getChannelIDByName(guild, g.questionChannelName);
-  if (textChannelID === null) {
+  if (textChannelID === undefined) {
     error(`Failed to find the text channel of: ${g.questionChannelName}`);
   }
   g.questionChannelID = textChannelID;
 
-  // Store our user ID for later
+  // Store our user ID for later.
   g.botID = client.user === null ? "" : client.user.id;
 
   return guild;
@@ -64,7 +64,7 @@ function initDiscordVariables(client: Client): Guild {
  */
 async function deleteEmptyVoiceChannels(guild: Guild) {
   const channels = await getChannelsInCategory(guild, g.voiceCategoryID);
-  if (channels === null) {
+  if (channels === undefined) {
     console.error(
       `Failed to get the channels for category: ${g.voiceCategoryID}`,
     );

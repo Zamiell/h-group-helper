@@ -34,7 +34,6 @@ function getEnvFilePath(): string {
   }
 
   error('Failed to find the ".env" file.');
-  return "";
 }
 
 function printWelcomeMessage() {

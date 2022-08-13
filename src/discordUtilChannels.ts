@@ -1,11 +1,9 @@
 import {
+  ChannelType,
   Guild,
-  Message,
   NonThreadGuildBasedChannel,
-  TextChannel,
   VoiceChannel,
 } from "discord.js";
-import { ChannelTypes } from "discord.js/typings/enums";
 import { getMember } from "./discordUtil";
 
 export async function createNewVoiceChannel(
@@ -13,8 +11,9 @@ export async function createNewVoiceChannel(
   channelName: string,
   categoryID: string,
 ): Promise<VoiceChannel> {
-  return guild.channels.create(channelName, {
-    type: ChannelTypes.GUILD_VOICE,
+  return guild.channels.create({
+    name: channelName,
+    type: ChannelType.GuildVoice,
     parent: categoryID,
   });
 }
@@ -22,39 +21,32 @@ export async function createNewVoiceChannel(
 export async function getChannel(
   guild: Guild,
   channelID: string,
-): Promise<NonThreadGuildBasedChannel | null> {
-  return guild.channels.fetch(channelID);
+): Promise<NonThreadGuildBasedChannel | undefined> {
+  const channel = await guild.channels.fetch(channelID);
+  return channel === null ? undefined : channel;
 }
 
 export function getChannelIDByName(
   guild: Guild,
   channelName: string,
-): string | null {
+): string | undefined {
   const channels = Array.from(guild.channels.cache.values());
   const matchingChannels = channels.filter(
     (channel) => channel.name === channelName,
   );
-  return matchingChannels.length === 0 ? null : matchingChannels[0].id;
+  const firstMatchingChannel = matchingChannels[0];
+  return firstMatchingChannel === undefined
+    ? undefined
+    : firstMatchingChannel.id;
 }
 
 export async function getChannelsInCategory(
   guild: Guild,
   categoryID: string,
-): Promise<NonThreadGuildBasedChannel[] | null> {
+): Promise<NonThreadGuildBasedChannel[] | undefined> {
   const channelMap = await guild.channels.fetch();
-  if (channelMap === null) {
-    return null;
-  }
-
   const channels = Array.from(channelMap.values());
   return channels.filter((channel) => channel.parentId === categoryID);
-}
-
-export async function getLastMessage(
-  channel: TextChannel,
-): Promise<Message<boolean> | undefined> {
-  const messages = await channel.messages.fetch({ limit: 1 });
-  return messages.first();
 }
 
 export function isVoiceChannelEmpty(

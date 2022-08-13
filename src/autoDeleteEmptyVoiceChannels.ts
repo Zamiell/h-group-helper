@@ -6,9 +6,9 @@ import { getChannel, isVoiceChannelEmpty } from "./discordUtilChannels";
 export async function autoDeleteEmptyVoiceChannels(
   guild: Guild,
   channelID: string,
-) {
+): Promise<void> {
   const channel = await getChannel(guild, channelID);
-  if (channel === null) {
+  if (channel === undefined) {
     return;
   }
 

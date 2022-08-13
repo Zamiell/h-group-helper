@@ -8,6 +8,7 @@
   ],
   "enableGlobDot": true,
   "ignorePaths": [
+    ".env",
     ".git/**",
     "dist/**",
     "node_modules/**"
@@ -17,8 +18,9 @@
     "bufferutil",
     "dbaeumer",
     "discordjs",
-    "erlpack",
+    "esbenp",
     "isaacscript",
+    "pnpm",
     "sarisia",
     "technote",
     "Zamiell"

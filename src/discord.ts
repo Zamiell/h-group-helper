@@ -1,28 +1,22 @@
-import { Client, Intents } from "discord.js";
+import { Client, GatewayIntentBits } from "discord.js";
 import { onMessageCreate } from "./events/onMessageCreate";
 import { onReady } from "./events/onReady";
 import { onVoiceStateUpdate } from "./events/onVoiceStatusUpdate";
 import g from "./globals";
-import { getEnvironmentVariables } from "./util";
+import { getEnvironmentVariable } from "./util";
 
 let client: Client | null = null;
 
-export async function discordInit() {
-  const [
-    discordToken,
-    discordServerName,
-    voiceCategoryName,
-    voiceJoinChannelName,
-    questionChannelName,
-    adminIDsString,
-  ] = getEnvironmentVariables([
-    "DISCORD_TOKEN",
-    "DISCORD_SERVER_NAME",
-    "VOICE_CATEGORY_NAME",
+export async function discordInit(): Promise<void> {
+  const discordToken = getEnvironmentVariable("DISCORD_TOKEN");
+  const discordServerName = getEnvironmentVariable("DISCORD_SERVER_NAME");
+  const voiceCategoryName = getEnvironmentVariable("VOICE_CATEGORY_NAME");
+  const voiceJoinChannelName = getEnvironmentVariable(
     "VOICE_JOIN_CHANNEL_NAME",
-    "QUESTION_CHANNEL_NAME",
-    "ADMIN_IDS",
-  ]);
+  );
+  const questionChannelName = getEnvironmentVariable("QUESTION_CHANNEL_NAME");
+  const adminIDsString = getEnvironmentVariable("ADMIN_IDS");
+
   g.discordServerName = discordServerName;
   g.voiceCategoryName = voiceCategoryName;
   g.voiceJoinChannelName = voiceJoinChannelName;
@@ -30,12 +24,12 @@ export async function discordInit() {
   g.adminIDs = adminIDsString.split(",");
 
   client = new Client({
-    // An intent is needed for each type of data that we need Discord to send to us
+    // An intent is needed for each type of data that we need Discord to send to us.
     intents: [
-      Intents.FLAGS.GUILDS,
-      Intents.FLAGS.GUILD_MEMBERS,
-      Intents.FLAGS.GUILD_MESSAGES,
-      Intents.FLAGS.GUILD_VOICE_STATES,
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildVoiceStates,
     ],
   });
 
@@ -47,7 +41,7 @@ export async function discordInit() {
   await client.login(discordToken);
 }
 
-export function discordShutdown() {
+export function discordShutdown(): void {
   if (client === null) {
     return;
   }

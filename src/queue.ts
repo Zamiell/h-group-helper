@@ -1,11 +1,10 @@
-// In order to avoid race conditions, we only want to process one voice event at a time
-// (otherwise, we observe bugs like channels not being properly cleaned up)
-// Thus, any async voice event callbacks will put work onto this queue
+// In order to avoid race conditions, we only want to process one voice event at a time. (Otherwise,
+// we observe bugs like channels not being properly cleaned up.) Thus, any async voice event
+// callbacks will put work onto this queue.
 
 import { Guild } from "discord.js";
 import { autoCreateVoiceChannels } from "./autoCreateVoiceChannels";
 import { autoDeleteEmptyVoiceChannels } from "./autoDeleteEmptyVoiceChannels";
-import { ensureAllCases } from "./util";
 
 export enum QueueFunction {
   AutoCreateVoiceChannels,
@@ -26,11 +25,11 @@ export function addQueue(
   guild: Guild,
   userID: string,
   channelID: string,
-) {
+): void {
   const queueTuple: QueueTuple = [queueFunction, guild, userID, channelID];
   queue.push(queueTuple);
 
-  // If the queue was previously empty, asynchronously schedule work to begin
+  // If the queue was previously empty, asynchronously schedule work to begin.
   if (queue.length === 1) {
     setTimeout(() => {
       processQueue().catch((err) => {
@@ -65,10 +64,6 @@ async function processQueueElement() {
     case QueueFunction.AutoDeleteEmptyVoiceChannels: {
       await autoDeleteEmptyVoiceChannels(guild, channelID);
       break;
-    }
-
-    default: {
-      ensureAllCases(queueFunction);
     }
   }
 
