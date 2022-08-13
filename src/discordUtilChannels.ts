@@ -46,7 +46,11 @@ export async function getChannelsInCategory(
 ): Promise<NonThreadGuildBasedChannel[] | undefined> {
   const channelMap = await guild.channels.fetch();
   const channels = Array.from(channelMap.values());
-  return channels.filter((channel) => channel.parentId === categoryID);
+  return channels.filter(
+    // The discord.js typings are wrong; the channel can be null here.
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    (channel) => channel !== null && channel.parentId === categoryID,
+  );
 }
 
 export function isVoiceChannelEmpty(
