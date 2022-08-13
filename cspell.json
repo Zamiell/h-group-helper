@@ -1,0 +1,26 @@
+{
+  "version": "0.2",
+  "files": [
+    "**"
+  ],
+  "enableFiletypes": [
+    "*"
+  ],
+  "enableGlobDot": true,
+  "ignorePaths": [
+    ".git/**",
+    "dist/**",
+    "node_modules/**"
+  ],
+  "words": [
+    "autocrlf",
+    "bufferutil",
+    "dbaeumer",
+    "discordjs",
+    "erlpack",
+    "isaacscript",
+    "sarisia",
+    "technote",
+    "Zamiell"
+  ]
+}

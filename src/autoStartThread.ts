@@ -8,17 +8,18 @@ export async function autoStartThread(
   message: Message,
   questionChannelID: string,
 ) {
-  // Ignore all messages that are not in the question channel
+  // Ignore all messages that are not in the question channel.
   if (message.channelId !== questionChannelID) {
     return;
   }
 
-  // Perform necessary type narrowing
+  // Perform necessary type narrowing.
   if (message.channel.type !== "GUILD_TEXT") {
     return;
   }
 
-  // Discord does not allow quotes in thread names, so this will appear as "Alices question"
+  // cspell:ignore Alices
+  // Discord does not allow quotes in thread names, so this will appear as: "Alices question"
   const suffix = message.author.username.endsWith("s") ? "" : "s";
   const threadName = `${message.author.username}${suffix} question`;
 

@@ -8,6 +8,10 @@
   "editor.rulers": [100],
   "editor.tabSize": 2,
 
+  "files.associations": {
+    ".env*": "properties", // e.g. ".env_template" is the same as ".env".
+  },
+
   // Linux line endings are used in this project
   "files.eol": "\n",
 
