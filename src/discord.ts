@@ -30,6 +30,7 @@ export async function discordInit(): Promise<void> {
       GatewayIntentBits.GuildMembers,
       GatewayIntentBits.GuildMessages,
       GatewayIntentBits.GuildVoiceStates,
+      GatewayIntentBits.MessageContent,
     ],
   });
 
