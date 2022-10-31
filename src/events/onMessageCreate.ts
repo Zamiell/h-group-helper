@@ -2,6 +2,7 @@ import { ChannelType, Message } from "discord.js";
 import { autoStartThread } from "../autoStartThread";
 import { checkCommand } from "../command";
 import g from "../globals";
+import { log } from "../log";
 
 export async function onMessageCreate(message: Message): Promise<void> {
   if (!g.ready) {
@@ -28,7 +29,7 @@ function logDiscordTextMessage(message: Message) {
   const channelName =
     message.channel.type === ChannelType.DM ? "DM" : `#${message.channel.name}`;
 
-  console.log(
+  log.info(
     `[${channelName}] <${message.author.username}#${message.author.discriminator}> ${message.content}`,
   );
 }

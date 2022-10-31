@@ -4,6 +4,7 @@ import sourceMapSupport from "source-map-support";
 import { CWD, PROJECT_NAME } from "./constants";
 import { discordInit, discordShutdown } from "./discord";
 import * as file from "./file";
+import { log } from "./log";
 import { error } from "./util";
 
 main().catch((err) => {
@@ -37,11 +38,11 @@ function getEnvFilePath(): string {
 }
 
 function printWelcomeMessage() {
-  console.log(`${PROJECT_NAME} started.`);
+  log.info(`${PROJECT_NAME} started.`);
 }
 
 process.on("SIGINT", () => {
-  console.log("SIGINT detected; shutting down.");
+  log.info("SIGINT detected; shutting down.");
   discordShutdown();
   process.exit();
 });

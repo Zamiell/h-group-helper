@@ -3,6 +3,7 @@ import { onMessageCreate } from "./events/onMessageCreate";
 import { onReady } from "./events/onReady";
 import { onVoiceStateUpdate } from "./events/onVoiceStatusUpdate";
 import g from "./globals";
+import { log } from "./log";
 import { getEnvironmentVariable } from "./util";
 
 export async function discordInit(): Promise<void> {
@@ -30,7 +31,7 @@ export async function discordInit(): Promise<void> {
   client.on("messageCreate", onMessageCreate);
   client.on("voiceStateUpdate", onVoiceStateUpdate);
 
-  console.log("Logging in to Discord...");
+  log.info("Logging in to Discord...");
   await client.login(discordToken);
 }
 
