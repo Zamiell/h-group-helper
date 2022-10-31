@@ -1,11 +1,9 @@
-import { Client, GatewayIntentBits } from "discord.js";
+import { client, initDiscordClient } from "./client";
 import { onMessageCreate } from "./events/onMessageCreate";
 import { onReady } from "./events/onReady";
 import { onVoiceStateUpdate } from "./events/onVoiceStatusUpdate";
 import g from "./globals";
 import { getEnvironmentVariable } from "./util";
-
-let client: Client | null = null;
 
 export async function discordInit(): Promise<void> {
   const discordToken = getEnvironmentVariable("DISCORD_TOKEN");
@@ -23,16 +21,10 @@ export async function discordInit(): Promise<void> {
   g.questionChannelName = questionChannelName;
   g.adminIDs = adminIDsString.split(",");
 
-  client = new Client({
-    // An intent is needed for each type of data that we need Discord to send to us.
-    intents: [
-      GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMembers,
-      GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.GuildVoiceStates,
-      GatewayIntentBits.MessageContent,
-    ],
-  });
+  initDiscordClient();
+  if (client === null) {
+    return;
+  }
 
   client.on("ready", onReady);
   client.on("messageCreate", onMessageCreate);
