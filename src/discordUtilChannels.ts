@@ -2,9 +2,11 @@ import {
   ChannelType,
   Guild,
   NonThreadGuildBasedChannel,
+  VoiceBasedChannel,
   VoiceChannel,
 } from "discord.js";
 import { getMember } from "./discordUtil";
+import { notEmpty } from "./util";
 
 export async function createNewVoiceChannel(
   guild: Guild,
@@ -18,12 +20,16 @@ export async function createNewVoiceChannel(
   });
 }
 
-export async function getChannel(
+export async function getVoiceChannel(
   guild: Guild,
   channelID: string,
-): Promise<NonThreadGuildBasedChannel | undefined> {
+): Promise<VoiceBasedChannel | undefined> {
   const channel = await guild.channels.fetch(channelID);
-  return channel === null ? undefined : channel;
+  if (channel === null) {
+    return undefined;
+  }
+
+  return channel.isVoiceBased() ? channel : undefined;
 }
 
 export function getChannelIDByName(
@@ -40,22 +46,24 @@ export function getChannelIDByName(
     : firstMatchingChannel.id;
 }
 
-export async function getChannelsInCategory(
+export async function getVoiceChannelsInCategory(
   guild: Guild,
   categoryID: string,
-): Promise<NonThreadGuildBasedChannel[] | undefined> {
+): Promise<VoiceBasedChannel[] | undefined> {
   const channelMap = await guild.channels.fetch();
-  const channels = Array.from(channelMap.values());
-  return channels.filter(
-    // The discord.js typings are wrong; the channel can be null here.
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    (channel) => channel !== null && channel.parentId === categoryID,
-  );
+  const allChannels = Array.from(channelMap.values());
+  const channels = allChannels.filter(notEmpty);
+  const voiceChannels = channels.filter(isVoiceChannel);
+  return voiceChannels.filter((channel) => channel.parentId === categoryID);
 }
 
-export function isVoiceChannelEmpty(
+function isVoiceChannel(
   channel: NonThreadGuildBasedChannel,
-): boolean {
+): channel is VoiceBasedChannel {
+  return channel.isVoiceBased();
+}
+
+export function isVoiceChannelEmpty(channel: VoiceBasedChannel): boolean {
   return channel.members.size === 0;
 }
 

@@ -4,7 +4,7 @@ import { VOICE_CHANNEL_PREFIX } from "../constants";
 import { getGuildByName } from "../discordUtil";
 import {
   getChannelIDByName,
-  getChannelsInCategory,
+  getVoiceChannelsInCategory,
   isVoiceChannelEmpty,
 } from "../discordUtilChannels";
 import g from "../globals";
@@ -63,8 +63,11 @@ function initDiscordVariables(client: Client): Guild {
  * empty when the bot was offline.
  */
 async function deleteEmptyVoiceChannels(guild: Guild) {
-  const channels = await getChannelsInCategory(guild, g.voiceCategoryID);
-  if (channels === undefined) {
+  const voiceChannels = await getVoiceChannelsInCategory(
+    guild,
+    g.voiceCategoryID,
+  );
+  if (voiceChannels === undefined) {
     console.error(
       `Failed to get the channels for category: ${g.voiceCategoryID}`,
     );
@@ -72,13 +75,13 @@ async function deleteEmptyVoiceChannels(guild: Guild) {
   }
 
   const promises: Array<Promise<GuildChannel>> = [];
-  for (const channel of channels) {
-    if (!channel.name.startsWith(VOICE_CHANNEL_PREFIX)) {
+  for (const voiceChannel of voiceChannels) {
+    if (!voiceChannel.name.startsWith(VOICE_CHANNEL_PREFIX)) {
       continue;
     }
 
-    if (isVoiceChannelEmpty(channel)) {
-      const promise = channel.delete();
+    if (isVoiceChannelEmpty(voiceChannel)) {
+      const promise = voiceChannel.delete();
       promises.push(promise);
     }
   }

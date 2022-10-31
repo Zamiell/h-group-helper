@@ -2,7 +2,7 @@ import { Guild } from "discord.js";
 import { VOICE_CHANNEL_PREFIX } from "./constants";
 import {
   createNewVoiceChannel,
-  getChannelsInCategory,
+  getVoiceChannelsInCategory,
   moveUserToVoiceChannel,
 } from "./discordUtilChannels";
 import g from "./globals";
@@ -32,26 +32,26 @@ export async function autoCreateVoiceChannels(
 export async function renameAllChannelsAccordingToOrder(
   guild: Guild,
 ): Promise<void> {
-  const channelsInCategory = await getChannelsInCategory(
+  const voiceChannelsInCategory = await getVoiceChannelsInCategory(
     guild,
     g.voiceCategoryID,
   );
-  if (channelsInCategory === undefined) {
+  if (voiceChannelsInCategory === undefined) {
     console.error(
-      `Failed to get the channels for category: ${g.voiceCategoryID}`,
+      `Failed to get the voice channels for category: ${g.voiceCategoryID}`,
     );
     return;
   }
 
   const promises: Array<Promise<unknown>> = [];
-  for (const channel of channelsInCategory) {
+  for (const voiceChannel of voiceChannelsInCategory) {
     // Don't rename the "Create New Voice Channel" channel.
-    if (channel.id === g.voiceJoinChannelID) {
+    if (voiceChannel.id === g.voiceJoinChannelID) {
       continue;
     }
 
-    const name = `${VOICE_CHANNEL_PREFIX}${channel.position}`;
-    const promise = channel.setName(name);
+    const name = `${VOICE_CHANNEL_PREFIX}${voiceChannel.position}`;
+    const promise = voiceChannel.setName(name);
     promises.push(promise);
   }
 

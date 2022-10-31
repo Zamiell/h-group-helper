@@ -1,13 +1,13 @@
 import { Guild } from "discord.js";
 import { renameAllChannelsAccordingToOrder } from "./autoCreateVoiceChannels";
 import { VOICE_CHANNEL_PREFIX } from "./constants";
-import { getChannel, isVoiceChannelEmpty } from "./discordUtilChannels";
+import { getVoiceChannel, isVoiceChannelEmpty } from "./discordUtilChannels";
 
 export async function autoDeleteEmptyVoiceChannels(
   guild: Guild,
   channelID: string,
 ): Promise<void> {
-  const channel = await getChannel(guild, channelID);
+  const channel = await getVoiceChannel(guild, channelID);
   if (channel === undefined) {
     return;
   }

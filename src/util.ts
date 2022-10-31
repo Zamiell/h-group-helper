@@ -3,6 +3,10 @@ export function error(...args: unknown[]): never {
   process.exit(1);
 }
 
+export function notEmpty<T>(value: T | null | undefined): value is T {
+  return value !== null && value !== undefined;
+}
+
 export function getEnvironmentVariable(variableName: string): string {
   const variable = process.env[variableName];
   if (variable === undefined || variable === "") {
