@@ -24,12 +24,12 @@ export function onVoiceStateUpdate(
 }
 
 function onJoinedVoiceChannel(guild: Guild, userID: string, channelID: string) {
-  logVoiceStatusUpdate(userID, "Joined");
+  logVoiceStatusUpdate(userID, channelID, "Joined");
   addQueue(QueueFunction.AutoCreateVoiceChannels, guild, userID, channelID);
 }
 
 function onLeftVoiceChannel(guild: Guild, userID: string, channelID: string) {
-  logVoiceStatusUpdate(userID, "Left");
+  logVoiceStatusUpdate(userID, channelID, "Left");
   addQueue(
     QueueFunction.AutoDeleteEmptyVoiceChannels,
     guild,
@@ -38,15 +38,22 @@ function onLeftVoiceChannel(guild: Guild, userID: string, channelID: string) {
   );
 }
 
-function logVoiceStatusUpdate(userID: string, verb: string) {
+function logVoiceStatusUpdate(userID: string, channelID: string, verb: string) {
   if (client === null) {
     return;
   }
 
   const user = client.users.cache.get(userID);
-  if (user !== undefined) {
-    console.log(
-      `${verb} voice channel: ${user.username}#${user.discriminator} (${userID})`,
-    );
+  if (user === undefined) {
+    return;
   }
+
+  const channel = client.channels.cache.get(channelID);
+  if (channel === undefined || !channel.isVoiceBased()) {
+    return;
+  }
+
+  console.log(
+    `${verb} voice channel: ${user.username}#${user.discriminator} (${userID}) --> ${channel.name}`,
+  );
 }
