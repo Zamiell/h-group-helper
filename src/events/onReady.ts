@@ -3,7 +3,7 @@ import { getGuildByName } from "../discordUtil.js";
 import { getChannelIDByName } from "../discordUtilChannels.js";
 import { env } from "../env.js";
 import { g } from "../globals.js";
-import { log } from "../log.js";
+import { logger } from "../logger.js";
 import { deleteEmptyVoiceChannels } from "../queueActions/deleteEmptyVoiceChannels.js";
 
 export async function onReady(client: Client): Promise<void> {
@@ -11,7 +11,9 @@ export async function onReady(client: Client): Promise<void> {
     throw new Error("Failed to connect to Discord.");
   }
 
-  log.info(`Connected to Discord with a username of: ${client.user.username}`);
+  logger.info(
+    `Connected to Discord with a username of: ${client.user.username}`,
+  );
 
   const guild = initDiscordVariables(client);
   await deleteEmptyVoiceChannels(guild);
@@ -24,7 +26,7 @@ function initDiscordVariables(client: Client): Guild {
       `Failed to find Discord server: ${env.DISCORD_SERVER_NAME}`,
     );
   }
-  log.info(`Connected to Discord server: ${guild.name}`);
+  logger.info(`Connected to Discord server: ${guild.name}`);
 
   const categoryID = getChannelIDByName(guild, env.VOICE_CATEGORY_NAME);
   if (categoryID === undefined) {

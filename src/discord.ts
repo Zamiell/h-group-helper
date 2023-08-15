@@ -4,7 +4,7 @@ import { env } from "./env.js";
 import { onMessageCreate } from "./events/onMessageCreate.js";
 import { onReady } from "./events/onReady.js";
 import { onVoiceStateUpdate } from "./events/onVoiceStatusUpdate.js";
-import { log } from "./log.js";
+import { logger } from "./logger.js";
 
 export async function discordInit(): Promise<void> {
   client.on("ready", onReady);
@@ -13,7 +13,7 @@ export async function discordInit(): Promise<void> {
 
   addExitHandler(discordShutdown);
 
-  log.info("Logging in to Discord...");
+  logger.info("Logging in to Discord...");
   await client.login(env.DISCORD_TOKEN);
 }
 

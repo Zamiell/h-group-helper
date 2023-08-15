@@ -1,6 +1,6 @@
 import type { Guild, VoiceState } from "discord.js";
 import { client } from "../client.js";
-import { log } from "../log.js";
+import { logger } from "../logger.js";
 import { QueueType, addQueue } from "../queue.js";
 
 export function onVoiceStateUpdate(
@@ -41,7 +41,7 @@ function logVoiceStatusUpdate(userID: string, channelID: string, verb: string) {
     return;
   }
 
-  log.info(
+  logger.info(
     `${verb} voice channel: ${user.username}#${user.discriminator} (${userID}) --> ${channel.name}`,
   );
 }
