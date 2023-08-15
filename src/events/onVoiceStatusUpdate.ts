@@ -1,7 +1,7 @@
 import type { Guild, VoiceState } from "discord.js";
 import { client } from "../client.js";
 import { log } from "../log.js";
-import { QueueFunction, addQueue } from "../queue.js";
+import { QueueType, addQueue } from "../queue.js";
 
 export function onVoiceStateUpdate(
   oldState: VoiceState,
@@ -15,23 +15,19 @@ export function onVoiceStateUpdate(
   if (newChannelID !== null && newChannelID !== oldChannelID) {
     onJoinedVoiceChannel(guild, userID, newChannelID);
   } else if (newChannelID === null && oldChannelID !== null) {
-    onLeftVoiceChannel(guild, userID, oldChannelID);
+    onLeftVoiceChannel(userID, oldChannelID);
   }
+
+  addQueue(QueueType.DeleteEmptyVoiceChannels, guild, "", "");
 }
 
 function onJoinedVoiceChannel(guild: Guild, userID: string, channelID: string) {
   logVoiceStatusUpdate(userID, channelID, "Joined");
-  addQueue(QueueFunction.AutoCreateVoiceChannels, guild, userID, channelID);
+  addQueue(QueueType.CreateVoiceChannels, guild, userID, channelID);
 }
 
-function onLeftVoiceChannel(guild: Guild, userID: string, channelID: string) {
+function onLeftVoiceChannel(userID: string, channelID: string) {
   logVoiceStatusUpdate(userID, channelID, "Left");
-  addQueue(
-    QueueFunction.AutoDeleteEmptyVoiceChannels,
-    guild,
-    userID,
-    channelID,
-  );
 }
 
 function logVoiceStatusUpdate(userID: string, channelID: string, verb: string) {

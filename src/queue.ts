@@ -3,31 +3,36 @@
 // callbacks will put work onto this queue.
 
 import type { Guild } from "discord.js";
-import { autoCreateVoiceChannels } from "./autoCreateVoiceChannels.js";
-import { autoDeleteEmptyVoiceChannels } from "./autoDeleteEmptyVoiceChannels.js";
+import { createVoiceChannels } from "./queueActions/createVoiceChannels.js";
+import { deleteEmptyVoiceChannels } from "./queueActions/deleteEmptyVoiceChannels.js";
 
-export enum QueueFunction {
-  AutoCreateVoiceChannels = "AutoCreateVoiceChannels",
-  AutoDeleteEmptyVoiceChannels = "AutoDeleteEmptyVoiceChannels",
+export enum QueueType {
+  CreateVoiceChannels = "CreateVoiceChannels",
+  DeleteEmptyVoiceChannels = "DeleteEmptyVoiceChannels",
 }
 
-type QueueTuple = [
-  queueFunction: QueueFunction,
-  guild: Guild,
-  userID: string,
-  channelID: string,
-];
+interface QueueElement {
+  queueType: QueueType;
+  guild: Guild;
+  userID: string;
+  channelID: string;
+}
 
-const queue: QueueTuple[] = [];
+const queue: QueueElement[] = [];
 
 export function addQueue(
-  queueFunction: QueueFunction,
+  queueType: QueueType,
   guild: Guild,
   userID: string,
   channelID: string,
 ): void {
-  const queueTuple: QueueTuple = [queueFunction, guild, userID, channelID];
-  queue.push(queueTuple);
+  const queueElement: QueueElement = {
+    queueType,
+    guild,
+    userID,
+    channelID,
+  };
+  queue.push(queueElement);
 
   // If the queue was previously empty, asynchronously schedule work to begin.
   if (queue.length === 1) {
@@ -46,23 +51,23 @@ async function processQueue() {
   } while (!queueEmpty);
 }
 
-/** Returns whether or not the queue is currently empty. */
+/** @returns Whether the queue is currently empty. */
 async function processQueueElement() {
-  const queueTuple = queue.shift();
-  if (queueTuple === undefined) {
+  const queueElement = queue.shift();
+  if (queueElement === undefined) {
     return true;
   }
 
-  const [queueFunction, guild, userID, channelID] = queueTuple;
+  const { queueType, guild, userID, channelID } = queueElement;
 
-  switch (queueFunction) {
-    case QueueFunction.AutoCreateVoiceChannels: {
-      await autoCreateVoiceChannels(guild, userID, channelID);
+  switch (queueType) {
+    case QueueType.CreateVoiceChannels: {
+      await createVoiceChannels(guild, userID, channelID);
       break;
     }
 
-    case QueueFunction.AutoDeleteEmptyVoiceChannels: {
-      await autoDeleteEmptyVoiceChannels(guild, channelID);
+    case QueueType.DeleteEmptyVoiceChannels: {
+      await deleteEmptyVoiceChannels(guild);
       break;
     }
   }

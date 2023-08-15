@@ -1,15 +1,10 @@
-import type { Client, Guild, GuildChannel } from "discord.js";
-import { renameAllChannelsAccordingToOrder } from "../autoCreateVoiceChannels.js";
-import { VOICE_CHANNEL_PREFIX } from "../constants.js";
+import type { Client, Guild } from "discord.js";
 import { getGuildByName } from "../discordUtil.js";
-import {
-  getChannelIDByName,
-  getVoiceChannelsInCategory,
-  isVoiceChannelEmpty,
-} from "../discordUtilChannels.js";
+import { getChannelIDByName } from "../discordUtilChannels.js";
 import { env } from "../env.js";
 import { g } from "../globals.js";
 import { log } from "../log.js";
+import { deleteEmptyVoiceChannels } from "../queueActions/deleteEmptyVoiceChannels.js";
 
 export async function onReady(client: Client): Promise<void> {
   if (client.user === null || client.application === null) {
@@ -20,7 +15,6 @@ export async function onReady(client: Client): Promise<void> {
 
   const guild = initDiscordVariables(client);
   await deleteEmptyVoiceChannels(guild);
-  await renameAllChannelsAccordingToOrder(guild);
 }
 
 function initDiscordVariables(client: Client): Guild {
@@ -62,36 +56,4 @@ function initDiscordVariables(client: Client): Guild {
   g.botID = client.user === null ? "" : client.user.id;
 
   return guild;
-}
-
-/**
- * Normally, the bot will delete empty voice channels. So, when the bot first starts, we want to
- * check for any existing empty voice channels and delete them in case they transitioned to being
- * empty when the bot was offline.
- */
-async function deleteEmptyVoiceChannels(guild: Guild) {
-  const voiceChannels = await getVoiceChannelsInCategory(
-    guild,
-    g.voiceCategoryID,
-  );
-  if (voiceChannels === undefined) {
-    console.error(
-      `Failed to get the channels for category: ${g.voiceCategoryID}`,
-    );
-    return;
-  }
-
-  const promises: Array<Promise<GuildChannel>> = [];
-  for (const voiceChannel of voiceChannels) {
-    if (!voiceChannel.name.startsWith(VOICE_CHANNEL_PREFIX)) {
-      continue;
-    }
-
-    if (isVoiceChannelEmpty(voiceChannel)) {
-      const promise = voiceChannel.delete();
-      promises.push(promise);
-    }
-  }
-
-  await Promise.all(promises);
 }

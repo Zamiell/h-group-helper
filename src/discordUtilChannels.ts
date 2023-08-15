@@ -20,18 +20,6 @@ export async function createNewVoiceChannel(
   });
 }
 
-export async function getVoiceChannel(
-  guild: Guild,
-  channelID: string,
-): Promise<VoiceBasedChannel | undefined> {
-  const channel = await guild.channels.fetch(channelID);
-  if (channel === null) {
-    return undefined;
-  }
-
-  return channel.isVoiceBased() ? channel : undefined;
-}
-
 export function getChannelIDByName(
   guild: Guild,
   channelName: string,

@@ -1,13 +1,13 @@
 import type { Guild } from "discord.js";
-import { VOICE_CHANNEL_PREFIX } from "./constants.js";
+import { VOICE_CHANNEL_PREFIX } from "../constants.js";
 import {
   createNewVoiceChannel,
   getVoiceChannelsInCategory,
   moveUserToVoiceChannel,
-} from "./discordUtilChannels.js";
-import { g } from "./globals.js";
+} from "../discordUtilChannels.js";
+import { g } from "../globals.js";
 
-export async function autoCreateVoiceChannels(
+export async function createVoiceChannels(
   guild: Guild,
   userID: string,
   channelID: string,
