@@ -27,7 +27,7 @@
     "source-map-support": "^0.5.21",
     "utf-8-validate": "^6.0.3",
     "winston": "^3.10.0",
-    "zod": "^3.22.0"
+    "zod": "^3.22.1"
   },
   "devDependencies": {
     "@types/node": "^20.5.0",

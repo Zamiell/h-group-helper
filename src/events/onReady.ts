@@ -7,7 +7,7 @@ import { logger } from "../logger.js";
 import { deleteEmptyVoiceChannels } from "../queueActions/deleteEmptyVoiceChannels.js";
 
 export async function onReady(client: Client): Promise<void> {
-  if (client.user === null || client.application === null) {
+  if (client.user === null) {
     throw new Error("Failed to connect to Discord.");
   }
 
@@ -20,6 +20,10 @@ export async function onReady(client: Client): Promise<void> {
 }
 
 function initDiscordVariables(client: Client): Guild {
+  if (client.user === null) {
+    throw new Error("Failed to connect to Discord.");
+  }
+
   const guild = getGuildByName(client, env.DISCORD_SERVER_NAME);
   if (guild === undefined) {
     throw new Error(
@@ -55,7 +59,7 @@ function initDiscordVariables(client: Client): Guild {
   g.adminIDs = env.ADMIN_IDS.split(",");
 
   // Store our user ID for later.
-  g.botID = client.user === null ? "" : client.user.id;
+  g.botID = client.user.id;
 
   return guild;
 }
