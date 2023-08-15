@@ -28,7 +28,8 @@ npx eslint --max-warnings 0 .
 
 # @template-customization-start
 # Check for unused exports.
-npx ts-prune
+# "--error" makes it return an error code of 1 if unused exports are found.
+npx ts-prune --error
 # @template-customization-end
 
 # Spell check every file using CSpell.
