@@ -3672,7 +3672,7 @@ __metadata:
     bufferutil: ^4.0.7
     discord.js: ^14.12.1
     dotenv: ^16.3.1
-    isaacscript: ^3.6.57
+    isaacscript: ^3.7.2
     isaacscript-lint: ^5.2.3
     isaacscript-tsconfig: ^4.0.0
     npm-check-updates: ^16.11.1
@@ -4184,9 +4184,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"isaacscript@npm:^3.6.57":
-  version: 3.6.57
-  resolution: "isaacscript@npm:3.6.57"
+"isaacscript@npm:^3.7.2":
+  version: 3.7.2
+  resolution: "isaacscript@npm:3.7.2"
   dependencies:
     ajv: ^8.12.0
     chalk: 4.1.2
@@ -4209,7 +4209,7 @@ __metadata:
     typescript: ">= 4.0.0"
   bin:
     isaacscript: src/main.js
-  checksum: dc7b1f1ba9e023e9039459bbf1c026965623ce1ab63b2350345f4ac1ff64bc34fe6fe9bbd41a5dd607a7d42020431a70a1a2c5b1863a18e6539b0d14604f085c
+  checksum: 0325f472efdc0e8df191c76b2b78e131ce01589a4968e4193c00862c12f9c7bba436a3c713ce752413c03dad16bd35c571b7b4a8cefdbc0b7a6be2781059b5a3
   languageName: node
   linkType: hard
 
