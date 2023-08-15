@@ -1,12 +1,12 @@
-import { Client, Guild, GuildMember } from "discord.js";
+import type { Client, Guild, GuildMember } from "discord.js";
 
 export function getGuildByName(
   client: Client,
   guildName: string,
 ): Guild | undefined {
-  const guilds = Array.from(client.guilds.cache.values());
-  const matchingGuilds = guilds.filter((guild) => guild.name === guildName);
-  return matchingGuilds[0];
+  const guilds = [...client.guilds.cache.values()];
+  const matchingGuild = guilds.find((guild) => guild.name === guildName);
+  return matchingGuild;
 }
 
 export async function getMember(

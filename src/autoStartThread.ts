@@ -1,4 +1,5 @@
-import { ChannelType, Message } from "discord.js";
+import type { Message } from "discord.js";
+import { ChannelType } from "discord.js";
 
 const NEW_THREAD_AUTO_MESSAGE = `Please make sure that your question satisfies all of the rules here:
 <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>

@@ -1,14 +1,14 @@
 import * as dotenv from "dotenv";
-import path from "path";
+import path from "node:path";
 import sourceMapSupport from "source-map-support";
-import { CWD, PROJECT_NAME } from "./constants";
-import { discordInit, discordShutdown } from "./discord";
-import * as file from "./file";
-import { log } from "./log";
-import { error } from "./util";
+import { CWD, PROJECT_NAME } from "./constants.js";
+import { discordInit, discordShutdown } from "./discord.js";
+import * as file from "./file.js";
+import { log } from "./log.js";
+import { error } from "./util.js";
 
-main().catch((err) => {
-  error(`${PROJECT_NAME} failed:`, err);
+main().catch((error_) => {
+  error(`${PROJECT_NAME} failed:`, error_);
 });
 
 async function main() {

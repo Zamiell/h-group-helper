@@ -1,12 +1,13 @@
-import {
-  ChannelType,
+import type {
   Guild,
   NonThreadGuildBasedChannel,
   VoiceBasedChannel,
-  VoiceChannel,
+  VoiceChannel} from "discord.js";
+import {
+  ChannelType
 } from "discord.js";
-import { getMember } from "./discordUtil";
-import { notEmpty } from "./util";
+import { getMember } from "./discordUtil.js";
+import { notEmpty } from "./util.js";
 
 export async function createNewVoiceChannel(
   guild: Guild,
@@ -36,11 +37,11 @@ export function getChannelIDByName(
   guild: Guild,
   channelName: string,
 ): string | undefined {
-  const channels = Array.from(guild.channels.cache.values());
-  const matchingChannels = channels.filter(
+  const channels = [...guild.channels.cache.values()];
+  const matchingChannel = channels.find(
     (channel) => channel.name === channelName,
   );
-  const firstMatchingChannel = matchingChannels[0];
+  const firstMatchingChannel = matchingChannel;
   return firstMatchingChannel === undefined
     ? undefined
     : firstMatchingChannel.id;
@@ -51,7 +52,7 @@ export async function getVoiceChannelsInCategory(
   categoryID: string,
 ): Promise<VoiceBasedChannel[] | undefined> {
   const channelMap = await guild.channels.fetch();
-  const allChannels = Array.from(channelMap.values());
+  const allChannels = [...channelMap.values()];
   const channels = allChannels.filter(notEmpty);
   const voiceChannels = channels.filter(isVoiceChannel);
   return voiceChannels.filter((channel) => channel.parentId === categoryID);

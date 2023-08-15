@@ -1,7 +1,7 @@
-import { Guild } from "discord.js";
-import { renameAllChannelsAccordingToOrder } from "./autoCreateVoiceChannels";
-import { VOICE_CHANNEL_PREFIX } from "./constants";
-import { getVoiceChannel, isVoiceChannelEmpty } from "./discordUtilChannels";
+import type { Guild } from "discord.js";
+import { renameAllChannelsAccordingToOrder } from "./autoCreateVoiceChannels.js";
+import { VOICE_CHANNEL_PREFIX } from "./constants.js";
+import { getVoiceChannel, isVoiceChannelEmpty } from "./discordUtilChannels.js";
 
 export async function autoDeleteEmptyVoiceChannels(
   guild: Guild,

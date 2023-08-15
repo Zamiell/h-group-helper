@@ -2,9 +2,9 @@
 // we observe bugs like channels not being properly cleaned up.) Thus, any async voice event
 // callbacks will put work onto this queue.
 
-import { Guild } from "discord.js";
-import { autoCreateVoiceChannels } from "./autoCreateVoiceChannels";
-import { autoDeleteEmptyVoiceChannels } from "./autoDeleteEmptyVoiceChannels";
+import type { Guild } from "discord.js";
+import { autoCreateVoiceChannels } from "./autoCreateVoiceChannels.js";
+import { autoDeleteEmptyVoiceChannels } from "./autoDeleteEmptyVoiceChannels.js";
 
 export enum QueueFunction {
   AutoCreateVoiceChannels,
@@ -32,8 +32,8 @@ export function addQueue(
   // If the queue was previously empty, asynchronously schedule work to begin.
   if (queue.length === 1) {
     setTimeout(() => {
-      processQueue().catch((err) => {
-        console.error("Failed to process the queue:", err);
+      processQueue().catch((error) => {
+        console.error("Failed to process the queue:", error);
       });
     }, 0);
   }

@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import type { Message } from "discord.js";
 
 const COMMAND_PREFIX = "/";
 
@@ -14,7 +14,7 @@ export async function checkCommand(
   if (!command.startsWith(COMMAND_PREFIX)) {
     return;
   }
-  command = command.substring(COMMAND_PREFIX.length); // Remove the command prefix.
+  command = command.slice(COMMAND_PREFIX.length); // Remove the command prefix.
   command = command.toLowerCase();
 
   const commandFunction = commandFunctions.get(command);

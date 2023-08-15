@@ -1,8 +1,9 @@
-import { ChannelType, Message } from "discord.js";
-import { autoStartThread } from "../autoStartThread";
-import { checkCommand } from "../command";
-import g from "../globals";
-import { log } from "../log";
+import type { Message } from "discord.js";
+import { ChannelType } from "discord.js";
+import { autoStartThread } from "../autoStartThread.js";
+import { checkCommand } from "../command.js";
+import g from "../globals.js";
+import { log } from "../log.js";
 
 export async function onMessageCreate(message: Message): Promise<void> {
   if (!g.ready) {

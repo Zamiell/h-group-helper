@@ -1,15 +1,15 @@
-import { Client, Guild, GuildChannel } from "discord.js";
-import { renameAllChannelsAccordingToOrder } from "../autoCreateVoiceChannels";
-import { VOICE_CHANNEL_PREFIX } from "../constants";
-import { getGuildByName } from "../discordUtil";
+import type { Client, Guild, GuildChannel } from "discord.js";
+import { renameAllChannelsAccordingToOrder } from "../autoCreateVoiceChannels.js";
+import { VOICE_CHANNEL_PREFIX } from "../constants.js";
+import { getGuildByName } from "../discordUtil.js";
 import {
   getChannelIDByName,
   getVoiceChannelsInCategory,
   isVoiceChannelEmpty,
-} from "../discordUtilChannels";
-import g from "../globals";
-import { log } from "../log";
-import { error } from "../util";
+} from "../discordUtilChannels.js";
+import g from "../globals.js";
+import { log } from "../log.js";
+import { error } from "../util.js";
 
 export async function onReady(client: Client): Promise<void> {
   if (client.user === null || client.application === null) {

@@ -1,10 +1,10 @@
-import { client, initDiscordClient } from "./client";
-import { onMessageCreate } from "./events/onMessageCreate";
-import { onReady } from "./events/onReady";
-import { onVoiceStateUpdate } from "./events/onVoiceStatusUpdate";
-import g from "./globals";
-import { log } from "./log";
-import { getEnvironmentVariable } from "./util";
+import { client, initDiscordClient } from "./client.js";
+import { onMessageCreate } from "./events/onMessageCreate.js";
+import { onReady } from "./events/onReady.js";
+import { onVoiceStateUpdate } from "./events/onVoiceStatusUpdate.js";
+import g from "./globals.js";
+import { log } from "./log.js";
+import { getEnvironmentVariable } from "./util.js";
 
 export async function discordInit(): Promise<void> {
   const discordToken = getEnvironmentVariable("DISCORD_TOKEN");
