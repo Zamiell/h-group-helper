@@ -1,18 +1,9 @@
 {
   "version": "0.2",
-  "files": [
-    "**"
-  ],
-  "enableFiletypes": [
-    "*"
-  ],
+  "files": ["**"],
+  "enableFiletypes": ["*"],
   "enableGlobDot": true,
-  "ignorePaths": [
-    ".env",
-    ".git/**",
-    "dist/**",
-    "node_modules/**"
-  ],
+  "ignorePaths": [".env", ".git/**", "dist/**", "node_modules/**"],
   "words": [
     "autocrlf",
     "bufferutil",
@@ -20,6 +11,7 @@
     "discordjs",
     "esbenp",
     "isaacscript",
+    "knip",
     "pnpm",
     "sarisia",
     "technote",

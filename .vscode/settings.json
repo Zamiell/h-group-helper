@@ -12,7 +12,7 @@
     ".env*": "shellscript", // e.g. ".env.example" is the same as ".env".
   },
 
-  // Linux line endings are used in this project.
+  // Automatically removing all trailing whitespace when saving a file.
   "files.eol": "\n",
 
   // Automatically removing all trailing whitespace when saving a file.
@@ -20,9 +20,20 @@
 
   // Configure glob patterns for excluding files and folders in full text searches and quick open.
   "search.exclude": {
+    "**/*.mp3": true,
+    "**/*.png": true,
+    "**/*.wav": true,
+    "**/.yarn/": true,
     "**/dist/": true,
     "**/node_modules/": true,
   },
+
+  // ------------------
+  // Extension settings
+  // ------------------
+
+  // Use Prettier to format "cspell.json".
+  "cSpell.autoFormatConfigFile": true,
 
   // -----------------
   // Language settings

@@ -2,7 +2,7 @@ import { Guild, VoiceState } from "discord.js";
 import { client } from "../client";
 import g from "../globals";
 import { log } from "../log";
-import { addQueue, QueueFunction } from "../queue";
+import { QueueFunction, addQueue } from "../queue";
 
 export function onVoiceStateUpdate(
   oldState: VoiceState,
