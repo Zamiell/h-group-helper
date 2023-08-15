@@ -5,7 +5,7 @@ import {
   getVoiceChannelsInCategory,
   moveUserToVoiceChannel,
 } from "./discordUtilChannels.js";
-import g from "./globals.js";
+import { g } from "./globals.js";
 
 export async function autoCreateVoiceChannels(
   guild: Guild,

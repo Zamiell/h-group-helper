@@ -7,13 +7,13 @@ import {
   getVoiceChannelsInCategory,
   isVoiceChannelEmpty,
 } from "../discordUtilChannels.js";
-import g from "../globals.js";
+import { env } from "../env.js";
+import { g } from "../globals.js";
 import { log } from "../log.js";
-import { error } from "../utils.js";
 
 export async function onReady(client: Client): Promise<void> {
   if (client.user === null || client.application === null) {
-    error("Failed to connect to Discord.");
+    throw new Error("Failed to connect to Discord.");
   }
 
   log.info(`Connected to Discord with a username of: ${client.user.username}`);
@@ -21,34 +21,42 @@ export async function onReady(client: Client): Promise<void> {
   const guild = initDiscordVariables(client);
   await deleteEmptyVoiceChannels(guild);
   await renameAllChannelsAccordingToOrder(guild);
-
-  g.ready = true;
 }
 
 function initDiscordVariables(client: Client): Guild {
-  const guild = getGuildByName(client, g.discordServerName);
+  const guild = getGuildByName(client, env.DISCORD_SERVER_NAME);
   if (guild === undefined) {
-    error(`Failed to find Discord server: ${g.discordServerName}`);
+    throw new Error(
+      `Failed to find Discord server: ${env.DISCORD_SERVER_NAME}`,
+    );
   }
   log.info(`Connected to Discord server: ${guild.name}`);
 
-  const categoryID = getChannelIDByName(guild, g.voiceCategoryName);
+  const categoryID = getChannelIDByName(guild, env.VOICE_CATEGORY_NAME);
   if (categoryID === undefined) {
-    error(`Failed to find the voice category of: ${g.voiceCategoryName}`);
+    throw new Error(
+      `Failed to find the voice category of: ${env.VOICE_CATEGORY_NAME}`,
+    );
   }
   g.voiceCategoryID = categoryID;
 
-  const voiceChannelID = getChannelIDByName(guild, g.voiceJoinChannelName);
+  const voiceChannelID = getChannelIDByName(guild, env.VOICE_JOIN_CHANNEL_NAME);
   if (voiceChannelID === undefined) {
-    error(`Failed to find the voice channel of: ${g.voiceJoinChannelName}`);
+    throw new Error(
+      `Failed to find the voice channel of: ${env.VOICE_JOIN_CHANNEL_NAME}`,
+    );
   }
   g.voiceJoinChannelID = voiceChannelID;
 
-  const textChannelID = getChannelIDByName(guild, g.questionChannelName);
+  const textChannelID = getChannelIDByName(guild, env.QUESTION_CHANNEL_NAME);
   if (textChannelID === undefined) {
-    error(`Failed to find the text channel of: ${g.questionChannelName}`);
+    throw new Error(
+      `Failed to find the text channel of: ${env.QUESTION_CHANNEL_NAME}`,
+    );
   }
   g.questionChannelID = textChannelID;
+
+  g.adminIDs = env.ADMIN_IDS.split(",");
 
   // Store our user ID for later.
   g.botID = client.user === null ? "" : client.user.id;

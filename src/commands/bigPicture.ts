@@ -23,3 +23,5 @@ For more information about this, please see the *Clarity Principle* on the websi
 `;
 
 */
+
+/* eslint-disable unicorn/no-empty-file */

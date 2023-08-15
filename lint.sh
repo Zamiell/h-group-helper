@@ -6,6 +6,10 @@ set -euo pipefail # Exit on errors and undefined variables.
 # https://stackoverflow.com/questions/59895/getting-the-source-directory-of-a-bash-script-from-within
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
+# Get the name of the repository:
+# https://stackoverflow.com/questions/23162299/how-to-get-the-last-part-of-dirname-in-bash/23162553
+REPO_NAME="$(basename "$DIR")"
+
 SECONDS=0
 
 cd "$DIR"
@@ -19,7 +23,13 @@ npx prettier --log-level=warn --check .
 npx eslint --max-warnings 0 .
 
 # Check for unused files, dependencies, and exports.
-npx knip
+# @template-ignore-next-line
+#npx knip
+
+# @template-customization-start
+# Check for unused exports.
+npx ts-prune
+# @template-customization-end
 
 # Spell check every file using CSpell.
 # "--no-progress" and "--no-summary" make it only output errors.
@@ -28,7 +38,9 @@ npx cspell --no-progress --no-summary .
 # Check for unused CSpell words.
 npx cspell-check-unused-words
 
+# @template-customization-start
 # Check for base file updates.
-npx isaacscript check-ts
+npx isaacscript check-ts --ignore publish.sh
+# @template-customization-end
 
-echo "Successfully linted in $SECONDS seconds."
+echo "Successfully linted $REPO_NAME in $SECONDS seconds."

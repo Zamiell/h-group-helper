@@ -2,17 +2,14 @@
 # h-group-helper
 # --------------
 
-# Windows artifacts
-thumbs.db
-
-# MacOS artifacts
+# OS-specific artifacts
 .DS_Store
-
-# cspell:disable
+thumbs.db
 
 # ------------------------------
 # GitHub Node.gitignore template
 # https://raw.githubusercontent.com/github/gitignore/master/Node.gitignore
+# cspell:disable
 # ------------------------------
 
 # Logs

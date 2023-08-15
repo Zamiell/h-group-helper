@@ -1,6 +1,5 @@
 import type { Guild, VoiceState } from "discord.js";
 import { client } from "../client.js";
-import g from "../globals.js";
 import { log } from "../log.js";
 import { QueueFunction, addQueue } from "../queue.js";
 
@@ -8,10 +7,6 @@ export function onVoiceStateUpdate(
   oldState: VoiceState,
   newState: VoiceState,
 ): void {
-  if (!g.ready) {
-    return;
-  }
-
   const { guild } = newState;
   const userID = newState.id;
   const oldChannelID = oldState.channelId;
@@ -40,10 +35,6 @@ function onLeftVoiceChannel(guild: Guild, userID: string, channelID: string) {
 }
 
 function logVoiceStatusUpdate(userID: string, channelID: string, verb: string) {
-  if (client === null) {
-    return;
-  }
-
   const user = client.users.cache.get(userID);
   if (user === undefined) {
     return;

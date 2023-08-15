@@ -12,7 +12,7 @@
     ".env*": "shellscript", // e.g. ".env.example" is the same as ".env".
   },
 
-  // Automatically removing all trailing whitespace when saving a file.
+  // We want to always use "lf" to be consistent with all platforms.
   "files.eol": "\n",
 
   // Automatically removing all trailing whitespace when saving a file.
@@ -43,6 +43,10 @@
   "javascript.suggest.completeFunctionCalls": true,
   "typescript.suggest.completeFunctionCalls": true,
 
+  // By default, VSCode will prefer non-relative paths for deeply nested files.
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifier": "relative",
+
   // Automatically run the formatter when certain files are saved.
   "[javascript]": {
     "editor.codeActionsOnSave": ["source.fixAll.eslint"],
@@ -51,6 +55,18 @@
     "editor.tabSize": 2,
   },
   "[typescript]": {
+    "editor.codeActionsOnSave": ["source.fixAll.eslint"],
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+  },
+  "[javascriptreact]": {
+    "editor.codeActionsOnSave": ["source.fixAll.eslint"],
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+  },
+  "[typescriptreact]": {
     "editor.codeActionsOnSave": ["source.fixAll.eslint"],
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
@@ -71,12 +87,22 @@
     "editor.formatOnSave": true,
     "editor.tabSize": 2,
   },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+  },
   "[css]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "editor.tabSize": 2,
   },
-  "[markdown]": {
+  "[postcss]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true,
     "editor.tabSize": 2,

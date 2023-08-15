@@ -1,4 +1,3 @@
-import { Globals } from "./types/Globals.js";
+import { Globals } from "./classes/Globals.js";
 
-const globals = new Globals();
-export default globals;
+export const g = new Globals();

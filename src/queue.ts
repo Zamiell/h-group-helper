@@ -7,8 +7,8 @@ import { autoCreateVoiceChannels } from "./autoCreateVoiceChannels.js";
 import { autoDeleteEmptyVoiceChannels } from "./autoDeleteEmptyVoiceChannels.js";
 
 export enum QueueFunction {
-  AutoCreateVoiceChannels,
-  AutoDeleteEmptyVoiceChannels,
+  AutoCreateVoiceChannels = "AutoCreateVoiceChannels",
+  AutoDeleteEmptyVoiceChannels = "AutoDeleteEmptyVoiceChannels",
 }
 
 type QueueTuple = [

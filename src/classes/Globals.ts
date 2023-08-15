@@ -3,14 +3,9 @@
  * API calls upon first connection.
  */
 export class Globals {
-  discordServerName = "";
-  voiceCategoryName = "";
   voiceCategoryID = "";
-  voiceJoinChannelName = "";
   voiceJoinChannelID = "";
-  questionChannelName = "";
   questionChannelID = "";
   adminIDs: string[] = [];
   botID = "";
-  ready = false;
 }
