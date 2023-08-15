@@ -4,7 +4,7 @@ import { onReady } from "./events/onReady.js";
 import { onVoiceStateUpdate } from "./events/onVoiceStatusUpdate.js";
 import g from "./globals.js";
 import { log } from "./log.js";
-import { getEnvironmentVariable } from "./util.js";
+import { getEnvironmentVariable } from "./utils.js";
 
 export async function discordInit(): Promise<void> {
   const discordToken = getEnvironmentVariable("DISCORD_TOKEN");

@@ -1016,6 +1016,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@t3-oss/env-core@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@t3-oss/env-core@npm:0.6.0"
+  peerDependencies:
+    typescript: ">=4.7.2"
+    zod: ^3.0.0
+  checksum: 00c5b8e2d893f85e9d33099fded1e9ee1c74e642144b91d60096d31ed5bcd09986f14b275316568aa1a1f42d1b01a34b67dcf1396e11d837ff5c11b4bfb56a3a
+  languageName: node
+  linkType: hard
+
 "@tootallnate/once@npm:2":
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
@@ -3493,6 +3503,7 @@ __metadata:
   resolution: "h-group-helper@workspace:."
   dependencies:
     "@discordjs/voice": ^0.16.0
+    "@t3-oss/env-core": ^0.6.0
     "@types/node": ^20.5.0
     "@types/source-map-support": ^0.5.6
     bufferutil: ^4.0.7

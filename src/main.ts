@@ -5,10 +5,9 @@ import { CWD, PROJECT_NAME } from "./constants.js";
 import { discordInit, discordShutdown } from "./discord.js";
 import * as file from "./file.js";
 import { log } from "./log.js";
-import { error } from "./util.js";
 
-main().catch((error_) => {
-  error(`${PROJECT_NAME} failed:`, error_);
+main().catch((error) => {
+  throw new Error(`${PROJECT_NAME} failed: ${error}`);
 });
 
 async function main() {
@@ -34,7 +33,7 @@ function getEnvFilePath(): string {
     return productionEnvFilePath;
   }
 
-  error('Failed to find the ".env" file.');
+  throw new Error('Failed to find the ".env" file.');
 }
 
 function printWelcomeMessage() {

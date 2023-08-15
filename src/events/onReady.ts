@@ -9,7 +9,7 @@ import {
 } from "../discordUtilChannels.js";
 import g from "../globals.js";
 import { log } from "../log.js";
-import { error } from "../util.js";
+import { error } from "../utils.js";
 
 export async function onReady(client: Client): Promise<void> {
   if (client.user === null || client.application === null) {

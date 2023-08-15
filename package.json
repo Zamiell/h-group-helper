@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@discordjs/voice": "^0.16.0",
+    "@t3-oss/env-core": "^0.6.0",
     "bufferutil": "^4.0.7",
     "discord.js": "^14.12.1",
     "dotenv": "^16.3.1",

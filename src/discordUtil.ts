@@ -5,8 +5,7 @@ export function getGuildByName(
   guildName: string,
 ): Guild | undefined {
   const guilds = [...client.guilds.cache.values()];
-  const matchingGuild = guilds.find((guild) => guild.name === guildName);
-  return matchingGuild;
+  return guilds.find((guild) => guild.name === guildName);
 }
 
 export async function getMember(

@@ -2,12 +2,11 @@ import type {
   Guild,
   NonThreadGuildBasedChannel,
   VoiceBasedChannel,
-  VoiceChannel} from "discord.js";
-import {
-  ChannelType
+  VoiceChannel,
 } from "discord.js";
+import { ChannelType } from "discord.js";
 import { getMember } from "./discordUtil.js";
-import { notEmpty } from "./util.js";
+import { notEmpty } from "./utils.js";
 
 export async function createNewVoiceChannel(
   guild: Guild,
