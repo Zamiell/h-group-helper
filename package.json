@@ -18,26 +18,26 @@
     "start": "tsx src/main.ts"
   },
   "dependencies": {
-    "@discordjs/voice": "^0.16.0",
-    "@t3-oss/env-core": "^0.6.0",
-    "bufferutil": "^4.0.7",
-    "discord.js": "^14.12.1",
+    "@discordjs/voice": "^0.16.1",
+    "@t3-oss/env-core": "^0.7.1",
+    "bufferutil": "^4.0.8",
+    "discord.js": "^14.14.1",
     "dotenv": "^16.3.1",
     "shutdown-async": "^1.2.3",
     "source-map-support": "^0.5.21",
     "utf-8-validate": "^6.0.3",
-    "winston": "^3.10.0",
-    "zod": "^3.22.1"
+    "winston": "^3.11.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/node": "^20.5.0",
-    "@types/source-map-support": "^0.5.6",
-    "isaacscript": "^3.7.2",
-    "isaacscript-lint": "^5.2.3",
-    "isaacscript-tsconfig": "^4.0.0",
-    "npm-check-updates": "^16.11.1",
-    "tsx": "^3.12.7",
-    "typescript": "^5.1.6"
+    "@types/node": "^20.10.0",
+    "@types/source-map-support": "^0.5.10",
+    "isaacscript": "^3.21.1",
+    "isaacscript-lint": "^6.4.1",
+    "isaacscript-tsconfig": "^5.0.0",
+    "npm-check-updates": "^16.14.11",
+    "tsx": "^4.4.0",
+    "typescript": "^5.3.2"
   },
-  "packageManager": "yarn@3.6.1"
+  "packageManager": "yarn@4.0.2"
 }
