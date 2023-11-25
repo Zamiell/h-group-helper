@@ -14,8 +14,11 @@
   "author": "Zamiell",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "start": "tsx src/main.ts"
+    "build": "tsx ./scripts/build.ts",
+    "lint": "tsx ./scripts/lint.ts",
+    "nuke": "isaacscript nuke",
+    "start": "tsx ./src/main.ts",
+    "update": "isaacscript update"
   },
   "dependencies": {
     "@discordjs/voice": "^0.16.1",
@@ -27,16 +30,17 @@
     "source-map-support": "^0.5.21",
     "utf-8-validate": "^6.0.3",
     "winston": "^3.11.0",
+    "zlib-sync": "^0.1.9",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@types/source-map-support": "^0.5.10",
-    "isaacscript": "^3.21.1",
+    "isaacscript": "^3.22.2",
+    "isaacscript-common-node": "^1.2.0",
     "isaacscript-lint": "^6.4.1",
     "isaacscript-tsconfig": "^5.0.0",
-    "npm-check-updates": "^16.14.11",
-    "tsx": "^4.4.0",
+    "tsx": "^4.5.0",
     "typescript": "^5.3.2"
   },
   "packageManager": "yarn@4.0.2"

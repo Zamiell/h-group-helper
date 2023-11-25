@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip/schema.json",
+  "ignore": [".eslintrc.cjs", "prettier.config.mjs"],
+  "ignoreDependencies": [
+    "isaacscript-lint",
+
+    // Optional discord.js peer dependencies
+    "@discordjs/voice",
+    "bufferutil",
+    "utf-8-validate",
+    "zlib-sync",
+  ],
+}

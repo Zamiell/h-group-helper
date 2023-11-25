@@ -6,24 +6,28 @@
   "enableGlobDot": true,
   "useGitignore": true,
   "ignorePaths": [
+    "*.mp3",
     "*.pyc",
+    "*.svg",
     ".git/**",
     ".yarn/**",
     "dist/**",
     "node_modules/**",
     "package-lock.json",
     "pnpm-lock.yaml",
-    "yarn.lock"
+    "yarn.lock",
   ],
   "words": [
     "autocrlf",
     "bufferutil",
+    "corepack",
     "dbaeumer",
     "esbenp",
     "isaacscript",
     "knip",
+    "packagejson",
     "sarisia",
     "technote",
-    "Zamiell"
-  ]
+    "Zamiell",
+  ],
 }
