@@ -17,12 +17,12 @@ dotenv.config({
 });
 
 const envSchema = z.object({
-  DISCORD_TOKEN: z.string(),
-  DISCORD_SERVER_NAME: z.string(),
-  VOICE_CATEGORY_NAME: z.string(),
-  VOICE_JOIN_CHANNEL_NAME: z.string(),
-  QUESTION_CHANNEL_NAME: z.string(),
-  ADMIN_IDS: z.string(),
+  DISCORD_TOKEN: z.string().min(1),
+  DISCORD_SERVER_NAME: z.string().min(1),
+  VOICE_CATEGORY_NAME: z.string().min(1),
+  VOICE_JOIN_CHANNEL_NAME: z.string().min(1),
+  QUESTION_CHANNEL_NAME: z.string().min(1),
+  ADMIN_IDS: z.string().min(1),
 });
 
 export const env = envSchema.parse(process.env);
