@@ -26,7 +26,6 @@
     "discord.js": "^14.14.1",
     "isaacscript-common-node": "^1.4.0",
     "source-map-support": "^0.5.21",
-    "utf-8-validate": "^6.0.3",
     "winston": "^3.11.0",
     "zlib-sync": "^0.1.9",
     "zod": "^3.22.4"
