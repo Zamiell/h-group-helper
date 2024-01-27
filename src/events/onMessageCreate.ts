@@ -1,6 +1,5 @@
 import type { Message } from "discord.js";
 import { ChannelType } from "discord.js";
-import { autoStartThread } from "../autoStartThread.js";
 import { checkCommand } from "../command.js";
 import { g } from "../globals.js";
 import { logger } from "../logger.js";
@@ -19,7 +18,6 @@ export async function onMessageCreate(message: Message): Promise<void> {
   }
 
   await checkCommand(message, g.adminIDs);
-  await autoStartThread(message, g.questionChannelID);
 }
 
 function logDiscordTextMessage(message: Message) {
