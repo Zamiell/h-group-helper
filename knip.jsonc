@@ -8,7 +8,6 @@
     // https://discord.js.org/docs/packages/discord.js/main
     "@discordjs/voice",
     "bufferutil",
-    "utf-8-validate",
     "zlib-sync",
   ],
 }

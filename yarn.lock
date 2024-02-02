@@ -4155,7 +4155,7 @@ __metadata:
     "@types/source-map-support": "npm:^0.5.10"
     bufferutil: "npm:^4.0.8"
     discord.js: "npm:^14.14.1"
-    isaacscript: "npm:^3.39.0"
+    isaacscript: "npm:^3.40.0"
     isaacscript-common-node: "npm:^3.0.0"
     isaacscript-lint: "npm:^6.19.0"
     isaacscript-tsconfig: "npm:^5.0.0"
@@ -4768,9 +4768,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"isaacscript@npm:^3.39.0":
-  version: 3.39.0
-  resolution: "isaacscript@npm:3.39.0"
+"isaacscript@npm:^3.40.0":
+  version: 3.40.0
+  resolution: "isaacscript@npm:3.40.0"
   dependencies:
     "@commander-js/extra-typings": "npm:^11.1.0"
     "@zamiell/sync-directory": "npm:^6.0.5"
@@ -4795,7 +4795,7 @@ __metadata:
       optional: true
   bin:
     isaacscript: dist/main.js
-  checksum: 10c0/35b3d6af4c96f6af5d6d491777b10b3338952a1fe13f56060fa744b849490f548fcb5641269ab5481b6acc227c8fb65f43669bd6d75b24e3b3a73caa7ad45a83
+  checksum: 10c0/54dc53d34704ba828bc72f4436a57df2f28ab7e79497bf471d73d6def539773a3242d714f4746cbbc9c3fa3a4a7a339b422cd2246b8838baa0925c037667c430
   languageName: node
   linkType: hard
 
