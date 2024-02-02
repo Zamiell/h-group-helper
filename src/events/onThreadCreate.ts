@@ -13,5 +13,12 @@ export async function onThreadCreate(
     return;
   }
 
+  // There is a race condition where this event can fire before the initial message has loaded.
+  const starterMessage = await threadChannel.fetchStarterMessage();
+  if (starterMessage === null) {
+    await onThreadCreate(threadChannel);
+    return;
+  }
+
   await threadChannel.send(NEW_THREAD_AUTO_MESSAGE);
 }
