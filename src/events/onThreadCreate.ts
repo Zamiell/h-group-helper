@@ -14,6 +14,7 @@ export async function onThreadCreate(
   }
 
   // There is a race condition where this event can fire before the initial message has loaded.
+  // https://github.com/discord/discord-api-docs/issues/6340
   const starterMessage = await threadChannel.fetchStarterMessage();
   if (starterMessage === null) {
     await onThreadCreate(threadChannel);

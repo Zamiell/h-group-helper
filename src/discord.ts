@@ -6,10 +6,11 @@ import { onThreadCreate } from "./events/onThreadCreate.js";
 import { onVoiceStateUpdate } from "./events/onVoiceStatusUpdate.js";
 import { logger } from "./logger.js";
 
+/** @see https://github.com/discordjs/discord.js/issues/10279 */
 export async function discordInit(): Promise<void> {
-  client.on("ready", onReady);
-  client.on("messageCreate", onMessageCreate);
-  client.on("threadCreate", onThreadCreate);
+  client.on("ready", onReady); // eslint-disable-line @typescript-eslint/no-misused-promises
+  client.on("messageCreate", onMessageCreate); // eslint-disable-line @typescript-eslint/no-misused-promises
+  client.on("threadCreate", onThreadCreate); // eslint-disable-line @typescript-eslint/no-misused-promises
   client.on("voiceStateUpdate", onVoiceStateUpdate);
 
   logger.info("Logging in to Discord...");
