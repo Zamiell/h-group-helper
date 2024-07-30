@@ -21,9 +21,9 @@
     "update": "isaacscript update"
   },
   "dependencies": {
-    "@discordjs/voice": "^0.16.1",
+    "@discordjs/voice": "^0.17.0",
     "bufferutil": "^4.0.8",
-    "discord.js": "^14.14.1",
+    "discord.js": "^14.15.3",
     "isaacscript-common-node": "^3.0.1",
     "source-map-support": "^0.5.21",
     "winston": "^3.11.0",
