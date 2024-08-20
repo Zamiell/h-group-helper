@@ -26,6 +26,7 @@
     "corepack",
     "dbaeumer",
     "esbenp",
+    "fastq",
     "isaacscript",
     "knip",
     "packagejson",

@@ -24,20 +24,22 @@
     "@discordjs/voice": "^0.17.0",
     "bufferutil": "^4.0.8",
     "discord.js": "^14.15.3",
-    "isaacscript-common-node": "^3.0.1",
+    "fastq": "^1.17.1",
+    "isaacscript-common-node": "^4.0.6",
+    "isaacscript-common-ts": "^16.1.0",
     "source-map-support": "^0.5.21",
-    "winston": "^3.11.0",
+    "winston": "^3.14.2",
     "zlib-sync": "^0.1.9",
-    "zod": "^3.22.4"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^20.11.20",
+    "@types/node": "^22.4.1",
     "@types/source-map-support": "^0.5.10",
-    "isaacscript": "^4.2.2",
+    "isaacscript": "^4.4.4",
     "isaacscript-lint": "^6.20.0",
     "isaacscript-tsconfig": "^5.0.0",
-    "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4"
   },
-  "packageManager": "yarn@4.1.0"
+  "packageManager": "yarn@4.4.0"
 }

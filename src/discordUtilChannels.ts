@@ -6,6 +6,7 @@ import type {
 } from "discord.js";
 import { ChannelType } from "discord.js";
 import { getMember } from "./discordUtil.js";
+import { logger } from "./logger.js";
 import { notEmpty } from "./utils.js";
 
 export async function createNewVoiceChannel(
@@ -61,5 +62,11 @@ export async function moveUserToVoiceChannel(
   newChannelID: string,
 ): Promise<void> {
   const member = await getMember(guild, userID);
-  await member.voice.setChannel(newChannelID);
+  try {
+    await member.voice.setChannel(newChannelID);
+  } catch (error) {
+    logger.error(
+      `Failed to move user "${userID}" to channel "${newChannelID}": ${error}`,
+    );
+  }
 }

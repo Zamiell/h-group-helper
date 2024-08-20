@@ -3,74 +3,49 @@
 // callbacks will put work onto this queue.
 
 import type { Guild } from "discord.js";
+import type { queueAsPromised } from "fastq";
+import fastq from "fastq";
+import type { QueueElement, QueueTypeToElement } from "./enums/QueueType.js";
+import { QueueType } from "./enums/QueueType.js";
 import { createVoiceChannels } from "./queueActions/createVoiceChannels.js";
 import { deleteEmptyVoiceChannels } from "./queueActions/deleteEmptyVoiceChannels.js";
 
-export enum QueueType {
-  CreateVoiceChannels = "CreateVoiceChannels",
-  DeleteEmptyVoiceChannels = "DeleteEmptyVoiceChannels",
-}
+type QueueFunctions = {
+  [Value in QueueType]: (
+    queueElement: QueueTypeToElement[Value],
+  ) => Promise<void>;
+};
 
-interface QueueElement {
-  queueType: QueueType;
-  guild: Guild;
-  userID: string;
-  channelID: string;
-}
+const QUEUE_FUNCTIONS = {
+  [QueueType.CreateVoiceChannels]: createVoiceChannels,
+  [QueueType.DeleteEmptyVoiceChannels]: deleteEmptyVoiceChannels,
+} as const satisfies QueueFunctions;
 
-const queue: QueueElement[] = [];
+const queue: queueAsPromised<QueueElement, void> = fastq.promise(
+  processQueue,
+  1,
+);
+
+async function processQueue(queueElement: QueueElement) {
+  const func = QUEUE_FUNCTIONS[queueElement.type];
+
+  // The compiler is not smart enough to know that the data matches.
+  await func(queueElement as never);
+}
 
 export function addQueue(
-  queueType: QueueType,
+  type: QueueType,
   guild: Guild,
   userID: string,
   channelID: string,
 ): void {
   const queueElement: QueueElement = {
-    queueType,
+    type,
     guild,
     userID,
     channelID,
   };
+
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
   queue.push(queueElement);
-
-  // If the queue was previously empty, asynchronously schedule work to begin.
-  if (queue.length === 1) {
-    setTimeout(() => {
-      processQueue().catch((error) => {
-        console.error("Failed to process the queue:", error);
-      });
-    }, 0);
-  }
-}
-
-async function processQueue() {
-  let queueEmpty: boolean;
-  do {
-    queueEmpty = await processQueueElement(); // eslint-disable-line no-await-in-loop
-  } while (!queueEmpty);
-}
-
-/** @returns Whether the queue is currently empty. */
-async function processQueueElement() {
-  const queueElement = queue.shift();
-  if (queueElement === undefined) {
-    return true;
-  }
-
-  const { queueType, guild, userID, channelID } = queueElement;
-
-  switch (queueType) {
-    case QueueType.CreateVoiceChannels: {
-      await createVoiceChannels(guild, userID, channelID);
-      break;
-    }
-
-    case QueueType.DeleteEmptyVoiceChannels: {
-      await deleteEmptyVoiceChannels(guild);
-      break;
-    }
-  }
-
-  return false;
 }

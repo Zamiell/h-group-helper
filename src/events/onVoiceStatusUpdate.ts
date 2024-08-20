@@ -1,7 +1,8 @@
 import type { Guild, VoiceState } from "discord.js";
 import { client } from "../client.js";
+import { QueueType } from "../enums/QueueType.js";
 import { logger } from "../logger.js";
-import { QueueType, addQueue } from "../queue.js";
+import { addQueue } from "../queue.js";
 
 export function onVoiceStateUpdate(
   oldState: VoiceState,

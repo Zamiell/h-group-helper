@@ -1,6 +1,7 @@
 import type { Client, Guild } from "discord.js";
 import { getGuildByName } from "../discordUtil.js";
 import { getChannelIDByName } from "../discordUtilChannels.js";
+import { QueueType } from "../enums/QueueType.js";
 import { env } from "../env.js";
 import { g } from "../globals.js";
 import { logger } from "../logger.js";
@@ -16,7 +17,10 @@ export async function onReady(client: Client): Promise<void> {
   );
 
   const guild = initDiscordVariables(client);
-  await deleteEmptyVoiceChannels(guild);
+  await deleteEmptyVoiceChannels({
+    type: QueueType.DeleteEmptyVoiceChannels,
+    guild,
+  });
 }
 
 function initDiscordVariables(client: Client): Guild {

@@ -5,13 +5,14 @@ import {
   getVoiceChannelsInCategory,
   moveUserToVoiceChannel,
 } from "../discordUtilChannels.js";
+import type { QueueElementCreateVoidChannels } from "../enums/QueueType.js";
 import { g } from "../globals.js";
 
 export async function createVoiceChannels(
-  guild: Guild,
-  userID: string,
-  channelID: string,
+  queueElement: QueueElementCreateVoidChannels,
 ): Promise<void> {
+  const { guild, userID, channelID } = queueElement;
+
   if (channelID !== g.voiceJoinChannelID) {
     return;
   }
