@@ -29,7 +29,8 @@ const queue: queueAsPromised<QueueElement, void> = fastq.promise(
 async function processQueue(queueElement: QueueElement) {
   const func = QUEUE_FUNCTIONS[queueElement.type];
 
-  // The compiler is not smart enough to know that the data matches.
+  // TypeScript cannot see through the correspondence:
+  // https://gist.github.com/Zamiell/a7b51922385bbe811c339225d7a7fe7a
   await func(queueElement as never);
 }
 
