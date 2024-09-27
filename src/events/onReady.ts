@@ -44,27 +44,26 @@ function initDiscordVariables(client: Client): Guild {
   }
   g.voiceCategoryID = categoryID;
 
-  const voiceChannelID = getChannelIDByName(guild, env.VOICE_JOIN_CHANNEL_NAME);
-  if (voiceChannelID === undefined) {
+  const createNewVoiceChannelID = getChannelIDByName(
+    guild,
+    "Create New Voice Channel",
+  );
+  if (createNewVoiceChannelID === undefined) {
     throw new Error(
-      `Failed to find the channel ID of: ${env.VOICE_JOIN_CHANNEL_NAME}`,
+      "Failed to find the channel ID of: Create New Voice Channel",
     );
   }
-  g.voiceJoinChannelID = voiceChannelID;
+  g.createNewVoiceJoinChannelID = createNewVoiceChannelID;
 
-  const questionForumID = getChannelIDByName(guild, env.QUESTION_FORUM_NAME);
+  const questionForumID = getChannelIDByName(guild, "convention-questions");
   if (questionForumID === undefined) {
-    throw new Error(
-      `Failed to find the channel ID of: ${env.QUESTION_FORUM_NAME}`,
-    );
+    throw new Error("Failed to find the channel ID of: convention-questions");
   }
   g.questionForumID = questionForumID;
 
-  const proposalForumID = getChannelIDByName(guild, env.PROPOSAL_FORUM_NAME);
+  const proposalForumID = getChannelIDByName(guild, "convention-proposals");
   if (proposalForumID === undefined) {
-    throw new Error(
-      `Failed to find the channel ID of: ${env.PROPOSAL_FORUM_NAME}`,
-    );
+    throw new Error("Failed to find the channel ID of: convention-proposals");
   }
   g.proposalForumID = proposalForumID;
 

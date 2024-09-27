@@ -13,7 +13,7 @@ export async function createVoiceChannels(
 ): Promise<void> {
   const { guild, userID, channelID } = queueElement;
 
-  if (channelID !== g.voiceJoinChannelID) {
+  if (channelID !== g.createNewVoiceJoinChannelID) {
     return;
   }
 
@@ -47,7 +47,7 @@ export async function renameAllChannelsAccordingToOrder(
   const promises: Array<Promise<unknown>> = [];
   for (const voiceChannel of voiceChannelsInCategory) {
     // Don't rename the "Create New Voice Channel" channel.
-    if (voiceChannel.id === g.voiceJoinChannelID) {
+    if (voiceChannel.id === g.createNewVoiceJoinChannelID) {
       continue;
     }
 

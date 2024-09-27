@@ -4,7 +4,7 @@
  */
 export class Globals {
   voiceCategoryID = "";
-  voiceJoinChannelID = "";
+  createNewVoiceJoinChannelID = "";
   questionForumID = "";
   proposalForumID = "";
   adminIDs: string[] = [];
