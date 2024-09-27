@@ -1,6 +1,6 @@
+import type { CompositionTypeSatisfiesEnum } from "complete-common";
+import { interfaceSatisfiesEnum } from "complete-common";
 import type { Guild } from "discord.js";
-import type { CompositionTypeSatisfiesEnum } from "isaacscript-common-ts";
-import { interfaceSatisfiesEnum } from "isaacscript-common-ts";
 
 // ----
 // Enum

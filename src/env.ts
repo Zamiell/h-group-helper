@@ -1,4 +1,4 @@
-import { getEnv } from "isaacscript-common-node";
+import { getEnv } from "complete-node";
 import { z } from "zod";
 
 const envSchema = z.object({

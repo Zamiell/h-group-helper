@@ -4,7 +4,7 @@ const COMMAND_PREFIX = "/";
 
 export async function checkCommand(
   message: Message,
-  adminIDs: string[],
+  adminIDs: readonly string[],
 ): Promise<void> {
   const args = message.content.split(" ");
   let command = args.shift();
@@ -29,8 +29,8 @@ const commandFunctions = new Map<
   string,
   (
     command: string,
-    args: string[],
+    args: readonly string[],
     message: Message,
-    adminIDs: string[],
+    adminIDs: readonly string[],
   ) => Promise<void>
 >();
