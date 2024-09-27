@@ -2,17 +2,24 @@ import type { Message, ThreadChannel } from "discord.js";
 import { g } from "../globals.js";
 import { logger } from "../logger.js";
 
-const NEW_THREAD_AUTO_MESSAGE = `Please make sure that your question satisfies all of the rules here:
+const CONVENTION_QUESTIONS_MESSAGE = `Please make sure that your question satisfies all of the rules here:
 <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>
 If it doesn't, please edit your question accordingly.`;
+
+const CONVENTION_PROPOSALS_MESSAGE = `If you are not already familiar with how convention changes work, please review the convention changes document:
+<https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-changes.md>`;
 
 const MAX_STARTER_MESSAGE_FETCH_ATTEMPTS = 10;
 
 export async function onThreadCreate(
   threadChannel: ThreadChannel,
 ): Promise<void> {
-  // Ignore all messages that are not in the #convention-questions forum.
-  if (threadChannel.parentId !== g.questionChannelID) {
+  await checkConventionQuestions(threadChannel);
+  await checkConventionProposals(threadChannel);
+}
+
+async function checkConventionQuestions(threadChannel: ThreadChannel) {
+  if (threadChannel.parentId !== g.questionForumID) {
     return;
   }
 
@@ -21,7 +28,20 @@ export async function onThreadCreate(
     return;
   }
 
-  await threadChannel.send(NEW_THREAD_AUTO_MESSAGE);
+  await threadChannel.send(CONVENTION_QUESTIONS_MESSAGE);
+}
+
+async function checkConventionProposals(threadChannel: ThreadChannel) {
+  if (threadChannel.parentId !== g.proposalForumID) {
+    return;
+  }
+
+  const starterMessage = await getStarterMessage(threadChannel);
+  if (starterMessage === undefined) {
+    return;
+  }
+
+  await threadChannel.send(CONVENTION_PROPOSALS_MESSAGE);
 }
 
 /**

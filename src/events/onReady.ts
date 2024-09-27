@@ -39,7 +39,7 @@ function initDiscordVariables(client: Client): Guild {
   const categoryID = getChannelIDByName(guild, env.VOICE_CATEGORY_NAME);
   if (categoryID === undefined) {
     throw new Error(
-      `Failed to find the voice category of: ${env.VOICE_CATEGORY_NAME}`,
+      `Failed to find the channel ID of: ${env.VOICE_CATEGORY_NAME}`,
     );
   }
   g.voiceCategoryID = categoryID;
@@ -47,18 +47,26 @@ function initDiscordVariables(client: Client): Guild {
   const voiceChannelID = getChannelIDByName(guild, env.VOICE_JOIN_CHANNEL_NAME);
   if (voiceChannelID === undefined) {
     throw new Error(
-      `Failed to find the voice channel of: ${env.VOICE_JOIN_CHANNEL_NAME}`,
+      `Failed to find the channel ID of: ${env.VOICE_JOIN_CHANNEL_NAME}`,
     );
   }
   g.voiceJoinChannelID = voiceChannelID;
 
-  const textChannelID = getChannelIDByName(guild, env.QUESTION_CHANNEL_NAME);
-  if (textChannelID === undefined) {
+  const questionForumID = getChannelIDByName(guild, env.QUESTION_FORUM_NAME);
+  if (questionForumID === undefined) {
     throw new Error(
-      `Failed to find the text channel of: ${env.QUESTION_CHANNEL_NAME}`,
+      `Failed to find the channel ID of: ${env.QUESTION_FORUM_NAME}`,
     );
   }
-  g.questionChannelID = textChannelID;
+  g.questionForumID = questionForumID;
+
+  const proposalForumID = getChannelIDByName(guild, env.PROPOSAL_FORUM_NAME);
+  if (proposalForumID === undefined) {
+    throw new Error(
+      `Failed to find the channel ID of: ${env.PROPOSAL_FORUM_NAME}`,
+    );
+  }
+  g.proposalForumID = proposalForumID;
 
   g.adminIDs = env.ADMIN_IDS.split(",");
 

@@ -5,7 +5,8 @@
 export class Globals {
   voiceCategoryID = "";
   voiceJoinChannelID = "";
-  questionChannelID = "";
+  questionForumID = "";
+  proposalForumID = "";
   adminIDs: string[] = [];
   botID = "";
 }
