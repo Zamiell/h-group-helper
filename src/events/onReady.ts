@@ -77,6 +77,9 @@ export async function onReady(client: Client<true>): Promise<void> {
     "Failed to find the forum tag: open-for-discussion",
   );
 
+  // Refresh the channel cache.
+  await guild.channels.fetch();
+
   // ---------------------
   // Attach event handlers
   // ---------------------

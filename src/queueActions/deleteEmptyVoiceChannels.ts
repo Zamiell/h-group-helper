@@ -17,10 +17,7 @@ export async function deleteEmptyVoiceChannels(
 ): Promise<number> {
   const { guild, voiceCategoryID, createNewVoiceChannelID } = queueElement;
 
-  const voiceChannels = await getVoiceChannelsInCategory(
-    guild,
-    voiceCategoryID,
-  );
+  const voiceChannels = getVoiceChannelsInCategory(guild, voiceCategoryID);
 
   const emptyVoiceChannels = voiceChannels.filter(
     (voiceChannel) =>
