@@ -5,12 +5,13 @@ import {
   isVoiceChannelEmpty,
 } from "../discordUtilChannels.js";
 import type { QueueElementDeleteEmptyVoiceChannels } from "../enums/QueueType.js";
-import { logger } from "../logger.js";
 
 /**
  * Normally, the bot will delete empty voice channels. So, when the bot first starts, we want to
  * check for any existing empty voice channels and delete them in case they transitioned to being
  * empty when the bot was offline.
+ *
+ * @returns The number of channels remaining after the empty channels were deleted.
  */
 export async function deleteEmptyVoiceChannels(
   queueElement: QueueElementDeleteEmptyVoiceChannels,
@@ -26,14 +27,10 @@ export async function deleteEmptyVoiceChannels(
   );
 
   if (emptyVoiceChannels.length > 0) {
-    logger.info("Deleting empty channels...");
-
     const promises = emptyVoiceChannels.map(async (voiceChannel) =>
       voiceChannel.delete(),
     );
     await Promise.allSettled(promises);
-
-    logger.info("Deleted empty channels.");
   }
 
   return renameAllChannelsAccordingToOrder(
