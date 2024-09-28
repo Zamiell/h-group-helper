@@ -5,7 +5,6 @@ import type {
 } from "discord.js";
 import { getMember } from "./discordUtil.js";
 import { logger } from "./logger.js";
-import { notEmpty } from "./utils.js";
 
 export function getChannelIDByName(
   guild: Guild,
@@ -25,11 +24,24 @@ export async function getVoiceChannelsInCategory(
   guild: Guild,
   categoryID: string,
 ): Promise<VoiceBasedChannel[]> {
+  logger.info(`Getting voice channels in category "${categoryID}"...`);
+
   const channelMap = await guild.channels.fetch();
   const allChannels = [...channelMap.values()];
-  const channels = allChannels.filter(notEmpty);
+  const channels = allChannels.filter(isNotNullUndefined);
   const voiceChannels = channels.filter(isVoiceChannel);
-  return voiceChannels.filter((channel) => channel.parentId === categoryID);
+
+  const voiceChannelsInCategory = voiceChannels.filter(
+    (channel) => channel.parentId === categoryID,
+  );
+
+  logger.info(`Got voice channels in category "${categoryID}".`);
+
+  return voiceChannelsInCategory;
+}
+
+function isNotNullUndefined<T>(value: T | null | undefined): value is T {
+  return value !== null && value !== undefined;
 }
 
 function isVoiceChannel(
@@ -47,6 +59,8 @@ export async function moveUserToVoiceChannel(
   userID: string,
   newChannelID: string,
 ): Promise<void> {
+  logger.info(`Moving user "${userID}" to channel ${newChannelID}...`);
+
   const member = await getMember(guild, userID);
   try {
     await member.voice.setChannel(newChannelID);
@@ -55,4 +69,6 @@ export async function moveUserToVoiceChannel(
       `Failed to move user "${userID}" to channel "${newChannelID}": ${error}`,
     );
   }
+
+  logger.info(`Moved user "${userID}" to channel ${newChannelID}.`);
 }

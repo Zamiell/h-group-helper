@@ -1,25 +1,23 @@
-import type { Guild } from "discord.js";
 import { ChannelType } from "discord.js";
 import { VOICE_CHANNEL_PREFIX } from "../constants.js";
-import {
-  getVoiceChannelsInCategory,
-  moveUserToVoiceChannel,
-} from "../discordUtilChannels.js";
-import type { QueueElementCreateVoidChannels } from "../enums/QueueType.js";
-import { logger } from "../logger.js";
+import { moveUserToVoiceChannel } from "../discordUtilChannels.js";
+import type { QueueElementCreateNewVoiceChannels } from "../enums/QueueType.js";
+import { QueueType } from "../enums/QueueType.js";
+import { deleteEmptyVoiceChannels } from "./deleteEmptyVoiceChannels.js";
 
 export async function createNewVoiceChannel(
-  queueElement: QueueElementCreateVoidChannels,
+  queueElement: QueueElementCreateNewVoiceChannels,
 ): Promise<void> {
   const { guild, userID, voiceCategoryID, createNewVoiceChannelID } =
     queueElement;
 
   // First, ensure that the existing channels are organized.
-  const numChannels = await renameAllChannelsAccordingToOrder(
+  const numChannels = await deleteEmptyVoiceChannels({
+    type: QueueType.DeleteEmptyVoiceChannels,
     guild,
     voiceCategoryID,
     createNewVoiceChannelID,
-  );
+  });
 
   const newChannel = await guild.channels.create({
     name: `${VOICE_CHANNEL_PREFIX}${numChannels + 1}`,
@@ -28,35 +26,4 @@ export async function createNewVoiceChannel(
   });
 
   await moveUserToVoiceChannel(guild, userID, newChannel.id);
-}
-
-export async function renameAllChannelsAccordingToOrder(
-  guild: Guild,
-  voiceCategoryID: string,
-  createNewVoiceChannelID: string,
-): Promise<number> {
-  logger.info("Starting a mass rename.");
-
-  const voiceChannelsInCategory = await getVoiceChannelsInCategory(
-    guild,
-    voiceCategoryID,
-  );
-
-  const promises: Array<Promise<unknown>> = [];
-  for (const voiceChannel of voiceChannelsInCategory) {
-    // Don't rename the "Create New Voice Channel" channel.
-    if (voiceChannel.id === createNewVoiceChannelID) {
-      continue;
-    }
-
-    const name = `${VOICE_CHANNEL_PREFIX}${voiceChannel.position}`;
-    const promise = voiceChannel.setName(name);
-    promises.push(promise);
-  }
-
-  await Promise.all(promises);
-
-  logger.info("Finished a mass rename.");
-
-  return voiceChannelsInCategory.length - 1;
 }
