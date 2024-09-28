@@ -20,12 +20,6 @@ export async function deleteEmptyVoiceChannels(
     guild,
     voiceCategoryID,
   );
-  if (voiceChannels === undefined) {
-    console.error(
-      `Failed to get the channels for category: ${voiceCategoryID}`,
-    );
-    return;
-  }
 
   const emptyVoiceChannels = voiceChannels.filter(
     (voiceChannel) =>

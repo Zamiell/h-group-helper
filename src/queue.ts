@@ -6,6 +6,7 @@ import type { queueAsPromised } from "fastq";
 import fastq from "fastq";
 import type { QueueElement } from "./enums/QueueType.js";
 import { QueueType } from "./enums/QueueType.js";
+import { logger } from "./logger.js";
 import { createNewVoiceChannel } from "./queueActions/createNewVoiceChannel.js";
 import { deleteEmptyVoiceChannels } from "./queueActions/deleteEmptyVoiceChannels.js";
 
@@ -15,6 +16,11 @@ const queue: queueAsPromised<QueueElement, void> = fastq.promise(
 );
 
 async function processQueue(queueElement: QueueElement) {
+  logger.info(
+    `Processing a queue element of type: ${QueueType[queueElement.type]} (${queueElement.type})`,
+  );
+  logger.info(`(There are ${queue.length()} elements in the queue.`);
+
   switch (queueElement.type) {
     case QueueType.CreateNewVoiceChannel: {
       await createNewVoiceChannel(queueElement);

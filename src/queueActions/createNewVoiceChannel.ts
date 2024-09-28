@@ -13,38 +13,31 @@ export async function createNewVoiceChannel(
   const { guild, userID, voiceCategoryID, createNewVoiceChannelID } =
     queueElement;
 
-  // This is a temporary name; it will be renamed post-creation, based on its position in the list.
-  const channelName = `${VOICE_CHANNEL_PREFIX}#`;
+  // First, ensure that the existing channels are organized.
+  const numChannels = await renameAllChannelsAccordingToOrder(
+    guild,
+    voiceCategoryID,
+    createNewVoiceChannelID,
+  );
 
   const newChannel = await guild.channels.create({
-    name: channelName,
+    name: `${VOICE_CHANNEL_PREFIX}${numChannels + 1}`,
     type: ChannelType.GuildVoice,
     parent: voiceCategoryID,
   });
 
   await moveUserToVoiceChannel(guild, userID, newChannel.id);
-  await renameAllChannelsAccordingToOrder(
-    guild,
-    voiceCategoryID,
-    createNewVoiceChannelID,
-  );
 }
 
 export async function renameAllChannelsAccordingToOrder(
   guild: Guild,
   voiceCategoryID: string,
   createNewVoiceChannelID: string,
-): Promise<void> {
+): Promise<number> {
   const voiceChannelsInCategory = await getVoiceChannelsInCategory(
     guild,
     voiceCategoryID,
   );
-  if (voiceChannelsInCategory === undefined) {
-    console.error(
-      `Failed to get the voice channels for category: ${voiceCategoryID}`,
-    );
-    return;
-  }
 
   const promises: Array<Promise<unknown>> = [];
   for (const voiceChannel of voiceChannelsInCategory) {
@@ -59,4 +52,6 @@ export async function renameAllChannelsAccordingToOrder(
   }
 
   await Promise.all(promises);
+
+  return voiceChannelsInCategory.length - 1;
 }

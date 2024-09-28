@@ -24,7 +24,7 @@ export function getChannelIDByName(
 export async function getVoiceChannelsInCategory(
   guild: Guild,
   categoryID: string,
-): Promise<VoiceBasedChannel[] | undefined> {
+): Promise<VoiceBasedChannel[]> {
   const channelMap = await guild.channels.fetch();
   const allChannels = [...channelMap.values()];
   const channels = allChannels.filter(notEmpty);
