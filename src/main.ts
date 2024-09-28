@@ -1,8 +1,8 @@
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client, Events, GatewayIntentBits } from "discord.js";
 import sourceMapSupport from "source-map-support";
 import { PROJECT_NAME } from "./constants.js";
 import { env } from "./env.js";
-import { onReady } from "./events/onReady.js";
+import { onClientReady } from "./events/onClientReady.js";
 import { logger } from "./logger.js";
 
 await main();
@@ -10,6 +10,10 @@ await main();
 async function main() {
   sourceMapSupport.install();
   logger.info(`${PROJECT_NAME} started.`);
+
+  process.on("unhandledRejection", (error) => {
+    logger.error("Unhandled promise rejection:", error);
+  });
 
   await discordInit();
 }
@@ -26,9 +30,13 @@ async function discordInit(): Promise<void> {
     ],
   });
 
+  disconnectedClient.on(Events.ShardError, (error) => {
+    logger.error("Websocket connection encountered an error:", error);
+  });
+
   // Other events are only attached once the client is connected.
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  disconnectedClient.on("ready", onReady);
+  disconnectedClient.on(Events.ClientReady, onClientReady);
 
   logger.info("Logging in to Discord...");
   await disconnectedClient.login(env.DISCORD_TOKEN);

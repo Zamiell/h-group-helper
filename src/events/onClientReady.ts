@@ -1,6 +1,6 @@
 import { assertDefined } from "complete-common";
 import type { Client } from "discord.js";
-import { ForumChannel } from "discord.js";
+import { Events, ForumChannel } from "discord.js";
 import { getGuildByName } from "../discordUtil.js";
 import { getChannelIDByName } from "../discordUtilChannels.js";
 import { QueueType } from "../enums/QueueType.js";
@@ -12,7 +12,7 @@ import { onThreadCreate } from "./onThreadCreate.js";
 import { onVoiceStateUpdate } from "./onVoiceStatusUpdate.js";
 
 /** @see https://github.com/discordjs/discord.js/issues/10279 */
-export async function onReady(client: Client<true>): Promise<void> {
+export async function onClientReady(client: Client<true>): Promise<void> {
   logger.info(
     `Connected to Discord with a username of: ${client.user.username}`,
   );
@@ -85,12 +85,12 @@ export async function onReady(client: Client<true>): Promise<void> {
   // ---------------------
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  client.on("messageCreate", async (message) => {
+  client.on(Events.MessageCreate, async (message) => {
     await onMessageCreate(message, botID, adminIDs);
   });
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  client.on("threadCreate", async (threadChannel) => {
+  client.on(Events.ThreadCreate, async (threadChannel) => {
     await onThreadCreate(
       threadChannel,
       questionForumID,
@@ -99,7 +99,7 @@ export async function onReady(client: Client<true>): Promise<void> {
     );
   });
 
-  client.on("voiceStateUpdate", (oldState, newState) => {
+  client.on(Events.VoiceStateUpdate, (oldState, newState) => {
     onVoiceStateUpdate(
       oldState,
       newState,

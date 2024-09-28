@@ -1,4 +1,5 @@
 import type { Guild, GuildBasedChannel, VoiceBasedChannel } from "discord.js";
+import { DiscordAPIError, RESTJSONErrorCodes } from "discord.js";
 import { getMember } from "./discordUtil.js";
 import { logger } from "./logger.js";
 
@@ -55,6 +56,16 @@ export async function moveUserToVoiceChannel(
   try {
     await member.voice.setChannel(newChannelID);
   } catch (error) {
+    if (
+      error instanceof DiscordAPIError &&
+      error.code === RESTJSONErrorCodes.TargetUserIsNotConnectedToVoice
+    ) {
+      logger.info(
+        `Failed to move user "${userID}" to channel "${newChannelID}" since they are no longer connected to voice.`,
+      );
+      return;
+    }
+
     logger.error(
       `Failed to move user "${userID}" to channel "${newChannelID}": ${error}`,
     );
