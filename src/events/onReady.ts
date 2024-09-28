@@ -1,4 +1,6 @@
+import { assertDefined } from "complete-common";
 import type { Client } from "discord.js";
+import { ForumChannel } from "discord.js";
 import { getGuildByName } from "../discordUtil.js";
 import { getChannelIDByName } from "../discordUtilChannels.js";
 import { QueueType } from "../enums/QueueType.js";
@@ -31,31 +33,49 @@ export async function onReady(client: Client<true>): Promise<void> {
   const adminIDs = env.ADMIN_IDS.split(",");
 
   const questionForumID = getChannelIDByName(guild, "convention-questions");
-  if (questionForumID === undefined) {
-    throw new Error("Failed to find the channel ID of: convention-questions");
-  }
+  assertDefined(
+    questionForumID,
+    "Failed to find the channel ID of: convention-questions",
+  );
 
   const proposalForumID = getChannelIDByName(guild, "convention-proposals");
-  if (proposalForumID === undefined) {
-    throw new Error("Failed to find the channel ID of: convention-proposals");
-  }
+  assertDefined(
+    proposalForumID,
+    "Failed to find the channel ID of: convention-proposals",
+  );
 
   const voiceCategoryID = getChannelIDByName(guild, env.VOICE_CATEGORY_NAME);
-  if (voiceCategoryID === undefined) {
-    throw new Error(
-      `Failed to find the channel ID of: ${env.VOICE_CATEGORY_NAME}`,
-    );
-  }
+  assertDefined(
+    voiceCategoryID,
+    `Failed to find the channel ID of: ${env.VOICE_CATEGORY_NAME}`,
+  );
 
   const createNewVoiceChannelID = getChannelIDByName(
     guild,
     "Create New Voice Channel",
   );
-  if (createNewVoiceChannelID === undefined) {
-    throw new Error(
-      "Failed to find the channel ID of: Create New Voice Channel",
-    );
-  }
+  assertDefined(
+    createNewVoiceChannelID,
+    "Failed to find the channel ID of: Create New Voice Channel",
+  );
+
+  const conventionProposals = client.channels.cache.find(
+    (channel) =>
+      channel instanceof ForumChannel &&
+      channel.name === "convention-proposals",
+  ) as ForumChannel | undefined;
+  assertDefined(
+    conventionProposals,
+    "Failed to find the channel: convention-proposals",
+  );
+
+  const openForDiscussionTag = conventionProposals.availableTags.find(
+    (tag) => tag.name === "open-for-discussion",
+  );
+  assertDefined(
+    openForDiscussionTag,
+    "Failed to find the forum tag: open-for-discussion",
+  );
 
   // ---------------------
   // Attach event handlers
@@ -68,7 +88,12 @@ export async function onReady(client: Client<true>): Promise<void> {
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   client.on("threadCreate", async (threadChannel) => {
-    await onThreadCreate(threadChannel, questionForumID, proposalForumID);
+    await onThreadCreate(
+      threadChannel,
+      questionForumID,
+      proposalForumID,
+      openForDiscussionTag.id,
+    );
   });
 
   client.on("voiceStateUpdate", (oldState, newState) => {
