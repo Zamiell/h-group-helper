@@ -1,5 +1,4 @@
 import type { CompositionTypeSatisfiesEnum } from "complete-common";
-import { interfaceSatisfiesEnum } from "complete-common";
 import type { Guild } from "discord.js";
 
 // ----
@@ -39,10 +38,3 @@ export type QueueElement =
   | QueueElementDeleteEmptyVoidChannels;
 
 type _Test = CompositionTypeSatisfiesEnum<QueueElement, QueueType>;
-
-export interface QueueTypeToElement {
-  [QueueType.CreateNewVoiceChannel]: QueueElementCreateVoidChannels;
-  [QueueType.DeleteEmptyVoiceChannels]: QueueElementDeleteEmptyVoidChannels;
-}
-
-interfaceSatisfiesEnum<QueueTypeToElement, QueueType>();
