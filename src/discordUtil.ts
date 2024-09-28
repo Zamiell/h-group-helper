@@ -12,5 +12,6 @@ export async function getMember(
   guild: Guild,
   userID: string,
 ): Promise<GuildMember> {
+  // This only fetches from the remote server if the user does not already exist in the cache.
   return guild.members.fetch(userID);
 }

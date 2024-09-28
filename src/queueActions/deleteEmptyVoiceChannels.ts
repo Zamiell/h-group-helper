@@ -46,8 +46,6 @@ async function renameAllChannelsAccordingToOrder(
   voiceChannels: readonly VoiceBasedChannel[],
   createNewVoiceChannelID: string,
 ): Promise<number> {
-  logger.info("Starting a mass rename.");
-
   const promises: Array<Promise<unknown>> = [];
 
   for (const voiceChannel of voiceChannels) {
@@ -64,8 +62,6 @@ async function renameAllChannelsAccordingToOrder(
   }
 
   await Promise.allSettled(promises);
-
-  logger.info("Finished a mass rename.");
 
   return voiceChannels.length - 1;
 }
