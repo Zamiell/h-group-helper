@@ -17,7 +17,7 @@ const queue: queueAsPromised<QueueElement, void> = fastq.promise(
 
 async function processQueue(queueElement: QueueElement) {
   logger.info(
-    `Processing a queue element of type "${queueElement.type}". (There are ${queue.length()} elements left in the queue.)`,
+    `Starting to process a queue element of type "${queueElement.type}". (There are ${queue.length()} elements left in the queue.)`,
   );
 
   switch (queueElement.type) {
@@ -31,6 +31,10 @@ async function processQueue(queueElement: QueueElement) {
       break;
     }
   }
+
+  logger.info(
+    `Finished processing a queue element of type "${queueElement.type}". (There are ${queue.length()} elements left in the queue.)`,
+  );
 }
 
 export function addQueue(queueElement: QueueElement): void {

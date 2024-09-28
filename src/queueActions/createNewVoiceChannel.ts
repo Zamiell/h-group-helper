@@ -6,6 +6,7 @@ import {
   moveUserToVoiceChannel,
 } from "../discordUtilChannels.js";
 import type { QueueElementCreateVoidChannels } from "../enums/QueueType.js";
+import { logger } from "../logger.js";
 
 export async function createNewVoiceChannel(
   queueElement: QueueElementCreateVoidChannels,
@@ -34,6 +35,8 @@ export async function renameAllChannelsAccordingToOrder(
   voiceCategoryID: string,
   createNewVoiceChannelID: string,
 ): Promise<number> {
+  logger.info("Starting a mass rename.");
+
   const voiceChannelsInCategory = await getVoiceChannelsInCategory(
     guild,
     voiceCategoryID,
@@ -52,6 +55,8 @@ export async function renameAllChannelsAccordingToOrder(
   }
 
   await Promise.all(promises);
+
+  logger.info("Finished a mass rename.");
 
   return voiceChannelsInCategory.length - 1;
 }
