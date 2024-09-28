@@ -17,9 +17,8 @@ const queue: queueAsPromised<QueueElement, void> = fastq.promise(
 
 async function processQueue(queueElement: QueueElement) {
   logger.info(
-    `Processing a queue element of type: ${QueueType[queueElement.type]} (${queueElement.type})`,
+    `Processing a queue element of type "${queueElement.type}". (There are ${queue.length()} elements left in the queue.)`,
   );
-  logger.info(`(There are ${queue.length()} elements in the queue.`);
 
   switch (queueElement.type) {
     case QueueType.CreateNewVoiceChannel: {
