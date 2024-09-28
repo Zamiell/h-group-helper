@@ -63,11 +63,10 @@ export async function moveUserToVoiceChannel(
       logger.info(
         `Failed to move user "${userID}" to channel "${newChannelID}" since they are no longer connected to voice.`,
       );
-      return;
+    } else {
+      logger.error(
+        `Failed to move user "${userID}" to channel "${newChannelID}": ${error}`,
+      );
     }
-
-    logger.error(
-      `Failed to move user "${userID}" to channel "${newChannelID}": ${error}`,
-    );
   }
 }
