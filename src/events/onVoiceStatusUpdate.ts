@@ -93,12 +93,14 @@ function onLeftVoiceChannel(
 ) {
   logVoiceStatusUpdate(client, userID, channelID, "Left");
 
-  addQueue({
-    type: QueueType.DeleteEmptyVoiceChannels,
-    guild,
-    voiceCategoryID,
-    createNewVoiceChannelID,
-  });
+  if (channelID !== createNewVoiceChannelID) {
+    addQueue({
+      type: QueueType.DeleteEmptyVoiceChannels,
+      guild,
+      voiceCategoryID,
+      createNewVoiceChannelID,
+    });
+  }
 }
 
 function logVoiceStatusUpdate(
