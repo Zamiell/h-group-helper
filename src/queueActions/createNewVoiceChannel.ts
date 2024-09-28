@@ -1,12 +1,12 @@
 import { ChannelType } from "discord.js";
 import { VOICE_CHANNEL_PREFIX } from "../constants.js";
 import { moveUserToVoiceChannel } from "../discordUtilChannels.js";
-import type { QueueElementCreateNewVoiceChannels } from "../enums/QueueType.js";
+import type { QueueElementCreateNewVoiceChannel } from "../enums/QueueType.js";
 import { QueueType } from "../enums/QueueType.js";
 import { deleteEmptyVoiceChannels } from "./deleteEmptyVoiceChannels.js";
 
 export async function createNewVoiceChannel(
-  queueElement: QueueElementCreateNewVoiceChannels,
+  queueElement: QueueElementCreateNewVoiceChannel,
 ): Promise<void> {
   const { guild, userID, voiceCategoryID, createNewVoiceChannelID } =
     queueElement;

@@ -14,7 +14,7 @@ export enum QueueType {
 // Elements
 // --------
 
-export interface QueueElementCreateNewVoiceChannels {
+export interface QueueElementCreateNewVoiceChannel {
   type: QueueType.CreateNewVoiceChannel;
   guild: Guild;
   userID: string;
@@ -34,7 +34,7 @@ export interface QueueElementDeleteEmptyVoiceChannels {
 // ---------
 
 export type QueueElement =
-  | QueueElementCreateNewVoiceChannels
+  | QueueElementCreateNewVoiceChannel
   | QueueElementDeleteEmptyVoiceChannels;
 
 type _Test = CompositionTypeSatisfiesEnum<QueueElement, QueueType>;
