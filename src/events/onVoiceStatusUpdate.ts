@@ -1,5 +1,4 @@
-import type { Guild, VoiceState } from "discord.js";
-import { client } from "../client.js";
+import type { Client, Guild, VoiceState } from "discord.js";
 import { QueueType } from "../enums/QueueType.js";
 import { logger } from "../logger.js";
 import { addQueue } from "../queue.js";
@@ -7,31 +6,109 @@ import { addQueue } from "../queue.js";
 export function onVoiceStateUpdate(
   oldState: VoiceState,
   newState: VoiceState,
+  client: Client<true>,
+  voiceCategoryID: string,
+  createNewVoiceChannelID: string,
 ): void {
   const { guild } = newState;
   const userID = newState.id;
   const oldChannelID = oldState.channelId;
   const newChannelID = newState.channelId;
 
-  if (newChannelID !== null && newChannelID !== oldChannelID) {
-    onJoinedVoiceChannel(guild, userID, newChannelID);
-  } else if (newChannelID === null && oldChannelID !== null) {
-    onLeftVoiceChannel(userID, oldChannelID);
+  if (oldChannelID === null && newChannelID === null) {
+    throw new Error(
+      'The "onVoiceStateUpdate" event fired with both channels being null.',
+    );
   }
 
-  addQueue(QueueType.DeleteEmptyVoiceChannels, guild, "", "");
+  if (oldChannelID === null && newChannelID !== null) {
+    // null --> something
+    onJoinedVoiceChannel(
+      client,
+      guild,
+      userID,
+      newChannelID,
+      voiceCategoryID,
+      createNewVoiceChannelID,
+    );
+  } else if (oldChannelID !== null && newChannelID === null) {
+    // something --> null
+    onLeftVoiceChannel(
+      client,
+      guild,
+      userID,
+      oldChannelID,
+      voiceCategoryID,
+      createNewVoiceChannelID,
+    );
+  } else if (oldChannelID !== null && newChannelID !== null) {
+    // something --> something
+    onLeftVoiceChannel(
+      client,
+      guild,
+      userID,
+      oldChannelID,
+      voiceCategoryID,
+      createNewVoiceChannelID,
+    );
+    onJoinedVoiceChannel(
+      client,
+      guild,
+      userID,
+      newChannelID,
+      voiceCategoryID,
+      createNewVoiceChannelID,
+    );
+  }
 }
 
-function onJoinedVoiceChannel(guild: Guild, userID: string, channelID: string) {
-  logVoiceStatusUpdate(userID, channelID, "Joined");
-  addQueue(QueueType.CreateVoiceChannels, guild, userID, channelID);
+function onJoinedVoiceChannel(
+  client: Client<true>,
+  guild: Guild,
+  userID: string,
+  channelID: string,
+  voiceCategoryID: string,
+  createNewVoiceChannelID: string,
+) {
+  logVoiceStatusUpdate(client, userID, channelID, "Joined");
+
+  if (channelID === createNewVoiceChannelID) {
+    addQueue({
+      type: QueueType.CreateNewVoiceChannel,
+      guild,
+      userID,
+      voiceCategoryID,
+      createNewVoiceChannelID,
+    });
+  }
 }
 
-function onLeftVoiceChannel(userID: string, channelID: string) {
-  logVoiceStatusUpdate(userID, channelID, "Left");
+function onLeftVoiceChannel(
+  client: Client<true>,
+  guild: Guild,
+  userID: string,
+  channelID: string,
+  voiceCategoryID: string,
+  createNewVoiceChannelID: string,
+) {
+  logVoiceStatusUpdate(client, userID, channelID, "Left");
+
+  if (channelID === createNewVoiceChannelID) {
+    addQueue({
+      type: QueueType.DeleteEmptyVoiceChannels,
+      guild,
+      voiceCategoryID,
+      createNewVoiceChannelID,
+    });
+  }
 }
 
-function logVoiceStatusUpdate(userID: string, channelID: string, verb: string) {
+function logVoiceStatusUpdate(
+  client: Client<true>,
+  userID: string,
+  channelID: string,
+  verb: string,
+) {
   const user = client.users.cache.get(userID);
   if (user === undefined) {
     return;

@@ -1,5 +1,4 @@
 import type { Message, ThreadChannel } from "discord.js";
-import { g } from "../globals.js";
 import { logger } from "../logger.js";
 
 const CONVENTION_QUESTIONS_MESSAGE = `Please make sure that your question satisfies all of the rules here:
@@ -13,13 +12,18 @@ const MAX_STARTER_MESSAGE_FETCH_ATTEMPTS = 10;
 
 export async function onThreadCreate(
   threadChannel: ThreadChannel,
+  questionForumID: string,
+  proposalForumID: string,
 ): Promise<void> {
-  await checkConventionQuestions(threadChannel);
-  await checkConventionProposals(threadChannel);
+  await checkConventionQuestions(threadChannel, questionForumID);
+  await checkConventionProposals(threadChannel, proposalForumID);
 }
 
-async function checkConventionQuestions(threadChannel: ThreadChannel) {
-  if (threadChannel.parentId !== g.questionForumID) {
+async function checkConventionQuestions(
+  threadChannel: ThreadChannel,
+  questionForumID: string,
+) {
+  if (threadChannel.parentId !== questionForumID) {
     return;
   }
 
@@ -31,8 +35,11 @@ async function checkConventionQuestions(threadChannel: ThreadChannel) {
   await threadChannel.send(CONVENTION_QUESTIONS_MESSAGE);
 }
 
-async function checkConventionProposals(threadChannel: ThreadChannel) {
-  if (threadChannel.parentId !== g.proposalForumID) {
+async function checkConventionProposals(
+  threadChannel: ThreadChannel,
+  proposalForumID: string,
+) {
+  if (threadChannel.parentId !== proposalForumID) {
     return;
   }
 

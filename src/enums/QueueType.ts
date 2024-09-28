@@ -7,7 +7,7 @@ import type { Guild } from "discord.js";
 // ----
 
 export enum QueueType {
-  CreateVoiceChannels = "CreateVoiceChannels",
+  CreateNewVoiceChannel = "CreateNewVoiceChannel",
   DeleteEmptyVoiceChannels = "DeleteEmptyVoiceChannels",
 }
 
@@ -16,15 +16,18 @@ export enum QueueType {
 // --------
 
 export interface QueueElementCreateVoidChannels {
-  type: QueueType.CreateVoiceChannels;
+  type: QueueType.CreateNewVoiceChannel;
   guild: Guild;
   userID: string;
-  channelID: string;
+  voiceCategoryID: string;
+  createNewVoiceChannelID: string;
 }
 
 export interface QueueElementDeleteEmptyVoidChannels {
   type: QueueType.DeleteEmptyVoiceChannels;
   guild: Guild;
+  voiceCategoryID: string;
+  createNewVoiceChannelID: string;
 }
 
 // ---------
@@ -38,7 +41,7 @@ export type QueueElement =
 type _Test = CompositionTypeSatisfiesEnum<QueueElement, QueueType>;
 
 export interface QueueTypeToElement {
-  [QueueType.CreateVoiceChannels]: QueueElementCreateVoidChannels;
+  [QueueType.CreateNewVoiceChannel]: QueueElementCreateVoidChannels;
   [QueueType.DeleteEmptyVoiceChannels]: QueueElementDeleteEmptyVoidChannels;
 }
 

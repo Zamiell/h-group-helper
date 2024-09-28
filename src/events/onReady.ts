@@ -1,32 +1,19 @@
-import type { Client, Guild } from "discord.js";
+import type { Client } from "discord.js";
 import { getGuildByName } from "../discordUtil.js";
 import { getChannelIDByName } from "../discordUtilChannels.js";
 import { QueueType } from "../enums/QueueType.js";
 import { env } from "../env.js";
-import { g } from "../globals.js";
 import { logger } from "../logger.js";
 import { deleteEmptyVoiceChannels } from "../queueActions/deleteEmptyVoiceChannels.js";
+import { onMessageCreate } from "./onMessageCreate.js";
+import { onThreadCreate } from "./onThreadCreate.js";
+import { onVoiceStateUpdate } from "./onVoiceStatusUpdate.js";
 
-export async function onReady(client: Client): Promise<void> {
-  if (client.user === null) {
-    throw new Error("Failed to connect to Discord.");
-  }
-
+/** @see https://github.com/discordjs/discord.js/issues/10279 */
+export async function onReady(client: Client<true>): Promise<void> {
   logger.info(
     `Connected to Discord with a username of: ${client.user.username}`,
   );
-
-  const guild = initDiscordVariables(client);
-  await deleteEmptyVoiceChannels({
-    type: QueueType.DeleteEmptyVoiceChannels,
-    guild,
-  });
-}
-
-function initDiscordVariables(client: Client): Guild {
-  if (client.user === null) {
-    throw new Error("Failed to connect to Discord.");
-  }
 
   const guild = getGuildByName(client, env.DISCORD_SERVER_NAME);
   if (guild === undefined) {
@@ -36,13 +23,29 @@ function initDiscordVariables(client: Client): Guild {
   }
   logger.info(`Connected to Discord server: ${guild.name}`);
 
-  const categoryID = getChannelIDByName(guild, env.VOICE_CATEGORY_NAME);
-  if (categoryID === undefined) {
+  // ----------------
+  // Gather variables
+  // ----------------
+
+  const botID = client.user.id;
+  const adminIDs = env.ADMIN_IDS.split(",");
+
+  const questionForumID = getChannelIDByName(guild, "convention-questions");
+  if (questionForumID === undefined) {
+    throw new Error("Failed to find the channel ID of: convention-questions");
+  }
+
+  const proposalForumID = getChannelIDByName(guild, "convention-proposals");
+  if (proposalForumID === undefined) {
+    throw new Error("Failed to find the channel ID of: convention-proposals");
+  }
+
+  const voiceCategoryID = getChannelIDByName(guild, env.VOICE_CATEGORY_NAME);
+  if (voiceCategoryID === undefined) {
     throw new Error(
       `Failed to find the channel ID of: ${env.VOICE_CATEGORY_NAME}`,
     );
   }
-  g.voiceCategoryID = categoryID;
 
   const createNewVoiceChannelID = getChannelIDByName(
     guild,
@@ -53,24 +56,39 @@ function initDiscordVariables(client: Client): Guild {
       "Failed to find the channel ID of: Create New Voice Channel",
     );
   }
-  g.createNewVoiceJoinChannelID = createNewVoiceChannelID;
 
-  const questionForumID = getChannelIDByName(guild, "convention-questions");
-  if (questionForumID === undefined) {
-    throw new Error("Failed to find the channel ID of: convention-questions");
-  }
-  g.questionForumID = questionForumID;
+  // ---------------------
+  // Attach event handlers
+  // ---------------------
 
-  const proposalForumID = getChannelIDByName(guild, "convention-proposals");
-  if (proposalForumID === undefined) {
-    throw new Error("Failed to find the channel ID of: convention-proposals");
-  }
-  g.proposalForumID = proposalForumID;
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  client.on("messageCreate", async (message) => {
+    await onMessageCreate(message, botID, adminIDs);
+  });
 
-  g.adminIDs = env.ADMIN_IDS.split(",");
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  client.on("threadCreate", async (threadChannel) => {
+    await onThreadCreate(threadChannel, questionForumID, proposalForumID);
+  });
 
-  // Store our user ID for later.
-  g.botID = client.user.id;
+  client.on("voiceStateUpdate", (oldState, newState) => {
+    onVoiceStateUpdate(
+      oldState,
+      newState,
+      client,
+      voiceCategoryID,
+      createNewVoiceChannelID,
+    );
+  });
 
-  return guild;
+  // ---------------------------
+  // Perform initialization work
+  // ---------------------------
+
+  await deleteEmptyVoiceChannels({
+    type: QueueType.DeleteEmptyVoiceChannels,
+    guild,
+    voiceCategoryID,
+    createNewVoiceChannelID,
+  });
 }

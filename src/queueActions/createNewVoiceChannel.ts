@@ -1,45 +1,47 @@
 import type { Guild } from "discord.js";
+import { ChannelType } from "discord.js";
 import { VOICE_CHANNEL_PREFIX } from "../constants.js";
 import {
-  createNewVoiceChannel,
   getVoiceChannelsInCategory,
   moveUserToVoiceChannel,
 } from "../discordUtilChannels.js";
 import type { QueueElementCreateVoidChannels } from "../enums/QueueType.js";
-import { g } from "../globals.js";
 
-export async function createVoiceChannels(
+export async function createNewVoiceChannel(
   queueElement: QueueElementCreateVoidChannels,
 ): Promise<void> {
-  const { guild, userID, channelID } = queueElement;
-
-  if (channelID !== g.createNewVoiceJoinChannelID) {
-    return;
-  }
+  const { guild, userID, voiceCategoryID, createNewVoiceChannelID } =
+    queueElement;
 
   // This is a temporary name; it will be renamed post-creation, based on its position in the list.
   const channelName = `${VOICE_CHANNEL_PREFIX}#`;
 
-  const newChannel = await createNewVoiceChannel(
-    guild,
-    channelName,
-    g.voiceCategoryID,
-  );
+  const newChannel = await guild.channels.create({
+    name: channelName,
+    type: ChannelType.GuildVoice,
+    parent: voiceCategoryID,
+  });
 
   await moveUserToVoiceChannel(guild, userID, newChannel.id);
-  await renameAllChannelsAccordingToOrder(guild);
+  await renameAllChannelsAccordingToOrder(
+    guild,
+    voiceCategoryID,
+    createNewVoiceChannelID,
+  );
 }
 
 export async function renameAllChannelsAccordingToOrder(
   guild: Guild,
+  voiceCategoryID: string,
+  createNewVoiceChannelID: string,
 ): Promise<void> {
   const voiceChannelsInCategory = await getVoiceChannelsInCategory(
     guild,
-    g.voiceCategoryID,
+    voiceCategoryID,
   );
   if (voiceChannelsInCategory === undefined) {
     console.error(
-      `Failed to get the voice channels for category: ${g.voiceCategoryID}`,
+      `Failed to get the voice channels for category: ${voiceCategoryID}`,
     );
     return;
   }
@@ -47,7 +49,7 @@ export async function renameAllChannelsAccordingToOrder(
   const promises: Array<Promise<unknown>> = [];
   for (const voiceChannel of voiceChannelsInCategory) {
     // Don't rename the "Create New Voice Channel" channel.
-    if (voiceChannel.id === g.createNewVoiceJoinChannelID) {
+    if (voiceChannel.id === createNewVoiceChannelID) {
       continue;
     }
 

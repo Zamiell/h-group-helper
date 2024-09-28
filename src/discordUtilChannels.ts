@@ -2,24 +2,10 @@ import type {
   Guild,
   NonThreadGuildBasedChannel,
   VoiceBasedChannel,
-  VoiceChannel,
 } from "discord.js";
-import { ChannelType } from "discord.js";
 import { getMember } from "./discordUtil.js";
 import { logger } from "./logger.js";
 import { notEmpty } from "./utils.js";
-
-export async function createNewVoiceChannel(
-  guild: Guild,
-  channelName: string,
-  categoryID: string,
-): Promise<VoiceChannel> {
-  return guild.channels.create({
-    name: channelName,
-    type: ChannelType.GuildVoice,
-    parent: categoryID,
-  });
-}
 
 export function getChannelIDByName(
   guild: Guild,

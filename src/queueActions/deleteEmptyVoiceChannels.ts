@@ -4,8 +4,7 @@ import {
   isVoiceChannelEmpty,
 } from "../discordUtilChannels.js";
 import type { QueueElementDeleteEmptyVoidChannels } from "../enums/QueueType.js";
-import { g } from "../globals.js";
-import { renameAllChannelsAccordingToOrder } from "./createVoiceChannels.js";
+import { renameAllChannelsAccordingToOrder } from "./createNewVoiceChannel.js";
 
 /**
  * Normally, the bot will delete empty voice channels. So, when the bot first starts, we want to
@@ -15,15 +14,15 @@ import { renameAllChannelsAccordingToOrder } from "./createVoiceChannels.js";
 export async function deleteEmptyVoiceChannels(
   queueElement: QueueElementDeleteEmptyVoidChannels,
 ): Promise<void> {
-  const { guild } = queueElement;
+  const { guild, voiceCategoryID, createNewVoiceChannelID } = queueElement;
 
   const voiceChannels = await getVoiceChannelsInCategory(
     guild,
-    g.voiceCategoryID,
+    voiceCategoryID,
   );
   if (voiceChannels === undefined) {
     console.error(
-      `Failed to get the channels for category: ${g.voiceCategoryID}`,
+      `Failed to get the channels for category: ${voiceCategoryID}`,
     );
     return;
   }
@@ -43,5 +42,9 @@ export async function deleteEmptyVoiceChannels(
   );
 
   await Promise.allSettled(promises);
-  await renameAllChannelsAccordingToOrder(guild);
+  await renameAllChannelsAccordingToOrder(
+    guild,
+    voiceCategoryID,
+    createNewVoiceChannelID,
+  );
 }
