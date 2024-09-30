@@ -1,4 +1,4 @@
-import type { ChatInputCommandInteraction } from "discord.js";
+import type { ChatInputCommandInteraction, TextBasedChannel } from "discord.js";
 import { ChannelType, SlashCommandBuilder } from "discord.js";
 
 interface Command {
@@ -45,25 +45,7 @@ async function conventionProposalCommand(
   conventionAdminRoleID: string,
   conventionProposalsID: string,
 ) {
-  if (interaction.guild === null) {
-    await interaction.reply({
-      content:
-        "Failed to find the Discord server corresponding to the interaction.",
-      ephemeral: true,
-    });
-    return;
-  }
-
-  const member = interaction.guild.members.cache.get(interaction.user.id);
-  if (member === undefined) {
-    await interaction.reply({
-      content: "Failed to find your user in the Discord server.",
-      ephemeral: true,
-    });
-    return;
-  }
-
-  if (!member.roles.cache.has(conventionAdminRoleID)) {
+  if (!isConventionAdmin(interaction, conventionAdminRoleID)) {
     await interaction.reply({
       content: "You are not authorized to perform this command.",
       ephemeral: true,
@@ -73,47 +55,7 @@ async function conventionProposalCommand(
 
   const { channel } = interaction;
 
-  if (channel === null) {
-    await interaction.reply({
-      content: 'You must use this command in the "convention-proposals" forum.',
-      ephemeral: true,
-    });
-    return;
-  }
-
-  if (!channel.isSendable()) {
-    await interaction.reply({
-      content: 'You must use this command in the "convention-proposals" forum.',
-      ephemeral: true,
-    });
-    return;
-  }
-
-  if (!("parent" in channel)) {
-    await interaction.reply({
-      content: 'You must use this command in the "convention-proposals" forum.',
-      ephemeral: true,
-    });
-    return;
-  }
-
-  if (channel.parent === null) {
-    await interaction.reply({
-      content: 'You must use this command in the "convention-proposals" forum.',
-      ephemeral: true,
-    });
-    return;
-  }
-
-  if (channel.parent.type !== ChannelType.GuildForum) {
-    await interaction.reply({
-      content: 'You must use this command in the "convention-proposals" forum.',
-      ephemeral: true,
-    });
-    return;
-  }
-
-  if (channel.parent.id !== conventionProposalsID) {
+  if (!inConventionProposalsForum(channel, conventionProposalsID)) {
     await interaction.reply({
       content: 'You must use this command in the "convention-proposals" forum.',
       ephemeral: true,
@@ -125,6 +67,35 @@ async function conventionProposalCommand(
     content: "test",
     ephemeral: true,
   });
+}
+
+function isConventionAdmin(
+  interaction: ChatInputCommandInteraction,
+  conventionAdminRoleID: string,
+): boolean {
+  if (interaction.guild === null) {
+    return false;
+  }
+
+  const member = interaction.guild.members.cache.get(interaction.user.id);
+  if (member === undefined) {
+    return false;
+  }
+
+  return member.roles.cache.has(conventionAdminRoleID);
+}
+
+function inConventionProposalsForum(
+  channel: TextBasedChannel | null,
+  conventionProposalsID: string,
+): boolean {
+  return (
+    channel !== null &&
+    "parent" in channel &&
+    channel.parent !== null &&
+    channel.parent.type === ChannelType.GuildForum &&
+    channel.parent.id === conventionProposalsID
+  );
 }
 
 export const commandMap = new Map<string, Command>([
