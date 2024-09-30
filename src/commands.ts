@@ -55,7 +55,7 @@ async function conventionProposalCommand(
     );
   }
 
-  if (member.roles.cache.has(conventionAdminRoleID)) {
+  if (!member.roles.cache.has(conventionAdminRoleID)) {
     await interaction.reply({
       content: "You are not authorized to perform this command.",
       ephemeral: true,
