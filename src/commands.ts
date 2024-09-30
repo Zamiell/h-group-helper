@@ -1,5 +1,5 @@
 import type { ChatInputCommandInteraction } from "discord.js";
-import { ForumChannel, SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 
 interface Command {
   data: SlashCommandBuilder;
@@ -71,12 +71,12 @@ async function conventionProposalCommand(
     );
   }
 
-  console.log(channel instanceof ForumChannel);
+  if (channel.isThread()) {
+    console.log("isThread");
+  }
 
-  if (channel instanceof ForumChannel) {
-    console.log("YES");
-  } else {
-    console.log("NO");
+  if (channel.isThreadOnly()) {
+    console.log("isThreadOnly");
   }
 
   /*
