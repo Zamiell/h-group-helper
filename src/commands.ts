@@ -98,9 +98,7 @@ async function conventionProposalCommand(
   await interaction.reply(message);
 
   await channel.setAppliedTags([closedTagID]);
-
-  // Lock thread
-  // TODO
+  await channel.setLocked();
 }
 
 function isConventionAdmin(
