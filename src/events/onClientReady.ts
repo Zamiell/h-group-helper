@@ -85,7 +85,11 @@ export async function onClientReady(client: Client<true>): Promise<void> {
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   client.on(Events.InteractionCreate, async (interaction) => {
-    await onInteractionCreate(interaction, conventionAdminRoleID);
+    await onInteractionCreate(
+      interaction,
+      conventionAdminRoleID,
+      conventionProposals.id,
+    );
   });
 
   client.on(Events.MessageCreate, (message) => {

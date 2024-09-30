@@ -1,5 +1,5 @@
 import type { ChatInputCommandInteraction } from "discord.js";
-import { SlashCommandBuilder } from "discord.js";
+import { ChannelType, SlashCommandBuilder } from "discord.js";
 
 interface Command {
   data: SlashCommandBuilder;
@@ -7,10 +7,12 @@ interface Command {
     | ((
         interaction: ChatInputCommandInteraction,
         conventionAdminRoleID: string,
+        conventionProposalsID: string,
       ) => void)
     | ((
         interaction: ChatInputCommandInteraction,
         conventionAdminRoleID: string,
+        conventionProposalsID: string,
       ) => Promise<void>);
 }
 
@@ -41,18 +43,24 @@ const stale: Command = {
 async function conventionProposalCommand(
   interaction: ChatInputCommandInteraction,
   conventionAdminRoleID: string,
+  conventionProposalsID: string,
 ) {
   if (interaction.guild === null) {
-    throw new Error(
-      "Failed to find the guild corresponding to an interaction.",
-    );
+    await interaction.reply({
+      content:
+        "Failed to find the Discord server corresponding to the interaction.",
+      ephemeral: true,
+    });
+    return;
   }
 
   const member = interaction.guild.members.cache.get(interaction.user.id);
   if (member === undefined) {
-    throw new Error(
-      "Failed to find the guild member corresponding to an interaction.",
-    );
+    await interaction.reply({
+      content: "Failed to find your user in the Discord server.",
+      ephemeral: true,
+    });
+    return;
   }
 
   if (!member.roles.cache.has(conventionAdminRoleID)) {
@@ -66,28 +74,57 @@ async function conventionProposalCommand(
   const { channel } = interaction;
 
   if (channel === null) {
-    throw new Error(
-      "Failed to find the channel corresponding to an interaction.",
-    );
-  }
-
-  if (channel.isThread()) {
-    console.log("isThread");
-  }
-
-  if (channel.isThreadOnly()) {
-    console.log("isThreadOnly");
-  }
-
-  /*
-  if (interaction.channel === null || !interaction.channel.isSendable()) {
+    await interaction.reply({
+      content: 'You must use this command in the "convention-proposals" forum.',
+      ephemeral: true,
+    });
     return;
   }
 
-  interaction.commandName
+  if (!channel.isSendable()) {
+    await interaction.reply({
+      content: 'You must use this command in the "convention-proposals" forum.',
+      ephemeral: true,
+    });
+    return;
+  }
 
-  await interaction.channel.send("hello");
-  */
+  if (!("parent" in channel)) {
+    await interaction.reply({
+      content: 'You must use this command in the "convention-proposals" forum.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  if (channel.parent === null) {
+    await interaction.reply({
+      content: 'You must use this command in the "convention-proposals" forum.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  if (channel.parent.type !== ChannelType.GuildForum) {
+    await interaction.reply({
+      content: 'You must use this command in the "convention-proposals" forum.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  if (channel.parent.id !== conventionProposalsID) {
+    await interaction.reply({
+      content: 'You must use this command in the "convention-proposals" forum.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  await interaction.reply({
+    content: "test",
+    ephemeral: true,
+  });
 }
 
 export const commandMap = new Map<string, Command>([
