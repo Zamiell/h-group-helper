@@ -1,4 +1,9 @@
-import type { ChatInputCommandInteraction, TextBasedChannel } from "discord.js";
+import { ReadonlyMap } from "complete-common";
+import type {
+  ChatInputCommandInteraction,
+  SendableChannels,
+  TextBasedChannel,
+} from "discord.js";
 import { ChannelType, SlashCommandBuilder } from "discord.js";
 
 interface Command {
@@ -15,6 +20,27 @@ interface Command {
         conventionProposalsID: string,
       ) => Promise<void>);
 }
+
+const MESSAGES = new ReadonlyMap([
+  [
+    "accept",
+    `- Some time has passed since this issue was opened and the group appears to have reached a consensus.
+- ✔️ This change will be integrated into the official reference document.`,
+  ],
+  [
+    "deny",
+    `- Some time has passed since this thread was opened and the group appears to have reached a consensus.
+- ❌ This change will **not** be integrated into the official reference document.`,
+  ],
+  [
+    "stale",
+    `- Some time has passed since this issue was opened and the discussion appears to have died down.
+- 💤 Either the document has already been updated or no additional changes need to be made.`,
+  ],
+]);
+
+const FOOTER = `- This thread will now be closed. If you feel this was an error, contact a convention admin to re-open the thread.
+- For more information on how consensus is determined, please read the [Convention Changes document](https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-changes.md).`;
 
 const accept: Command = {
   data: new SlashCommandBuilder()
@@ -63,10 +89,26 @@ async function conventionProposalCommand(
     return;
   }
 
-  await interaction.reply({
-    content: "test",
-    ephemeral: true,
-  });
+  const baseMessage = MESSAGES.get(interaction.commandName);
+  if (baseMessage === undefined) {
+    await interaction.reply({
+      content: `Failed to find a message for the command of: ${interaction.commandName}`,
+      ephemeral: true,
+    });
+    return;
+  }
+
+  const message = `${baseMessage}\n${FOOTER}`;
+  await interaction.reply(message);
+
+  // Remove tag
+  // TODO
+
+  // Add tag
+  // TODO
+
+  // Lock thread
+  // TODO
 }
 
 function isConventionAdmin(
@@ -88,9 +130,10 @@ function isConventionAdmin(
 function inConventionProposalsForum(
   channel: TextBasedChannel | null,
   conventionProposalsID: string,
-): boolean {
+): channel is SendableChannels {
   return (
     channel !== null &&
+    channel.isSendable() &&
     "parent" in channel &&
     channel.parent !== null &&
     channel.parent.type === ChannelType.GuildForum &&

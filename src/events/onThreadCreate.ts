@@ -5,11 +5,8 @@ const CONVENTION_QUESTIONS_MESSAGE = `Please make sure that your question satisf
 <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>
 If it doesn't, please edit your question accordingly.`;
 
-const CONVENTION_PROPOSALS_MESSAGE = `If you are not already familiar with the convention change process, please review this document:
-<https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-changes.md>
-
-Additionally, we need to keep in mind the goals for the H-Group conventions:
-<https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-goals.md>`;
+const CONVENTION_PROPOSALS_MESSAGE =
+  "If you are not already familiar with how this forum works, please review [the convention changes document](<https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-changes.md>) and [the goals for our conventions](<https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-goals.md>).";
 
 const MAX_STARTER_MESSAGE_FETCH_ATTEMPTS = 10;
 
