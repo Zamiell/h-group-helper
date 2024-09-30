@@ -43,7 +43,10 @@ async function conventionProposalCommand(
   adminIDs: readonly string[],
 ) {
   if (adminIDs.includes(interaction.user.id)) {
-    await interaction.reply("You are not authorized to perform this command.");
+    await interaction.reply({
+      content: "You are not authorized to perform this command.",
+      ephemeral: true,
+    });
     return;
   }
 
