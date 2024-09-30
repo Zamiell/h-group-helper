@@ -5,12 +5,14 @@ export async function onInteractionCreate(
   interaction: Interaction,
   conventionAdminRoleID: string,
   conventionProposalsID: string,
+  closedTagID: string,
 ): Promise<void> {
   if (interaction.isChatInputCommand()) {
     await onChatInputCommand(
       interaction,
       conventionAdminRoleID,
       conventionProposalsID,
+      closedTagID,
     );
   }
 }
@@ -19,6 +21,7 @@ async function onChatInputCommand(
   interaction: ChatInputCommandInteraction,
   conventionAdminRoleID: string,
   conventionProposalsID: string,
+  closedTagID: string,
 ) {
   const command = commandMap.get(interaction.commandName);
   if (command === undefined) {
@@ -29,5 +32,6 @@ async function onChatInputCommand(
     interaction,
     conventionAdminRoleID,
     conventionProposalsID,
+    closedTagID,
   );
 }

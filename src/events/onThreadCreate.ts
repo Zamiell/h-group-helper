@@ -14,14 +14,10 @@ export async function onThreadCreate(
   threadChannel: ThreadChannel,
   questionForumID: string,
   proposalForumID: string,
-  openForDiscussionTagID: string,
+  openTagID: string,
 ): Promise<void> {
   await checkConventionQuestions(threadChannel, questionForumID);
-  await checkConventionProposals(
-    threadChannel,
-    proposalForumID,
-    openForDiscussionTagID,
-  );
+  await checkConventionProposals(threadChannel, proposalForumID, openTagID);
 }
 
 async function checkConventionQuestions(
@@ -43,7 +39,7 @@ async function checkConventionQuestions(
 async function checkConventionProposals(
   threadChannel: ThreadChannel,
   proposalForumID: string,
-  openForDiscussionTagID: string,
+  openTagID: string,
 ) {
   if (threadChannel.parentId !== proposalForumID) {
     return;
@@ -55,7 +51,7 @@ async function checkConventionProposals(
   }
 
   await threadChannel.send(CONVENTION_PROPOSALS_MESSAGE);
-  await threadChannel.setAppliedTags([openForDiscussionTagID]);
+  await threadChannel.setAppliedTags([openTagID]);
 }
 
 /**

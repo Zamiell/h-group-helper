@@ -1,24 +1,19 @@
 import { ReadonlyMap } from "complete-common";
 import type {
   ChatInputCommandInteraction,
-  SendableChannels,
+  PublicThreadChannel,
   TextBasedChannel,
 } from "discord.js";
 import { ChannelType, SlashCommandBuilder } from "discord.js";
 
 interface Command {
   data: SlashCommandBuilder;
-  execute:
-    | ((
-        interaction: ChatInputCommandInteraction,
-        conventionAdminRoleID: string,
-        conventionProposalsID: string,
-      ) => void)
-    | ((
-        interaction: ChatInputCommandInteraction,
-        conventionAdminRoleID: string,
-        conventionProposalsID: string,
-      ) => Promise<void>);
+  execute: (
+    interaction: ChatInputCommandInteraction,
+    conventionAdminRoleID: string,
+    conventionProposalsID: string,
+    closedTagID: string,
+  ) => Promise<void>;
 }
 
 const MESSAGES = new ReadonlyMap([
@@ -70,6 +65,7 @@ async function conventionProposalCommand(
   interaction: ChatInputCommandInteraction,
   conventionAdminRoleID: string,
   conventionProposalsID: string,
+  closedTagID: string,
 ) {
   if (!isConventionAdmin(interaction, conventionAdminRoleID)) {
     await interaction.reply({
@@ -101,11 +97,7 @@ async function conventionProposalCommand(
   const message = `${baseMessage}\n${FOOTER}`;
   await interaction.reply(message);
 
-  // Remove tag
-  // TODO
-
-  // Add tag
-  // TODO
+  await channel.setAppliedTags([closedTagID]);
 
   // Lock thread
   // TODO
@@ -130,11 +122,10 @@ function isConventionAdmin(
 function inConventionProposalsForum(
   channel: TextBasedChannel | null,
   conventionProposalsID: string,
-): channel is SendableChannels {
+): channel is PublicThreadChannel<true> {
   return (
     channel !== null &&
-    channel.isSendable() &&
-    "parent" in channel &&
+    channel.type === ChannelType.PublicThread &&
     channel.parent !== null &&
     channel.parent.type === ChannelType.GuildForum &&
     channel.parent.id === conventionProposalsID

@@ -65,13 +65,15 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     "Failed to find the channel: convention-proposals",
   );
 
-  const openForDiscussionTag = conventionProposals.availableTags.find(
-    (tag) => tag.name === "open-for-discussion",
+  const openTag = conventionProposals.availableTags.find(
+    (tag) => tag.name === "open",
   );
-  assertDefined(
-    openForDiscussionTag,
-    "Failed to find the forum tag: open-for-discussion",
+  assertDefined(openTag, "Failed to find the forum tag: open");
+
+  const closedTag = conventionProposals.availableTags.find(
+    (tag) => tag.name === "closed",
   );
+  assertDefined(closedTag, "Failed to find the forum tag: closed");
 
   const conventionAdminRoleID = getRoleIDByName(guild, "Convention Admin");
   assertDefined(
@@ -89,6 +91,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
       interaction,
       conventionAdminRoleID,
       conventionProposals.id,
+      closedTag.id,
     );
   });
 
@@ -102,7 +105,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
       threadChannel,
       questionForumID,
       proposalForumID,
-      openForDiscussionTag.id,
+      openTag.id,
     );
   });
 
