@@ -3,7 +3,7 @@ import { VOICE_CHANNEL_PREFIX } from "../constants.js";
 import {
   getVoiceChannelsInCategory,
   isVoiceChannelEmpty,
-} from "../discordUtilChannels.js";
+} from "../discordUtils.js";
 import type { QueueElementDeleteEmptyVoiceChannels } from "../enums/QueueType.js";
 
 /**

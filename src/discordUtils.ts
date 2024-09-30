@@ -1,6 +1,5 @@
 import type { Guild, GuildBasedChannel, VoiceBasedChannel } from "discord.js";
 import { DiscordAPIError, RESTJSONErrorCodes } from "discord.js";
-import { getMember } from "./discordUtil.js";
 import { logger } from "./logger.js";
 
 export function getChannelIDByName(
@@ -52,7 +51,7 @@ export async function moveUserToVoiceChannel(
   userID: string,
   newChannelID: string,
 ): Promise<void> {
-  const member = await getMember(guild, userID);
+  const member = await guild.members.fetch(userID);
   try {
     await member.voice.setChannel(newChannelID);
   } catch (error) {

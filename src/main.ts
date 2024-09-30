@@ -23,10 +23,10 @@ async function discordInit(): Promise<void> {
     // An intent is needed for each type of data that we need Discord to send to us.
     intents: [
       GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.GuildMembers, // Needs "Server Members Intent" checked in the "Bot" menu.
       GatewayIntentBits.GuildMessages,
       GatewayIntentBits.GuildVoiceStates,
-      GatewayIntentBits.MessageContent,
+      GatewayIntentBits.MessageContent, // Needs "Message Content Intent" checked in the "Bot" menu.
     ],
   });
 

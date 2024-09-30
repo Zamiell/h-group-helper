@@ -1,12 +1,12 @@
 import { assertDefined } from "complete-common";
 import type { Client } from "discord.js";
 import { Events, ForumChannel } from "discord.js";
-import { getGuildByName } from "../discordUtil.js";
-import { getChannelIDByName } from "../discordUtilChannels.js";
+import { getChannelIDByName } from "../discordUtils.js";
 import { QueueType } from "../enums/QueueType.js";
 import { env } from "../env.js";
 import { logger } from "../logger.js";
 import { deleteEmptyVoiceChannels } from "../queueActions/deleteEmptyVoiceChannels.js";
+import { onInteractionCreate } from "./onInteractionCreate.js";
 import { onMessageCreate } from "./onMessageCreate.js";
 import { onThreadCreate } from "./onThreadCreate.js";
 import { onVoiceStateUpdate } from "./onVoiceStatusUpdate.js";
@@ -17,20 +17,25 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     `Connected to Discord with a username of: ${client.user.username}`,
   );
 
-  const guild = getGuildByName(client, env.DISCORD_SERVER_NAME);
-  if (guild === undefined) {
-    throw new Error(
-      `Failed to find Discord server: ${env.DISCORD_SERVER_NAME}`,
-    );
-  }
+  const guild = await client.guilds.fetch(env.DISCORD_SERVER_ID);
   logger.info(`Connected to Discord server: ${guild.name}`);
 
   // ----------------
   // Gather variables
   // ----------------
 
-  const botID = client.user.id;
+  const voiceCategoryID = getChannelIDByName(guild, env.VOICE_CATEGORY_NAME);
+  assertDefined(
+    voiceCategoryID,
+    `Failed to find the channel ID of: ${env.VOICE_CATEGORY_NAME}`,
+  );
+
   const adminIDs = env.ADMIN_IDS.split(",");
+  if (adminIDs.length === 0) {
+    throw new Error(
+      'Failed to find at least one admin in the "ADMIN_IDS" environment variable.',
+    );
+  }
 
   const questionForumID = getChannelIDByName(guild, "convention-questions");
   assertDefined(
@@ -42,12 +47,6 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   assertDefined(
     proposalForumID,
     "Failed to find the channel ID of: convention-proposals",
-  );
-
-  const voiceCategoryID = getChannelIDByName(guild, env.VOICE_CATEGORY_NAME);
-  assertDefined(
-    voiceCategoryID,
-    `Failed to find the channel ID of: ${env.VOICE_CATEGORY_NAME}`,
   );
 
   const createNewVoiceChannelID = getChannelIDByName(
@@ -85,8 +84,12 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   // ---------------------
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  client.on(Events.MessageCreate, async (message) => {
-    await onMessageCreate(message, botID, adminIDs);
+  client.on(Events.InteractionCreate, async (interaction) => {
+    await onInteractionCreate(interaction, adminIDs);
+  });
+
+  client.on(Events.MessageCreate, (message) => {
+    onMessageCreate(message);
   });
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises

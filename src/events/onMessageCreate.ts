@@ -1,26 +1,9 @@
 import type { Message } from "discord.js";
 import { ChannelType } from "discord.js";
-import { checkCommand } from "../command.js";
 import { logger } from "../logger.js";
 
-export async function onMessageCreate(
-  message: Message,
-  botID: string,
-  adminIDs: readonly string[],
-): Promise<void> {
+export function onMessageCreate(message: Message): void {
   logDiscordTextMessage(message);
-
-  // Ignore anything not in a text channel.
-  if (message.channel.type !== ChannelType.GuildText) {
-    return;
-  }
-
-  // Ignore our own messages.
-  if (message.author.id === botID) {
-    return;
-  }
-
-  await checkCommand(message, adminIDs);
 }
 
 function logDiscordTextMessage(message: Message) {

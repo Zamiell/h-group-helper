@@ -1,6 +1,6 @@
 import { ChannelType } from "discord.js";
 import { VOICE_CHANNEL_PREFIX } from "../constants.js";
-import { moveUserToVoiceChannel } from "../discordUtilChannels.js";
+import { moveUserToVoiceChannel } from "../discordUtils.js";
 import type { QueueElementCreateNewVoiceChannel } from "../enums/QueueType.js";
 import { QueueType } from "../enums/QueueType.js";
 import { deleteEmptyVoiceChannels } from "./deleteEmptyVoiceChannels.js";

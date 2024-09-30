@@ -15,6 +15,7 @@
   "type": "module",
   "scripts": {
     "build": "tsx ./scripts/build.ts",
+    "deploy-commands": "tsx ./scripts/deployCommands.ts",
     "lint": "tsx ./scripts/lint.ts",
     "nuke": "isaacscript nuke",
     "start": "tsx ./src/main.ts",
