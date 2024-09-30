@@ -25,9 +25,6 @@ const envSchema = z.object({
    * reside in. e.g. "H-Group Pickup Games"
    */
   VOICE_CATEGORY_NAME: z.string().min(1),
-
-  /** A comma separated list of Discord user IDs. */
-  ADMIN_IDS: z.string().min(1),
 });
 
 export const env = getEnv(envSchema);

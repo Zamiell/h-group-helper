@@ -3,21 +3,21 @@ import { commandMap } from "../commands.js";
 
 export async function onInteractionCreate(
   interaction: Interaction,
-  adminIDs: readonly string[],
+  conventionAdminRoleID: string,
 ): Promise<void> {
   if (interaction.isChatInputCommand()) {
-    await onChatInputCommand(interaction, adminIDs);
+    await onChatInputCommand(interaction, conventionAdminRoleID);
   }
 }
 
 async function onChatInputCommand(
   interaction: ChatInputCommandInteraction,
-  adminIDs: readonly string[],
+  conventionAdminRoleID: string,
 ) {
   const command = commandMap.get(interaction.commandName);
   if (command === undefined) {
     throw new Error(`Unknown command: ${interaction.commandName}`);
   }
 
-  await command.execute(interaction, adminIDs);
+  await command.execute(interaction, conventionAdminRoleID);
 }

@@ -10,10 +10,16 @@ export function getChannelIDByName(
   const matchingChannel = channels.find(
     (channel) => channel.name === channelName,
   );
-  const firstMatchingChannel = matchingChannel;
-  return firstMatchingChannel === undefined
-    ? undefined
-    : firstMatchingChannel.id;
+  return matchingChannel === undefined ? undefined : matchingChannel.id;
+}
+
+export function getRoleIDByName(
+  guild: Guild,
+  roleName: string,
+): string | undefined {
+  const roles = [...guild.roles.cache.values()];
+  const matchingRole = roles.find((role) => role.name === roleName);
+  return matchingRole === undefined ? undefined : matchingRole.id;
 }
 
 export function getVoiceChannelsInCategory(

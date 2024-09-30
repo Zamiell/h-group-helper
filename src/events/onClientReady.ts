@@ -1,7 +1,7 @@
 import { assertDefined } from "complete-common";
 import type { Client } from "discord.js";
 import { Events, ForumChannel } from "discord.js";
-import { getChannelIDByName } from "../discordUtils.js";
+import { getChannelIDByName, getRoleIDByName } from "../discordUtils.js";
 import { QueueType } from "../enums/QueueType.js";
 import { env } from "../env.js";
 import { logger } from "../logger.js";
@@ -24,18 +24,15 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   // Gather variables
   // ----------------
 
+  // Refresh the role and channel caches.
+  await guild.roles.fetch();
+  await guild.channels.fetch();
+
   const voiceCategoryID = getChannelIDByName(guild, env.VOICE_CATEGORY_NAME);
   assertDefined(
     voiceCategoryID,
     `Failed to find the channel ID of: ${env.VOICE_CATEGORY_NAME}`,
   );
-
-  const adminIDs = env.ADMIN_IDS.split(",");
-  if (adminIDs.length === 0) {
-    throw new Error(
-      'Failed to find at least one admin in the "ADMIN_IDS" environment variable.',
-    );
-  }
 
   const questionForumID = getChannelIDByName(guild, "convention-questions");
   assertDefined(
@@ -76,8 +73,11 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     "Failed to find the forum tag: open-for-discussion",
   );
 
-  // Refresh the channel cache.
-  await guild.channels.fetch();
+  const conventionAdminRoleID = getRoleIDByName(guild, "Convention Admin");
+  assertDefined(
+    conventionAdminRoleID,
+    "Failed to find the role: Convention Admin",
+  );
 
   // ---------------------
   // Attach event handlers
@@ -85,7 +85,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   client.on(Events.InteractionCreate, async (interaction) => {
-    await onInteractionCreate(interaction, adminIDs);
+    await onInteractionCreate(interaction, conventionAdminRoleID);
   });
 
   client.on(Events.MessageCreate, (message) => {

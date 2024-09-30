@@ -6,11 +6,11 @@ interface Command {
   execute:
     | ((
         interaction: ChatInputCommandInteraction,
-        adminIDs: readonly string[],
+        conventionAdminRoleID: string,
       ) => void)
     | ((
         interaction: ChatInputCommandInteraction,
-        adminIDs: readonly string[],
+        conventionAdminRoleID: string,
       ) => Promise<void>);
 }
 
@@ -40,9 +40,22 @@ const stale: Command = {
 
 async function conventionProposalCommand(
   interaction: ChatInputCommandInteraction,
-  adminIDs: readonly string[],
+  conventionAdminRoleID: string,
 ) {
-  if (adminIDs.includes(interaction.user.id)) {
+  if (interaction.guild === null) {
+    throw new Error(
+      "Failed to find the guild corresponding to an interaction.",
+    );
+  }
+
+  const member = interaction.guild.members.cache.get(interaction.user.id);
+  if (member === undefined) {
+    throw new Error(
+      "Failed to find the guild member corresponding to an interaction.",
+    );
+  }
+
+  if (member.roles.cache.has(conventionAdminRoleID)) {
     await interaction.reply({
       content: "You are not authorized to perform this command.",
       ephemeral: true,
@@ -53,7 +66,9 @@ async function conventionProposalCommand(
   const { channel } = interaction;
 
   if (channel === null) {
-    return;
+    throw new Error(
+      "Failed to find the channel corresponding to an interaction.",
+    );
   }
 
   console.log(channel instanceof ForumChannel);
