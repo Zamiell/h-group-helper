@@ -37,6 +37,8 @@
     "@types/node": "^22.7.4",
     "@types/source-map-support": "^0.5.10",
     "complete-lint": "^1.9.4",
+    "git-pull-run": "^1.4.0",
+    "husky": "^9.1.6",
     "isaacscript": "^5.0.7",
     "typescript": "5.5.4"
   }
