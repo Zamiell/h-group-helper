@@ -65,12 +65,12 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   );
 
   const openTag = conventionProposals.availableTags.find(
-    (tag) => tag.name === "open",
+    (tag) => tag.name.includes("open"), // The tag also has an emoji in it.
   );
   assertDefined(openTag, "Failed to find the forum tag: open");
 
   const closedTag = conventionProposals.availableTags.find(
-    (tag) => tag.name === "closed",
+    (tag) => tag.name.includes("closed"), // The tag also has an emoji in it.
   );
   assertDefined(closedTag, "Failed to find the forum tag: closed");
 
