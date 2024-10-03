@@ -20,7 +20,7 @@ const MESSAGES = new ReadonlyMap([
   [
     "accept",
     `- Some time has passed since this issue was opened and the group appears to have reached a consensus.
-- ✔️ This change will be integrated into the official reference document.`,
+- ✅ This change will be integrated into the official reference document.`,
   ],
   [
     "deny",
