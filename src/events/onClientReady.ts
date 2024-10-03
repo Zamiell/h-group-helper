@@ -11,7 +11,6 @@ import { onMessageCreate } from "./onMessageCreate.js";
 import { onThreadCreate } from "./onThreadCreate.js";
 import { onVoiceStateUpdate } from "./onVoiceStatusUpdate.js";
 
-/** @see https://github.com/discordjs/discord.js/issues/10279 */
 export async function onClientReady(client: Client<true>): Promise<void> {
   logger.info(
     `Connected to Discord with a username of: ${client.user.username}`,
@@ -83,6 +82,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
 
   // ---------------------
   // Attach event handlers
+  // https://github.com/discordjs/discord.js/issues/10279
   // ---------------------
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
