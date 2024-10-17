@@ -80,6 +80,9 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     "Failed to find the role: Convention Admin",
   );
 
+  const replaysChannelID = getChannelIDByName(guild, "replays");
+  assertDefined(replaysChannelID, "Failed to find the channel: replays");
+
   // ---------------------
   // Attach event handlers
   // https://github.com/discordjs/discord.js/issues/10279
@@ -95,8 +98,9 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     );
   });
 
-  client.on(Events.MessageCreate, (message) => {
-    onMessageCreate(message);
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  client.on(Events.MessageCreate, async (message) => {
+    await onMessageCreate(message, replaysChannelID);
   });
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
