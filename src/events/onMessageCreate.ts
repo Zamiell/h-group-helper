@@ -42,7 +42,7 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
   if (!message.content.includes("<https://hanab.live/replay/")) {
     const dmChannel = await message.author.createDM();
     await dmChannel.send(
-      "Your post in the #replays channel has been deleted since you have not disabled the link preview. Please enclose your link in `<` and `>` brackets, like the following: `<https://hanab.live/replay/123>`",
+      "Your post in the #replays channel has been deleted since you have not disabled the link preview. Please enclose your link in `<` and `>`, like the following: `<https://hanab.live/replay/123>`",
     );
     await message.delete();
     return;
@@ -63,6 +63,15 @@ async function checkScreenshotsChannel(
   replaysChannelID: string,
 ) {
   if (message.channelId !== replaysChannelID) {
+    return;
+  }
+
+  if (message.attachments.size === 0) {
+    const dmChannel = await message.author.createDM();
+    await dmChannel.send(
+      "Your post in the #screenshots channel has been deleted because it does not contain a screenshot. Please use threads to discuss a specific screenshot.`",
+    );
+    await message.delete();
     return;
   }
 
