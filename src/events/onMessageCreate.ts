@@ -5,13 +5,14 @@ import { logger } from "../logger.js";
 export async function onMessageCreate(
   message: Message,
   replaysChannelID: string,
+  screenshotsChannelID: string,
 ): Promise<void> {
   logDiscordTextMessage(message);
 
   await checkReplaysChannel(message, replaysChannelID);
-  /// checkScreenshotsChannel(message, replaysChannelID);
-  /// checkVideosChannel(message, replaysChannelID);
-  /// checkPuzzlesChannel(message, replaysChannelID);
+  await checkScreenshotsChannel(message, screenshotsChannelID);
+  /// await checkVideosChannel(message, replaysChannelID);
+  /// await checkPuzzlesChannel(message, replaysChannelID);
 }
 
 function logDiscordTextMessage(message: Message) {
@@ -37,18 +38,44 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
     return;
   }
 
-  let possessive = `${message.author.username}'`;
-  if (!message.author.username.endsWith("s")) {
-    possessive += "s";
+  // Ensure that replay's are surrounded by "<" and ">" to prevent the link preview.
+  if (!message.content.includes("<https://hanab.live/replay/")) {
+    const dmChannel = await message.author.createDM();
+    await dmChannel.send(
+      "Your post in the #replays channel has been deleted since you have not disabled the link preview. Please enclose your link in `<` and `>` brackets, like the following: `<https://hanab.live/replay/123>`",
+    );
+    await message.delete();
+    return;
   }
-  const name = `${possessive} replay`;
 
   const thread = await message.startThread({
-    name,
+    name: getThreadName(message, "replay"),
   });
 
   // By default, the thread is not visible unless a message is sent. Thus, we arbitrarily send a
   // message and then delete it.
   const threadMessage = await thread.send("Starting a thread.");
   await threadMessage.delete();
+}
+
+async function checkScreenshotsChannel(
+  message: Message,
+  replaysChannelID: string,
+) {
+  if (message.channelId !== replaysChannelID) {
+    return;
+  }
+
+  await message.startThread({
+    name: getThreadName(message, "screenshot"),
+  });
+}
+
+function getThreadName(message: Message, noun: string): string {
+  let possessive = `${message.author.username}'`;
+  if (!message.author.username.endsWith("s")) {
+    possessive += "s";
+  }
+
+  return `${possessive} ${noun}`;
 }
