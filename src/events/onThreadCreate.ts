@@ -10,6 +10,12 @@ const CONVENTION_PROPOSALS_MESSAGE =
 
 const MAX_STARTER_MESSAGE_FETCH_ATTEMPTS = 10;
 
+/**
+ * @see https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
+ */
+const URL_REGEX =
+  /https?:\/\/(www\.)?[\w#%+.:=@~-]{1,256}\.[\d()A-Za-z]{1,6}\b([\w#%&()+./:=?@~-]*)/;
+
 export async function onThreadCreate(
   threadChannel: ThreadChannel,
   questionForumID: string,
@@ -36,13 +42,40 @@ async function checkConventionQuestions(
   if (message.attachments.size > 0) {
     const dmChannel = await message.author.createDM();
     await dmChannel.send(
-      "Your post in the convention-questions forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>",
+      `Your post in the convention-questions forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>\n\nFor reference, your post was:\n\n> ${message.content}`,
     );
     await threadChannel.delete();
     return;
   }
 
+  if (!isAllLinksEnclosed(message.content)) {
+    const dmChannel = await message.author.createDM();
+    await dmChannel.send(
+      `Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your links in \`<\` and \`>\` characters, which will disable the link preview and make your question easier to read.\n\nFor reference, your post was:\n\n> ${message.content}`,
+    );
+    await threadChannel.delete();
+  }
+
   await threadChannel.send(CONVENTION_QUESTIONS_MESSAGE);
+}
+
+/**
+ * In Discord, you can disable the automatic link preview by enclosing a link in < and > characters.
+ * This is usually preferable since it reduces spam.
+ */
+function isAllLinksEnclosed(message: string): boolean {
+  const urls = message.match(URL_REGEX);
+  if (urls === null) {
+    return true;
+  }
+
+  for (const url of urls) {
+    if (!message.includes(`<${url}>`)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 async function checkConventionProposals(
