@@ -49,5 +49,6 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
 
   // By default, the thread is not visible unless a message is sent. Thus, we arbitrarily send a
   // message and then delete it.
-  await thread.send("Starting a thread.");
+  const threadMessage = await thread.send("Starting a thread.");
+  await threadMessage.delete();
 }
