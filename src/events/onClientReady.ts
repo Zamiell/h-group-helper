@@ -89,6 +89,12 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     "Failed to find the channel: screenshots",
   );
 
+  const videosChannelID = getChannelIDByName(guild, "videos");
+  assertDefined(videosChannelID, "Failed to find the channel: videos");
+
+  const puzzlesChannelID = getChannelIDByName(guild, "puzzles");
+  assertDefined(puzzlesChannelID, "Failed to find the channel: puzzles");
+
   // ---------------------
   // Attach event handlers
   // https://github.com/discordjs/discord.js/issues/10279
@@ -106,7 +112,13 @@ export async function onClientReady(client: Client<true>): Promise<void> {
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   client.on(Events.MessageCreate, async (message) => {
-    await onMessageCreate(message, replaysChannelID, screenshotsChannelID);
+    await onMessageCreate(
+      message,
+      replaysChannelID,
+      screenshotsChannelID,
+      videosChannelID,
+      puzzlesChannelID,
+    );
   });
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises

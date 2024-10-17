@@ -6,13 +6,15 @@ export async function onMessageCreate(
   message: Message,
   replaysChannelID: string,
   screenshotsChannelID: string,
+  videosChannelID: string,
+  puzzlesChannelID: string,
 ): Promise<void> {
   logDiscordTextMessage(message);
 
   await checkReplaysChannel(message, replaysChannelID);
   await checkScreenshotsChannel(message, screenshotsChannelID);
-  /// await checkVideosChannel(message, replaysChannelID);
-  /// await checkPuzzlesChannel(message, replaysChannelID);
+  await checkVideosChannel(message, videosChannelID);
+  await checkPuzzlesChannel(message, puzzlesChannelID);
 }
 
 function logDiscordTextMessage(message: Message) {
@@ -77,6 +79,28 @@ async function checkScreenshotsChannel(
 
   await message.startThread({
     name: getThreadName(message, "screenshot"),
+  });
+}
+
+/** There is no validation logic for this channel, since detecting a video is non-trivial. */
+async function checkVideosChannel(message: Message, videosChannelID: string) {
+  if (message.channelId !== videosChannelID) {
+    return;
+  }
+
+  await message.startThread({
+    name: getThreadName(message, "video"),
+  });
+}
+
+/** There is no validation logic for this channel, since detecting a puzzle is non-trivial. */
+async function checkPuzzlesChannel(message: Message, puzzlesChannelID: string) {
+  if (message.channelId !== puzzlesChannelID) {
+    return;
+  }
+
+  await message.startThread({
+    name: getThreadName(message, "puzzle"),
   });
 }
 
