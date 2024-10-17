@@ -119,7 +119,5 @@ function logVoiceStatusUpdate(
     return;
   }
 
-  logger.info(
-    `${verb} voice channel: ${user.username}#${user.discriminator} (${userID}) --> ${channel.name}`,
-  );
+  logger.info(`${verb} voice channel: ${user.username} --> ${channel.name}`);
 }
