@@ -24,10 +24,7 @@ function logDiscordTextMessage(message: Message) {
 }
 
 async function checkReplaysChannel(message: Message, replaysChannelID: string) {
-  console.log("GETTING HERE 1", message.channelId);
-  console.log("GETTING HERE 2", replaysChannelID);
-
-  if (message.channelId === replaysChannelID) {
+  if (message.channelId !== replaysChannelID) {
     return;
   }
 
