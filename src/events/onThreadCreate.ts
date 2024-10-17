@@ -10,11 +10,7 @@ const CONVENTION_PROPOSALS_MESSAGE =
 
 const MAX_STARTER_MESSAGE_FETCH_ATTEMPTS = 10;
 
-/**
- * @see https://stackoverflow.com/questions/3809401/what-is-a-good-regular-expression-to-match-a-url
- */
-const URL_REGEX =
-  /https?:\/\/(www\.)?[\w#%+.:=@~-]{1,256}\.[\d()A-Za-z]{1,6}\b([\w#%&()+./:=?@~-]*)/;
+const URL_REGEX = /https?:\/\/[^\s<>]+/g;
 
 export async function onThreadCreate(
   threadChannel: ThreadChannel,
