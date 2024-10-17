@@ -43,7 +43,12 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
   }
   const name = `${possessive} replay`;
 
-  await message.startThread({
+  const thread = await message.startThread({
     name,
   });
+
+  // By default, the thread is not visible unless a message is sent. Thus, we arbitrarily send a
+  // message and then delete it.
+  const threadMessage = await thread.send("Starting a thread.");
+  await threadMessage.delete();
 }
