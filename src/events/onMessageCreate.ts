@@ -1,5 +1,5 @@
 import type { Message } from "discord.js";
-import { ChannelType } from "discord.js";
+import { ChannelType, ThreadAutoArchiveDuration } from "discord.js";
 import { logger } from "../logger.js";
 
 export async function onMessageCreate(
@@ -45,10 +45,11 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
 
   const thread = await message.startThread({
     name,
+    autoArchiveDuration: ThreadAutoArchiveDuration.OneHour,
+    reason: "Needed a separate thread for food",
   });
 
   // By default, the thread is not visible unless a message is sent. Thus, we arbitrarily send a
   // message and then delete it.
-  const threadMessage = await thread.send("Starting a thread.");
-  await threadMessage.delete();
+  await thread.send("Starting a thread.");
 }
