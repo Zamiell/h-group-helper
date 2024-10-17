@@ -66,10 +66,7 @@ function isAllLinksEnclosed(messageContent: string): boolean {
     return true;
   }
 
-  console.log(`DEBUG 1: ${messageContent}`);
-
   for (const url of urls) {
-    console.log(`DEBUG 2: ${url}`);
     if (!messageContent.includes(`<${url}>`)) {
       return false;
     }
