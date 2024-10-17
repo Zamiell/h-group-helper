@@ -51,7 +51,7 @@ async function checkConventionQuestions(
   if (!isAllLinksEnclosed(message.content)) {
     const dmChannel = await message.author.createDM();
     await dmChannel.send(
-      `Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your links in \`<\` and \`>\` characters, which will disable the link preview and make your question easier to read.\n\nFor reference, your post was:\n> ${message.content}`,
+      `Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your links in \`<\` and \`>\` characters, like the following: \`<https://hanab.live/replay/123>\`\n\nFor reference, your post was:\n> ${message.content}`,
     );
     await threadChannel.delete();
   }
