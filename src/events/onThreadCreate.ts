@@ -36,9 +36,9 @@ async function checkConventionQuestions(
   if (message.attachments.size > 0) {
     const dmChannel = await message.author.createDM();
     await dmChannel.send(
-      "Your post in the convention-questions forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>`",
+      "Your post in the convention-questions forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>",
     );
-    await message.delete();
+    await threadChannel.delete();
     return;
   }
 
