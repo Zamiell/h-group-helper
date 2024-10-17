@@ -34,7 +34,7 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
   if (!message.content.includes("https://hanab.live/replay/")) {
     const dmChannel = await message.author.createDM();
     await dmChannel.send(
-      `Your post in the #replays channel has been deleted since it does not contain a replay. Please use threads to discuss a specific replay.\n\nFor reference, your post was:\n\n> ${message.content}`,
+      `Your post in the #replays channel has been deleted since it does not contain a replay. Please use threads to discuss a specific replay.\n\nFor reference, your post was:\n> ${message.content}`,
     );
     await message.delete();
     return;
@@ -44,7 +44,7 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
   if (!message.content.includes("<https://hanab.live/replay/")) {
     const dmChannel = await message.author.createDM();
     await dmChannel.send(
-      `Your post in the #replays channel has been deleted since you have not disabled the link preview. Please enclose your link in \`<\` and \`>\`, like the following: \`<https://hanab.live/replay/123>\`\n\nFor reference, your post was:\n\n> ${message.content}`,
+      `Your post in the #replays channel has been deleted since you have not disabled the link preview. Please enclose your link in \`<\` and \`>\`, like the following: \`<https://hanab.live/replay/123>\`\n\nFor reference, your post was:\n> ${message.content}`,
     );
     await message.delete();
     return;
@@ -71,7 +71,7 @@ async function checkScreenshotsChannel(
   if (message.attachments.size === 0) {
     const dmChannel = await message.author.createDM();
     await dmChannel.send(
-      `Your post in the #screenshots channel has been deleted because it does not contain a screenshot. Please use threads to discuss a specific screenshot.\n\nFor reference, your post was:\n\n> ${message.content}`,
+      `Your post in the #screenshots channel has been deleted because it does not contain a screenshot. Please use threads to discuss a specific screenshot.\n\nFor reference, your post was:\n> ${message.content}`,
     );
     await message.delete();
     return;

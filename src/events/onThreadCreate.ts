@@ -42,7 +42,7 @@ async function checkConventionQuestions(
   if (message.attachments.size > 0) {
     const dmChannel = await message.author.createDM();
     await dmChannel.send(
-      `Your post in the convention-questions forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>\n\nFor reference, your post was:\n\n> ${message.content}`,
+      `Your post in the convention-questions forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>\n\nFor reference, your post was:\n> ${message.content}`,
     );
     await threadChannel.delete();
     return;
@@ -51,7 +51,7 @@ async function checkConventionQuestions(
   if (!isAllLinksEnclosed(message.content)) {
     const dmChannel = await message.author.createDM();
     await dmChannel.send(
-      `Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your links in \`<\` and \`>\` characters, which will disable the link preview and make your question easier to read.\n\nFor reference, your post was:\n\n> ${message.content}`,
+      `Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your links in \`<\` and \`>\` characters, which will disable the link preview and make your question easier to read.\n\nFor reference, your post was:\n> ${message.content}`,
     );
     await threadChannel.delete();
   }
