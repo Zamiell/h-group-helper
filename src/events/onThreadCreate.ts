@@ -64,14 +64,17 @@ async function checkConventionQuestions(
  * In Discord, you can disable the automatic link preview by enclosing a link in < and > characters.
  * This is usually preferable since it reduces spam.
  */
-function isAllLinksEnclosed(message: string): boolean {
-  const urls = message.match(URL_REGEX);
+function isAllLinksEnclosed(messageContent: string): boolean {
+  const urls = messageContent.match(URL_REGEX);
   if (urls === null) {
     return true;
   }
 
+  console.log(`DEBUG 1: ${messageContent}`);
+
   for (const url of urls) {
-    if (!message.includes(`<${url}>`)) {
+    console.log(`DEBUG 2: ${url}`);
+    if (!messageContent.includes(`<${url}>`)) {
       return false;
     }
   }
