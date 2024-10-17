@@ -29,14 +29,14 @@
     "discord.js": "^14.16.3",
     "fastq": "^1.17.1",
     "source-map-support": "^0.5.21",
-    "winston": "^3.14.2",
+    "winston": "^3.15.0",
     "zlib-sync": "^0.1.9",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^22.7.4",
+    "@types/node": "^22.7.6",
     "@types/source-map-support": "^0.5.10",
-    "complete-lint": "^1.9.4",
+    "complete-lint": "^1.9.5",
     "git-pull-run": "^1.4.0",
     "husky": "^9.1.6",
     "isaacscript": "^5.0.7",
