@@ -69,7 +69,7 @@ async function checkScreenshotsChannel(
   if (message.attachments.size === 0) {
     const dmChannel = await message.author.createDM();
     await dmChannel.send(
-      "Your post in the #screenshots channel has been deleted because it does not contain a screenshot. Please use threads to discuss a specific screenshot.`",
+      "Your post in the #screenshots channel has been deleted because it does not contain a screenshot. Please use threads to discuss a specific screenshot.",
     );
     await message.delete();
     return;
