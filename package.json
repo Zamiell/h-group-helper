@@ -18,6 +18,7 @@
     "deploy-commands": "tsx ./scripts/deployCommands.ts",
     "lint": "tsx ./scripts/lint.ts",
     "nuke": "isaacscript nuke",
+    "prepare": "husky",
     "start": "tsx ./src/main.ts",
     "update": "isaacscript update"
   },

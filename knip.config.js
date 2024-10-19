@@ -21,8 +21,6 @@ const config = {
     "bufferutil",
     "zlib-sync",
 
-    "husky", // Bug in Knip?
-
     // @template-customization-end
   ],
 };
