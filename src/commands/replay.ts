@@ -4,7 +4,7 @@ import type { Command } from "../interfaces/Command.js";
 
 const BASE_URL = "https://hanab.live/replay/";
 
-const DATABASE_ID_OPTION = "databaseID";
+const DATABASE_ID_OPTION = "database-id";
 const TURN_OPTION = "turn";
 
 export const replayCommand: Command = {
