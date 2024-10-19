@@ -4,21 +4,29 @@ import type { Command } from "../interfaces/Command.js";
 
 const BASE_URL = "https://hanab.live/replay/";
 
-const DATABASE_ID_NAME = "database ID";
-const TURN_NUMBER_NAME = "turn number";
+const DATABASE_ID_OPTION = "databaseID";
+const TURN_OPTION = "turn";
 
 export const replayCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("replay")
     .setDescription("Generate a link to a replay on Hanab Live.")
     .addNumberOption((option) =>
-      option.setName(DATABASE_ID_NAME).setRequired(true),
+      option
+        .setName(DATABASE_ID_OPTION)
+        .setDescription("The database ID that appears on the top of the deck.")
+        .setRequired(true),
     )
     .addNumberOption((option) =>
-      option.setName(TURN_NUMBER_NAME).setRequired(false),
+      option
+        .setName(TURN_OPTION)
+        .setDescription(
+          "Optional. The specific turn number to link to, if any.",
+        )
+        .setRequired(false),
     ),
   execute: async (interaction: ChatInputCommandInteraction) => {
-    const databaseID = interaction.options.getNumber(DATABASE_ID_NAME);
+    const databaseID = interaction.options.getNumber(DATABASE_ID_OPTION);
     if (databaseID === null) {
       await interaction.reply({
         content: "The database ID is required as the first argument.",
@@ -27,7 +35,7 @@ export const replayCommand: Command = {
       return;
     }
 
-    const turn = interaction.options.getNumber(TURN_NUMBER_NAME) ?? undefined;
+    const turn = interaction.options.getNumber(TURN_OPTION) ?? undefined;
     const url = getReplayURL(databaseID, turn);
     await interaction.reply(url);
   },
