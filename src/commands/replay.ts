@@ -27,6 +27,7 @@ export const replayCommand: Command = {
     ),
   execute: async (interaction: ChatInputCommandInteraction) => {
     const databaseID = interaction.options.getNumber(DATABASE_ID_OPTION);
+
     if (databaseID === null) {
       await interaction.reply({
         content: "The database ID is required as the first argument.",
@@ -35,7 +36,42 @@ export const replayCommand: Command = {
       return;
     }
 
+    if (databaseID < 0) {
+      await interaction.reply({
+        content: "The database ID must be a positive number.",
+        ephemeral: true,
+      });
+      return;
+    }
+
+    if (!Number.isSafeInteger(databaseID)) {
+      await interaction.reply({
+        content: "The database ID must be an integer.",
+        ephemeral: true,
+      });
+      return;
+    }
+
     const turn = interaction.options.getNumber(TURN_OPTION) ?? undefined;
+
+    if (turn !== undefined) {
+      if (turn < 0) {
+        await interaction.reply({
+          content: "The turn must be a positive number.",
+          ephemeral: true,
+        });
+        return;
+      }
+
+      if (!Number.isSafeInteger(turn)) {
+        await interaction.reply({
+          content: "The turn must be an integer.",
+          ephemeral: true,
+        });
+        return;
+      }
+    }
+
     const url = getReplayURL(databaseID, turn);
 
     // Enclose the URL in "<" and ">" to prevent Discord from generating a link preview.
