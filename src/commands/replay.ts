@@ -11,14 +11,14 @@ export const replayCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("replay")
     .setDescription("Generate a link to a replay on Hanab Live.")
-    .addNumberOption((option) =>
+    .addIntegerOption((option) =>
       option
         .setName(DATABASE_ID_OPTION)
         .setDescription("The database ID that appears on the top of the deck.")
         .setRequired(true)
         .setMinValue(1),
     )
-    .addNumberOption(
+    .addIntegerOption(
       (option) =>
         option
           .setName(TURN_OPTION)
@@ -30,7 +30,6 @@ export const replayCommand: Command = {
     ),
   execute: async (interaction: ChatInputCommandInteraction) => {
     const databaseID = interaction.options.getNumber(DATABASE_ID_OPTION);
-
     if (databaseID === null) {
       await interaction.reply({
         content: "The database ID is required as the first argument.",
@@ -39,24 +38,7 @@ export const replayCommand: Command = {
       return;
     }
 
-    if (!Number.isSafeInteger(databaseID)) {
-      await interaction.reply({
-        content: "The database ID must be an integer.",
-        ephemeral: true,
-      });
-      return;
-    }
-
     const turn = interaction.options.getNumber(TURN_OPTION) ?? undefined;
-
-    if (turn !== undefined && !Number.isSafeInteger(turn)) {
-      await interaction.reply({
-        content: "The turn must be an integer.",
-        ephemeral: true,
-      });
-      return;
-    }
-
     const url = getReplayURL(databaseID, turn);
 
     // Enclose the URL in "<" and ">" to prevent Discord from generating a link preview.
