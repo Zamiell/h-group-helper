@@ -87,6 +87,12 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     `Failed to find the role: ${CONVENTION_ADMIN_ROLE_NAME}`,
   );
 
+  /**
+   * Represents admins of the Discord server who's job it is to read every message (for possible
+   * rule violations). This should technically be equal to all of the members in the "Moderator"
+   * role, but instead we re-use the "Convention Admins" role, since not all of the official
+   * moderators want to be pinged for every single thread.
+   */
   const adminIDs = [...conventionAdminRole.members.keys()];
 
   const replaysChannel = getChannelByName(guild, "replays");
