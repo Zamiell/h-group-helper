@@ -14,19 +14,23 @@ const URL_REGEX = /https?:\/\/[^\s<>]+/g;
 
 export async function onThreadCreate(
   threadChannel: ThreadChannel,
-  questionForumID: string,
-  proposalForumID: string,
+  conventionQuestionsForumID: string,
+  conventionProposalsForumID: string,
   openTagID: string,
 ): Promise<void> {
-  await checkConventionQuestions(threadChannel, questionForumID);
-  await checkConventionProposals(threadChannel, proposalForumID, openTagID);
+  await checkConventionQuestions(threadChannel, conventionQuestionsForumID);
+  await checkConventionProposals(
+    threadChannel,
+    conventionProposalsForumID,
+    openTagID,
+  );
 }
 
 async function checkConventionQuestions(
   threadChannel: ThreadChannel,
-  questionForumID: string,
+  conventionQuestionsForumID: string,
 ) {
-  if (threadChannel.parentId !== questionForumID) {
+  if (threadChannel.parentId !== conventionQuestionsForumID) {
     return;
   }
 
@@ -77,10 +81,10 @@ function isAllLinksEnclosed(messageContent: string): boolean {
 
 async function checkConventionProposals(
   threadChannel: ThreadChannel,
-  proposalForumID: string,
+  conventionProposalsForumID: string,
   openTagID: string,
 ) {
-  if (threadChannel.parentId !== proposalForumID) {
+  if (threadChannel.parentId !== conventionProposalsForumID) {
     return;
   }
 

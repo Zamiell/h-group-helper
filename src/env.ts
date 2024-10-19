@@ -19,12 +19,6 @@ const envSchema = z.object({
    * select "Copy Server ID". (This is also known as the guild ID.)
    */
   DISCORD_SERVER_ID: z.string().min(1),
-
-  /**
-   * The name of the Discord voice channel category that all of the bot-managed voice channels will
-   * reside in. e.g. "H-Group Pickup Games"
-   */
-  VOICE_CATEGORY_NAME: z.string().min(1),
 });
 
 export const env = getEnv(envSchema);

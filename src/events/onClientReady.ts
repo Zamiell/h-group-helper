@@ -11,6 +11,12 @@ import { onMessageCreate } from "./onMessageCreate.js";
 import { onThreadCreate } from "./onThreadCreate.js";
 import { onVoiceStateUpdate } from "./onVoiceStatusUpdate.js";
 
+const VOICE_CATEGORY_NAME = "H-Group Pickup Games";
+const CREATE_NEW_VOICE_CHANNEL_NAME = "Create New Voice Channel";
+const CONVENTION_QUESTIONS_FORUM_NAME = "convention-questions";
+const CONVENTION_PROPOSALS_FORUM_NAME = "convention-proposals";
+const CONVENTION_ADMIN_ROLE_NAME = "Convention Admin";
+
 export async function onClientReady(client: Client<true>): Promise<void> {
   logger.info(
     `Connected to Discord with a username of: ${client.user.username}`,
@@ -27,41 +33,38 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   await guild.roles.fetch();
   await guild.channels.fetch();
 
-  const voiceCategoryID = getChannelIDByName(guild, env.VOICE_CATEGORY_NAME);
+  const voiceCategoryID = getChannelIDByName(guild, VOICE_CATEGORY_NAME);
   assertDefined(
     voiceCategoryID,
-    `Failed to find the channel ID of: ${env.VOICE_CATEGORY_NAME}`,
-  );
-
-  const questionForumID = getChannelIDByName(guild, "convention-questions");
-  assertDefined(
-    questionForumID,
-    "Failed to find the channel ID of: convention-questions",
-  );
-
-  const proposalForumID = getChannelIDByName(guild, "convention-proposals");
-  assertDefined(
-    proposalForumID,
-    "Failed to find the channel ID of: convention-proposals",
+    `Failed to find the channel ID of: ${VOICE_CATEGORY_NAME}`,
   );
 
   const createNewVoiceChannelID = getChannelIDByName(
     guild,
-    "Create New Voice Channel",
+    CREATE_NEW_VOICE_CHANNEL_NAME,
   );
   assertDefined(
     createNewVoiceChannelID,
-    "Failed to find the channel ID of: Create New Voice Channel",
+    `Failed to find the channel ID of: ${CREATE_NEW_VOICE_CHANNEL_NAME}`,
+  );
+
+  const conventionQuestionsForumID = getChannelIDByName(
+    guild,
+    CONVENTION_QUESTIONS_FORUM_NAME,
+  );
+  assertDefined(
+    conventionQuestionsForumID,
+    `Failed to find the channel ID of: ${CONVENTION_QUESTIONS_FORUM_NAME}`,
   );
 
   const conventionProposals = client.channels.cache.find(
     (channel) =>
       channel instanceof ForumChannel &&
-      channel.name === "convention-proposals",
+      channel.name === CONVENTION_PROPOSALS_FORUM_NAME,
   ) as ForumChannel | undefined;
   assertDefined(
     conventionProposals,
-    "Failed to find the channel: convention-proposals",
+    `Failed to find the forum: ${CONVENTION_PROPOSALS_FORUM_NAME}`,
   );
 
   const openTag = conventionProposals.availableTags.find(
@@ -74,10 +77,13 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   );
   assertDefined(closedTag, "Failed to find the forum tag: closed");
 
-  const conventionAdminRoleID = getRoleIDByName(guild, "Convention Admin");
+  const conventionAdminRoleID = getRoleIDByName(
+    guild,
+    CONVENTION_ADMIN_ROLE_NAME,
+  );
   assertDefined(
     conventionAdminRoleID,
-    "Failed to find the role: Convention Admin",
+    `Failed to find the role: ${CONVENTION_ADMIN_ROLE_NAME}`,
   );
 
   const replaysChannelID = getChannelIDByName(guild, "replays");
@@ -125,8 +131,8 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   client.on(Events.ThreadCreate, async (threadChannel) => {
     await onThreadCreate(
       threadChannel,
-      questionForumID,
-      proposalForumID,
+      conventionQuestionsForumID,
+      conventionProposals.id,
       openTag.id,
     );
   });

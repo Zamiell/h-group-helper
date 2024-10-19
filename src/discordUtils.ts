@@ -2,6 +2,7 @@ import type { Guild, GuildBasedChannel, VoiceBasedChannel } from "discord.js";
 import { DiscordAPIError, RESTJSONErrorCodes } from "discord.js";
 import { logger } from "./logger.js";
 
+/** This works for both channels and forums. */
 export function getChannelIDByName(
   guild: Guild,
   channelName: string,
