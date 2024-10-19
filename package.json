@@ -1,6 +1,6 @@
 {
   "name": "h-group-helper",
-  "version": "0.0.0",
+  "private": true,
   "description": "A Discord bot",
   "homepage": "https://github.com/Zamiell/h-group-helper",
   "bugs": {
