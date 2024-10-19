@@ -14,16 +14,30 @@ const URL_REGEX = /https?:\/\/[^\s<>]+/g;
 
 export async function onThreadCreate(
   threadChannel: ThreadChannel,
+  adminIDs: readonly string[],
   conventionQuestionsForumID: string,
   conventionProposalsForumID: string,
   openTagID: string,
 ): Promise<void> {
+  await autoJoinAdminsToAllThreads(threadChannel, adminIDs);
   await checkConventionQuestions(threadChannel, conventionQuestionsForumID);
   await checkConventionProposals(
     threadChannel,
     conventionProposalsForumID,
     openTagID,
   );
+}
+
+async function autoJoinAdminsToAllThreads(
+  threadChannel: ThreadChannel,
+  adminIDs: readonly string[],
+) {
+  const promises: Array<Promise<string>> = [];
+  for (const adminID of adminIDs) {
+    const promise = threadChannel.members.add(adminID);
+    promises.push(promise);
+  }
+  await Promise.all(promises);
 }
 
 async function checkConventionQuestions(

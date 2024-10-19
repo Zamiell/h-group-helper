@@ -1,7 +1,7 @@
 import { assertDefined } from "complete-common";
 import type { Client } from "discord.js";
 import { Events, ForumChannel } from "discord.js";
-import { getChannelIDByName, getRoleIDByName } from "../discordUtils.js";
+import { getChannelByName, getRoleByName } from "../discordUtils.js";
 import { QueueType } from "../enums/QueueType.js";
 import { env } from "../env.js";
 import { logger } from "../logger.js";
@@ -30,42 +30,46 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   // ----------------
 
   // Refresh the role and channel caches.
-  await guild.roles.fetch();
-  await guild.channels.fetch();
+  await Promise.all([guild.roles.fetch(), guild.channels.fetch()]);
 
-  const voiceCategoryID = getChannelIDByName(guild, VOICE_CATEGORY_NAME);
+  const voiceCategory = getChannelByName(guild, VOICE_CATEGORY_NAME);
   assertDefined(
-    voiceCategoryID,
-    `Failed to find the channel ID of: ${VOICE_CATEGORY_NAME}`,
+    voiceCategory,
+    `Failed to find the channel of: ${VOICE_CATEGORY_NAME}`,
   );
 
-  const createNewVoiceChannelID = getChannelIDByName(
+  const createNewVoiceChannel = getChannelByName(
     guild,
     CREATE_NEW_VOICE_CHANNEL_NAME,
   );
   assertDefined(
-    createNewVoiceChannelID,
-    `Failed to find the channel ID of: ${CREATE_NEW_VOICE_CHANNEL_NAME}`,
+    createNewVoiceChannel,
+    `Failed to find the channel of: ${CREATE_NEW_VOICE_CHANNEL_NAME}`,
   );
 
-  const conventionQuestionsForumID = getChannelIDByName(
+  const conventionQuestionsForum = getChannelByName(
     guild,
     CONVENTION_QUESTIONS_FORUM_NAME,
   );
   assertDefined(
-    conventionQuestionsForumID,
-    `Failed to find the channel ID of: ${CONVENTION_QUESTIONS_FORUM_NAME}`,
+    conventionQuestionsForum,
+    `Failed to find the channel of: ${CONVENTION_QUESTIONS_FORUM_NAME}`,
   );
 
-  const conventionProposals = client.channels.cache.find(
-    (channel) =>
-      channel instanceof ForumChannel &&
-      channel.name === CONVENTION_PROPOSALS_FORUM_NAME,
-  ) as ForumChannel | undefined;
+  const conventionProposals = getChannelByName(
+    guild,
+    CONVENTION_PROPOSALS_FORUM_NAME,
+  );
   assertDefined(
     conventionProposals,
-    `Failed to find the forum: ${CONVENTION_PROPOSALS_FORUM_NAME}`,
+    `Failed to find the channel of: ${CONVENTION_PROPOSALS_FORUM_NAME}`,
   );
+
+  if (!(conventionProposals instanceof ForumChannel)) {
+    throw new TypeError(
+      `The channel of "${CONVENTION_PROPOSALS_FORUM_NAME}" is not a ForumChannel.`,
+    );
+  }
 
   const openTag = conventionProposals.availableTags.find(
     (tag) => tag.name.includes("open"), // The tag also has an emoji in it.
@@ -77,29 +81,25 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   );
   assertDefined(closedTag, "Failed to find the forum tag: closed");
 
-  const conventionAdminRoleID = getRoleIDByName(
-    guild,
-    CONVENTION_ADMIN_ROLE_NAME,
-  );
+  const conventionAdminRole = getRoleByName(guild, CONVENTION_ADMIN_ROLE_NAME);
   assertDefined(
-    conventionAdminRoleID,
+    conventionAdminRole,
     `Failed to find the role: ${CONVENTION_ADMIN_ROLE_NAME}`,
   );
 
-  const replaysChannelID = getChannelIDByName(guild, "replays");
-  assertDefined(replaysChannelID, "Failed to find the channel: replays");
+  const adminIDs = [...conventionAdminRole.members.keys()];
 
-  const screenshotsChannelID = getChannelIDByName(guild, "screenshots");
-  assertDefined(
-    screenshotsChannelID,
-    "Failed to find the channel: screenshots",
-  );
+  const replaysChannel = getChannelByName(guild, "replays");
+  assertDefined(replaysChannel, "Failed to find the channel: replays");
 
-  const videosChannelID = getChannelIDByName(guild, "videos");
-  assertDefined(videosChannelID, "Failed to find the channel: videos");
+  const screenshotsChannel = getChannelByName(guild, "screenshots");
+  assertDefined(screenshotsChannel, "Failed to find the channel: screenshots");
 
-  const puzzlesChannelID = getChannelIDByName(guild, "puzzles");
-  assertDefined(puzzlesChannelID, "Failed to find the channel: puzzles");
+  const videosChannel = getChannelByName(guild, "videos");
+  assertDefined(videosChannel, "Failed to find the channel: videos");
+
+  const puzzlesChannel = getChannelByName(guild, "puzzles");
+  assertDefined(puzzlesChannel, "Failed to find the channel: puzzles");
 
   // ---------------------
   // Attach event handlers
@@ -110,7 +110,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   client.on(Events.InteractionCreate, async (interaction) => {
     await onInteractionCreate(
       interaction,
-      conventionAdminRoleID,
+      conventionAdminRole.id,
       conventionProposals.id,
       closedTag.id,
     );
@@ -120,10 +120,10 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   client.on(Events.MessageCreate, async (message) => {
     await onMessageCreate(
       message,
-      replaysChannelID,
-      screenshotsChannelID,
-      videosChannelID,
-      puzzlesChannelID,
+      replaysChannel.id,
+      screenshotsChannel.id,
+      videosChannel.id,
+      puzzlesChannel.id,
     );
   });
 
@@ -131,7 +131,8 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   client.on(Events.ThreadCreate, async (threadChannel) => {
     await onThreadCreate(
       threadChannel,
-      conventionQuestionsForumID,
+      adminIDs,
+      conventionQuestionsForum.id,
       conventionProposals.id,
       openTag.id,
     );
@@ -142,8 +143,8 @@ export async function onClientReady(client: Client<true>): Promise<void> {
       oldState,
       newState,
       client,
-      voiceCategoryID,
-      createNewVoiceChannelID,
+      voiceCategory.id,
+      createNewVoiceChannel.id,
     );
   });
 
@@ -154,7 +155,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   await deleteEmptyVoiceChannels({
     type: QueueType.DeleteEmptyVoiceChannels,
     guild,
-    voiceCategoryID,
-    createNewVoiceChannelID,
+    voiceCategoryID: voiceCategory.id,
+    createNewVoiceChannelID: createNewVoiceChannel.id,
   });
 }

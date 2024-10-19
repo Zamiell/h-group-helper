@@ -1,36 +1,34 @@
-import type { Guild, GuildBasedChannel, VoiceBasedChannel } from "discord.js";
+import type {
+  Guild,
+  GuildBasedChannel,
+  Role,
+  VoiceBasedChannel,
+} from "discord.js";
 import { DiscordAPIError, RESTJSONErrorCodes } from "discord.js";
 import { logger } from "./logger.js";
 
 /** This works for both channels and forums. */
-export function getChannelIDByName(
+export function getChannelByName(
   guild: Guild,
   channelName: string,
-): string | undefined {
-  const channels = [...guild.channels.cache.values()];
-  const matchingChannel = channels.find(
-    (channel) => channel.name === channelName,
-  );
-  return matchingChannel === undefined ? undefined : matchingChannel.id;
+): GuildBasedChannel | undefined {
+  return guild.channels.cache.find((channel) => channel.name === channelName);
 }
 
-export function getRoleIDByName(
+export function getRoleByName(
   guild: Guild,
   roleName: string,
-): string | undefined {
-  const roles = [...guild.roles.cache.values()];
-  const matchingRole = roles.find((role) => role.name === roleName);
-  return matchingRole === undefined ? undefined : matchingRole.id;
+): Role | undefined {
+  return guild.roles.cache.find((role) => role.name === roleName);
 }
 
 export function getVoiceChannelsInCategory(
   guild: Guild,
   categoryID: string,
 ): readonly VoiceBasedChannel[] {
-  const channelMap = guild.channels.cache;
-  const allChannels = [...channelMap.values()];
+  const allChannels = [...guild.channels.cache.values()];
   const channels = allChannels.filter(isNotNullUndefined);
-  const voiceChannels = channels.filter(isVoiceChannel);
+  const voiceChannels = channels.filter((channel) => channel.isVoiceBased());
 
   const voiceChannelsInCategory = voiceChannels.filter(
     (channel) => channel.parentId === categoryID,
@@ -41,12 +39,6 @@ export function getVoiceChannelsInCategory(
 
 function isNotNullUndefined<T>(value: T | null | undefined): value is T {
   return value !== null && value !== undefined;
-}
-
-function isVoiceChannel(
-  channel: GuildBasedChannel,
-): channel is VoiceBasedChannel {
-  return channel.isVoiceBased();
 }
 
 export function isVoiceChannelEmpty(channel: VoiceBasedChannel): boolean {
