@@ -19,3 +19,6 @@ await rest.put(
   ),
   { body },
 );
+
+console.log("Added the following commands:\n");
+console.log(JSON.stringify(body, undefined, 2));
