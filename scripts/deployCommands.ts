@@ -1,4 +1,4 @@
-// Registering slash commands are done in a separate script. See:
+// In Discord, slash commands must be registered a separate script. See:
 // https://discordjs.guide/creating-your-bot/command-deployment.html#command-registration
 
 /* eslint-disable @typescript-eslint/no-restricted-imports */
