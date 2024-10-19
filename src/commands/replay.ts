@@ -15,15 +15,18 @@ export const replayCommand: Command = {
       option
         .setName(DATABASE_ID_OPTION)
         .setDescription("The database ID that appears on the top of the deck.")
-        .setRequired(true),
+        .setRequired(true)
+        .setMinValue(1),
     )
-    .addNumberOption((option) =>
-      option
-        .setName(TURN_OPTION)
-        .setDescription(
-          "Optional. The specific turn number to link to, if any.",
-        )
-        .setRequired(false),
+    .addNumberOption(
+      (option) =>
+        option
+          .setName(TURN_OPTION)
+          .setDescription(
+            "Optional. The specific turn number to link to, if any.",
+          )
+          .setRequired(false)
+          .setMinValue(2), // Linking to the first turn would be superfluous.
     ),
   execute: async (interaction: ChatInputCommandInteraction) => {
     const databaseID = interaction.options.getNumber(DATABASE_ID_OPTION);
@@ -31,14 +34,6 @@ export const replayCommand: Command = {
     if (databaseID === null) {
       await interaction.reply({
         content: "The database ID is required as the first argument.",
-        ephemeral: true,
-      });
-      return;
-    }
-
-    if (databaseID < 0) {
-      await interaction.reply({
-        content: "The database ID must be a positive number.",
         ephemeral: true,
       });
       return;
@@ -54,22 +49,12 @@ export const replayCommand: Command = {
 
     const turn = interaction.options.getNumber(TURN_OPTION) ?? undefined;
 
-    if (turn !== undefined) {
-      if (turn < 0) {
-        await interaction.reply({
-          content: "The turn must be a positive number.",
-          ephemeral: true,
-        });
-        return;
-      }
-
-      if (!Number.isSafeInteger(turn)) {
-        await interaction.reply({
-          content: "The turn must be an integer.",
-          ephemeral: true,
-        });
-        return;
-      }
+    if (turn !== undefined && !Number.isSafeInteger(turn)) {
+      await interaction.reply({
+        content: "The turn must be an integer.",
+        ephemeral: true,
+      });
+      return;
     }
 
     const url = getReplayURL(databaseID, turn);
