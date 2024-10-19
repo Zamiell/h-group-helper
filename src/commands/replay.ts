@@ -2,7 +2,7 @@ import type { ChatInputCommandInteraction } from "discord.js";
 import { SlashCommandBuilder } from "discord.js";
 import type { Command } from "../interfaces/Command.js";
 
-const BASE_URL = "https://hanab.live/replay/";
+const BASE_URL = "https://hanab.live/replay";
 
 const DATABASE_ID_OPTION = "database-id";
 const TURN_OPTION = "turn";
