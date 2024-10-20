@@ -29,8 +29,12 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   // Gather variables
   // ----------------
 
-  // Refresh the role and channel caches.
-  await Promise.all([guild.roles.fetch(), guild.channels.fetch()]);
+  // Refresh the various caches so that gathering the variables below works properly.
+  await Promise.all([
+    guild.channels.fetch(),
+    guild.members.fetch(),
+    guild.roles.fetch(),
+  ]);
 
   const voiceCategory = getChannelByName(guild, VOICE_CATEGORY_NAME);
   assertDefined(
@@ -94,6 +98,11 @@ export async function onClientReady(client: Client<true>): Promise<void> {
    * moderators want to be pinged for every single thread.
    */
   const adminIDs = [...conventionAdminRole.members.keys()];
+  if (adminIDs.length === 0) {
+    throw new Error(
+      `Failed to find any members in the "${CONVENTION_ADMIN_ROLE_NAME}" role.`,
+    );
+  }
 
   const replaysChannel = getChannelByName(guild, "replays");
   assertDefined(replaysChannel, "Failed to find the channel: replays");
