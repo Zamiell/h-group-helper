@@ -32,12 +32,12 @@ async function autoJoinAdminsToAllThreads(
   threadChannel: ThreadChannel,
   adminIDs: readonly string[],
 ) {
-  const promises: Array<Promise<string>> = [];
-  for (const adminID of adminIDs) {
-    const promise = threadChannel.members.add(adminID);
-    promises.push(promise);
-  }
-  await Promise.all(promises);
+  await Promise.all(
+    adminIDs.map(async (adminID) => threadChannel.members.add(adminID)),
+  );
+  logger.info(
+    `Added admins "${JSON.stringify(adminIDs)}" to the thread of: ${threadChannel.name}`,
+  );
 }
 
 async function checkConventionQuestions(
