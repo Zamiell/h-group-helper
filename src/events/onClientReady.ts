@@ -154,13 +154,6 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     );
   });
 
-  // TODO: test
-  client.on(Events.ThreadMemberUpdate, (threadChannel, member) => {
-    console.log(
-      `ThreadMemberUpdate: ${threadChannel.thread.name} - ${member.user?.username}`,
-    );
-  });
-
   client.on(Events.VoiceStateUpdate, (oldState, newState) => {
     onVoiceStateUpdate(
       oldState,
