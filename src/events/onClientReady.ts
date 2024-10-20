@@ -136,6 +136,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     await onMessageCreate(
       message,
       client.user.id,
+      adminIDs,
       replaysChannel.id,
       screenshotsChannel.id,
       videosChannel.id,
@@ -147,7 +148,6 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   client.on(Events.ThreadCreate, async (threadChannel) => {
     await onThreadCreate(
       threadChannel,
-      adminIDs,
       conventionQuestionsForum.id,
       conventionProposals.id,
       openTag.id,

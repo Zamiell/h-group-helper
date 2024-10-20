@@ -6,6 +6,7 @@ import { ADDING_MEMBER_TO_THREAD_TEXT } from "./onThreadCreate.js";
 export async function onMessageCreate(
   message: Message,
   botID: string,
+  adminIDs: readonly string[],
   replaysChannelID: string,
   screenshotsChannelID: string,
   videosChannelID: string,
@@ -13,7 +14,7 @@ export async function onMessageCreate(
 ): Promise<void> {
   logDiscordTextMessage(message);
 
-  await checkBotMessages(message, botID);
+  await checkBotMessages(message, botID, adminIDs);
   await checkReplaysChannel(message, replaysChannelID);
   await checkScreenshotsChannel(message, screenshotsChannelID);
   await checkVideosChannel(message, videosChannelID);
@@ -29,11 +30,19 @@ function logDiscordTextMessage(message: Message) {
   );
 }
 
-async function checkBotMessages(message: Message, botID: string) {
+/** See the description of the `autoJoinAdminsToAllThreads` function. */
+async function checkBotMessages(
+  message: Message,
+  botID: string,
+  adminIDs: readonly string[],
+) {
   if (
     message.author.id === botID &&
     message.content.startsWith(ADDING_MEMBER_TO_THREAD_TEXT)
   ) {
+    const mentions = adminIDs.map((adminID) => `<@${adminID}>`);
+    const mentionsMsg = mentions.join(" ");
+    await message.edit(mentionsMsg);
     await message.delete();
   }
 }

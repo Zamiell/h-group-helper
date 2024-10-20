@@ -1,7 +1,7 @@
 import type { Message, ThreadChannel } from "discord.js";
 import { logger } from "../logger.js";
 
-export const ADDING_MEMBER_TO_THREAD_TEXT = "Adding member to thread:";
+export const ADDING_MEMBER_TO_THREAD_TEXT = "Adding member to thread.";
 
 const CONVENTION_QUESTIONS_MESSAGE = `Please make sure that your question satisfies all of the rules here:
 <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>
@@ -16,12 +16,11 @@ const URL_REGEX = /https?:\/\/[^\s<>]+/g;
 
 export async function onThreadCreate(
   threadChannel: ThreadChannel,
-  adminIDs: readonly string[],
   conventionQuestionsForumID: string,
   conventionProposalsForumID: string,
   openTagID: string,
 ): Promise<void> {
-  await autoJoinAdminsToAllThreads(threadChannel, adminIDs);
+  await autoJoinAdminsToAllThreads(threadChannel);
   await checkConventionQuestions(threadChannel, conventionQuestionsForumID);
   await checkConventionProposals(
     threadChannel,
@@ -32,21 +31,15 @@ export async function onThreadCreate(
 
 /**
  * It is possible to join an admin to a thread with the `threadChannel.members.add` method. However,
- * this displays a notification of the person being added, which is unnecessary spam. Instead, we
- * simply bring the user into the thread with a ping, and then delete the ping afterward.
+ * this displays a notification of the person being added, which is unnecessary spam. It is also
+ * possible to join an admin to a thread by mentioning/pinging them with a message and then deleting
+ * that message. However, this is undesirable because it causes a ping instead of a normal message
+ * notification. Instead, we can create an arbitrary message, edit the message with a mention, and
+ * then delete the message, which will actually add the user without pinging them.
  */
-async function autoJoinAdminsToAllThreads(
-  threadChannel: ThreadChannel,
-  adminIDs: readonly string[],
-) {
-  /*
-  await Promise.all(
-    adminIDs.map(async (adminID) =>
-      threadChannel.send(`${ADDING_MEMBER_TO_THREAD_TEXT} <@${adminID}>`),
-    ),
-  );
-  */
-  // (The message is deleted later once it is received by the client.)
+async function autoJoinAdminsToAllThreads(threadChannel: ThreadChannel) {
+  await threadChannel.send(ADDING_MEMBER_TO_THREAD_TEXT);
+  // (The message is edited and deleted later once it is received by the client.)
 }
 
 async function checkConventionQuestions(
