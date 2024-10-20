@@ -41,7 +41,7 @@ async function autoJoinAdminsToAllThreads(
 ) {
   await Promise.all(
     adminIDs.map(async (adminID) =>
-      threadChannel.send(`${ADDING_MEMBER_TO_THREAD_TEXT} @${adminID}`),
+      threadChannel.send(`${ADDING_MEMBER_TO_THREAD_TEXT} <@${adminID}>`),
     ),
   );
   // (The message is deleted later once it is received by the client.)
