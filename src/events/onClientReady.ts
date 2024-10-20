@@ -19,7 +19,7 @@ const CONVENTION_ADMIN_ROLE_NAME = "Convention Admin";
 
 export async function onClientReady(client: Client<true>): Promise<void> {
   logger.info(
-    `Connected to Discord with a username of: ${client.user.username}`,
+    `Connected to Discord with a username of "${client.user.username}" and an ID of "${client.user.id}".`,
   );
 
   const guild = await client.guilds.fetch(env.DISCORD_SERVER_ID);
@@ -135,6 +135,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   client.on(Events.MessageCreate, async (message) => {
     await onMessageCreate(
       message,
+      client.user.id,
       replaysChannel.id,
       screenshotsChannel.id,
       videosChannel.id,

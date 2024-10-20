@@ -1,9 +1,11 @@
 import type { Message } from "discord.js";
 import { ChannelType } from "discord.js";
 import { logger } from "../logger.js";
+import { ADDING_MEMBER_TO_THREAD_TEXT } from "./onThreadCreate.js";
 
 export async function onMessageCreate(
   message: Message,
+  botID: string,
   replaysChannelID: string,
   screenshotsChannelID: string,
   videosChannelID: string,
@@ -11,6 +13,7 @@ export async function onMessageCreate(
 ): Promise<void> {
   logDiscordTextMessage(message);
 
+  await checkBotMessages(message, botID);
   await checkReplaysChannel(message, replaysChannelID);
   await checkScreenshotsChannel(message, screenshotsChannelID);
   await checkVideosChannel(message, videosChannelID);
@@ -24,6 +27,15 @@ function logDiscordTextMessage(message: Message) {
   logger.info(
     `[${channelName}] <${message.author.username}> ${message.content}`,
   );
+}
+
+async function checkBotMessages(message: Message, botID: string) {
+  if (
+    message.author.id === botID &&
+    message.content.startsWith(ADDING_MEMBER_TO_THREAD_TEXT)
+  ) {
+    await message.delete();
+  }
 }
 
 async function checkReplaysChannel(message: Message, replaysChannelID: string) {

@@ -1,6 +1,8 @@
 import type { Message, ThreadChannel } from "discord.js";
 import { logger } from "../logger.js";
 
+export const ADDING_MEMBER_TO_THREAD_TEXT = "Adding member to thread:";
+
 const CONVENTION_QUESTIONS_MESSAGE = `Please make sure that your question satisfies all of the rules here:
 <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>
 If it doesn't, please edit your question accordingly.`;
@@ -28,16 +30,21 @@ export async function onThreadCreate(
   );
 }
 
+/**
+ * It is possible to join an admin to a thread with the `threadChannel.members.add` method. However,
+ * this displays a notification of the person being added, which is unnecessary spam. Instead, we
+ * simply bring the user into the thread with a ping, and then delete the ping afterward.
+ */
 async function autoJoinAdminsToAllThreads(
   threadChannel: ThreadChannel,
   adminIDs: readonly string[],
 ) {
   await Promise.all(
-    adminIDs.map(async (adminID) => threadChannel.members.add(adminID)),
+    adminIDs.map(async (adminID) =>
+      threadChannel.send(`${ADDING_MEMBER_TO_THREAD_TEXT} @${adminID}`),
+    ),
   );
-  logger.info(
-    `Added admins "${JSON.stringify(adminIDs)}" to the thread of: ${threadChannel.name}`,
-  );
+  // (The message is deleted later once it is received by the client.)
 }
 
 async function checkConventionQuestions(
