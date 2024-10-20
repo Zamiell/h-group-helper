@@ -29,12 +29,13 @@ function logDiscordTextMessage(message: Message) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/require-await
 async function checkBotMessages(message: Message, botID: string) {
   if (
     message.author.id === botID &&
     message.content.startsWith(ADDING_MEMBER_TO_THREAD_TEXT)
   ) {
-    await message.delete();
+    /// await message.delete(); // TODO
   }
 }
 
