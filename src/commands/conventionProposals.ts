@@ -5,6 +5,7 @@ import type {
   TextBasedChannel,
 } from "discord.js";
 import { ChannelType, SlashCommandBuilder } from "discord.js";
+import { memberHasRole } from "../discordUtils.js";
 import type { Command } from "../interfaces/Command.js";
 
 const MESSAGES = new ReadonlyMap([
@@ -58,7 +59,16 @@ async function conventionProposalCommand(
   conventionProposalsID: string,
   closedTagID: string,
 ): Promise<void> {
-  if (!isConventionAdmin(interaction, conventionAdminRoleID)) {
+  if (interaction.guild === null) {
+    return;
+  }
+
+  const isConventionAdmin = await memberHasRole(
+    interaction.guild,
+    interaction.user.id,
+    conventionAdminRoleID,
+  );
+  if (!isConventionAdmin) {
     await interaction.reply({
       content: "You are not authorized to perform this command.",
       ephemeral: true,
@@ -90,22 +100,6 @@ async function conventionProposalCommand(
 
   await channel.setAppliedTags([closedTagID]);
   await channel.setLocked();
-}
-
-function isConventionAdmin(
-  interaction: ChatInputCommandInteraction,
-  conventionAdminRoleID: string,
-): boolean {
-  if (interaction.guild === null) {
-    return false;
-  }
-
-  const member = interaction.guild.members.cache.get(interaction.user.id);
-  if (member === undefined) {
-    return false;
-  }
-
-  return member.roles.cache.has(conventionAdminRoleID);
 }
 
 function inConventionProposalsForum(

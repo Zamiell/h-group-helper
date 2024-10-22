@@ -1,4 +1,5 @@
 import type { Message, ThreadChannel } from "discord.js";
+import { memberHasRole } from "../discordUtils.js";
 import { logger } from "../logger.js";
 
 export const ADDING_MEMBER_TO_THREAD_TEXT = "Adding member to thread.";
@@ -18,6 +19,7 @@ export async function onThreadCreate(
   threadChannel: ThreadChannel,
   conventionQuestionsForumID: string,
   conventionProposalsForumID: string,
+  hGroupRoleID: string,
   openTagID: string,
 ): Promise<void> {
   await autoJoinAdminsToAllThreads(threadChannel);
@@ -25,6 +27,7 @@ export async function onThreadCreate(
   await checkConventionProposals(
     threadChannel,
     conventionProposalsForumID,
+    hGroupRoleID,
     openTagID,
   );
 }
@@ -98,14 +101,29 @@ function isAllLinksEnclosed(messageContent: string): boolean {
 async function checkConventionProposals(
   threadChannel: ThreadChannel,
   conventionProposalsForumID: string,
+  hGroupRoleID: string,
   openTagID: string,
 ) {
   if (threadChannel.parentId !== conventionProposalsForumID) {
     return;
   }
 
-  const starterMessage = await getStarterMessage(threadChannel);
-  if (starterMessage === undefined) {
+  const message = await getStarterMessage(threadChannel);
+  if (message === undefined) {
+    return;
+  }
+
+  const isHGroup = await memberHasRole(
+    threadChannel.guild,
+    message.author.id,
+    hGroupRoleID,
+  );
+  if (!isHGroup) {
+    const dmChannel = await message.author.createDM();
+    await dmChannel.send(
+      `Your post in the convention-proposals forum has been deleted because you do not have the "H-Group" role. Do you regularly play pick-up games in this Discord server using the voice channels? If so, please request the "H-Group" role from a Discord moderator. You can find the current list of moderators in the #role-explanations channel.\n\nFor reference, your post was:\n> ${message.content}`,
+    );
+    await threadChannel.delete();
     return;
   }
 

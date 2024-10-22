@@ -3,13 +3,13 @@ import { QueueType } from "../enums/QueueType.js";
 import { logger } from "../logger.js";
 import { addQueue } from "../queue.js";
 
-export function onVoiceStateUpdate(
+export async function onVoiceStateUpdate(
   oldState: VoiceState,
   newState: VoiceState,
   client: Client<true>,
   voiceCategoryID: string,
   createNewVoiceChannelID: string,
-): void {
+): Promise<void> {
   const { guild } = newState;
   const userID = newState.id;
   const oldChannelID = oldState.channelId;
@@ -23,7 +23,7 @@ export function onVoiceStateUpdate(
 
   if (oldChannelID === null && newChannelID !== null) {
     // null --> something
-    onJoinedVoiceChannel(
+    await onJoinedVoiceChannel(
       client,
       guild,
       userID,
@@ -33,7 +33,7 @@ export function onVoiceStateUpdate(
     );
   } else if (oldChannelID !== null && newChannelID === null) {
     // something --> null
-    onLeftVoiceChannel(
+    await onLeftVoiceChannel(
       client,
       guild,
       userID,
@@ -43,7 +43,7 @@ export function onVoiceStateUpdate(
     );
   } else if (oldChannelID !== null && newChannelID !== null) {
     // something --> something
-    onLeftVoiceChannel(
+    await onLeftVoiceChannel(
       client,
       guild,
       userID,
@@ -51,7 +51,7 @@ export function onVoiceStateUpdate(
       voiceCategoryID,
       createNewVoiceChannelID,
     );
-    onJoinedVoiceChannel(
+    await onJoinedVoiceChannel(
       client,
       guild,
       userID,
@@ -62,7 +62,7 @@ export function onVoiceStateUpdate(
   }
 }
 
-function onJoinedVoiceChannel(
+async function onJoinedVoiceChannel(
   client: Client<true>,
   guild: Guild,
   userID: string,
@@ -70,7 +70,7 @@ function onJoinedVoiceChannel(
   voiceCategoryID: string,
   createNewVoiceChannelID: string,
 ) {
-  logVoiceStatusUpdate(client, userID, channelID, "Joined");
+  await logVoiceStatusUpdate(client, userID, channelID, "Joined");
 
   if (channelID === createNewVoiceChannelID) {
     addQueue({
@@ -83,7 +83,7 @@ function onJoinedVoiceChannel(
   }
 }
 
-function onLeftVoiceChannel(
+async function onLeftVoiceChannel(
   client: Client<true>,
   guild: Guild,
   userID: string,
@@ -91,7 +91,7 @@ function onLeftVoiceChannel(
   voiceCategoryID: string,
   createNewVoiceChannelID: string,
 ) {
-  logVoiceStatusUpdate(client, userID, channelID, "Left");
+  await logVoiceStatusUpdate(client, userID, channelID, "Left");
 
   if (channelID !== createNewVoiceChannelID) {
     addQueue({
@@ -103,19 +103,15 @@ function onLeftVoiceChannel(
   }
 }
 
-function logVoiceStatusUpdate(
+async function logVoiceStatusUpdate(
   client: Client<true>,
   userID: string,
   channelID: string,
   verb: string,
 ) {
-  const user = client.users.cache.get(userID);
-  if (user === undefined) {
-    return;
-  }
-
-  const channel = client.channels.cache.get(channelID);
-  if (channel === undefined || !channel.isVoiceBased()) {
+  const user = await client.users.fetch(userID);
+  const channel = await client.channels.fetch(channelID);
+  if (channel === null || !channel.isVoiceBased()) {
     return;
   }
 

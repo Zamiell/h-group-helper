@@ -15,6 +15,7 @@ const VOICE_CATEGORY_NAME = "H-Group Pickup Games";
 const CREATE_NEW_VOICE_CHANNEL_NAME = "Create New Voice Channel";
 const CONVENTION_QUESTIONS_FORUM_NAME = "convention-questions";
 const CONVENTION_PROPOSALS_FORUM_NAME = "convention-proposals";
+const H_GROUP_ROLE_NAME = "H-Group";
 const CONVENTION_ADMIN_ROLE_NAME = "Convention Admin";
 
 export async function onClientReady(client: Client<true>): Promise<void> {
@@ -85,6 +86,9 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   );
   assertDefined(closedTag, "Failed to find the forum tag: closed");
 
+  const hGroupRole = getRoleByName(guild, H_GROUP_ROLE_NAME);
+  assertDefined(hGroupRole, `Failed to find the role: ${H_GROUP_ROLE_NAME}`);
+
   const conventionAdminRole = getRoleByName(guild, CONVENTION_ADMIN_ROLE_NAME);
   assertDefined(
     conventionAdminRole,
@@ -150,12 +154,14 @@ export async function onClientReady(client: Client<true>): Promise<void> {
       threadChannel,
       conventionQuestionsForum.id,
       conventionProposals.id,
+      hGroupRole.id,
       openTag.id,
     );
   });
 
-  client.on(Events.VoiceStateUpdate, (oldState, newState) => {
-    onVoiceStateUpdate(
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
+    await onVoiceStateUpdate(
       oldState,
       newState,
       client,

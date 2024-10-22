@@ -6,6 +6,16 @@ import type {
 } from "discord.js";
 import { DiscordAPIError, RESTJSONErrorCodes } from "discord.js";
 import { logger } from "./logger.js";
+import { isNotNullUndefined } from "./utils.js";
+
+export async function memberHasRole(
+  guild: Guild,
+  userID: string,
+  roleID: string,
+): Promise<boolean> {
+  const member = await guild.members.fetch(userID);
+  return member.roles.cache.has(roleID);
+}
 
 /** This works for both channels and forums. */
 export function getChannelByName(
@@ -35,10 +45,6 @@ export function getVoiceChannelsInCategory(
   );
 
   return voiceChannelsInCategory;
-}
-
-function isNotNullUndefined<T>(value: T | null | undefined): value is T {
-  return value !== null && value !== undefined;
 }
 
 export function isVoiceChannelEmpty(channel: VoiceBasedChannel): boolean {
