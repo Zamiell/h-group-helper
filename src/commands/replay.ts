@@ -50,7 +50,7 @@ function getReplayURL(databaseID: number, turn?: number) {
   let url = `${BASE_URL}/${databaseID}`;
 
   if (turn !== undefined) {
-    url += `/${turn}`;
+    url += `#${turn}`;
   }
 
   return url;
