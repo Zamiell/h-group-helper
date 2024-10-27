@@ -9,6 +9,14 @@ import { DiscordAPIError, RESTJSONErrorCodes } from "discord.js";
 import { logger } from "./logger.js";
 import { isNotNullUndefined } from "./utils.js";
 
+/**
+ * If messages exceed this length, the Discord API will give an error:
+ *
+ * ```txt
+ * DiscordAPIError[50035]: Invalid Form Body
+ * content[BASE_TYPE_MAX_LENGTH]: Must be 2000 or fewer in length.
+ * ```
+ */
 const MAX_DISCORD_MESSAGE_LENGTH = 2000;
 
 export async function memberHasRole(
@@ -83,12 +91,16 @@ export async function sendDMWithDeletedMessage(
   dmMessage: string,
   deletedMessage: string,
 ): Promise<void> {
-  const messageWithSuffix = `${dmMessage}\n\nFor reference, your post was:\n> `;
-  const maxLengthForDeletedMessage =
-    MAX_DISCORD_MESSAGE_LENGTH - messageWithSuffix.length;
-  const trimmedDeletedMessage = deletedMessage.slice(
-    maxLengthForDeletedMessage,
-  );
-  const fullMessage = messageWithSuffix + trimmedDeletedMessage;
+  const fullMessage = `${dmMessage}\n\nFor reference, your post was:`;
   await dmChannel.send(fullMessage);
+
+  const sizeOfSurroundingTicks = 8;
+  const maxLengthOfDeletedMessage =
+    MAX_DISCORD_MESSAGE_LENGTH - sizeOfSurroundingTicks;
+  const trimmedDeletedMessage = deletedMessage.slice(
+    0,
+    maxLengthOfDeletedMessage,
+  );
+  const fullDeletedMessage = `\`\`\`\n${trimmedDeletedMessage}\`\`\`\n`;
+  await dmChannel.send(fullDeletedMessage);
 }
