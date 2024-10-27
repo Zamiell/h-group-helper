@@ -22,14 +22,52 @@ export async function onThreadCreate(
   hGroupRoleID: string,
   openTagID: string,
 ): Promise<void> {
+  // First, ensure that race conditions do not happen.
+  const starterMessage = await getStarterMessage(threadChannel);
+  if (starterMessage === undefined) {
+    return;
+  }
+
   await autoJoinAdminsToAllThreads(threadChannel);
-  await checkConventionQuestions(threadChannel, conventionQuestionsForumID);
+  await checkConventionQuestions(
+    threadChannel,
+    conventionQuestionsForumID,
+    starterMessage,
+  );
   await checkConventionProposals(
     threadChannel,
     conventionProposalsForumID,
     hGroupRoleID,
     openTagID,
+    starterMessage,
   );
+}
+
+/**
+ * There is a race condition where the `onThreadCreate` event can fire before the initial message
+ * has loaded.
+ *
+ * @see https://github.com/discord/discord-api-docs/issues/6340
+ */
+async function getStarterMessage(
+  threadChannel: ThreadChannel,
+): Promise<Message | undefined> {
+  for (let i = 0; i < MAX_STARTER_MESSAGE_FETCH_ATTEMPTS; i++) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const starterMessage = await threadChannel.fetchStarterMessage();
+      if (starterMessage !== null) {
+        return starterMessage;
+      }
+    } catch {
+      // Do nothing and try again.
+      logger.info(
+        `Failed to fetch starter message for thread ${threadChannel.id}. (On attempt ${i + 1} / ${MAX_STARTER_MESSAGE_FETCH_ATTEMPTS}.)`,
+      );
+    }
+  }
+
+  return undefined;
 }
 
 /**
@@ -48,29 +86,25 @@ async function autoJoinAdminsToAllThreads(threadChannel: ThreadChannel) {
 async function checkConventionQuestions(
   threadChannel: ThreadChannel,
   conventionQuestionsForumID: string,
+  starterMessage: Message,
 ) {
   if (threadChannel.parentId !== conventionQuestionsForumID) {
     return;
   }
 
-  const message = await getStarterMessage(threadChannel);
-  if (message === undefined) {
-    return;
-  }
-
-  if (message.attachments.size > 0) {
-    const dmChannel = await message.author.createDM();
+  if (starterMessage.attachments.size > 0) {
+    const dmChannel = await starterMessage.author.createDM();
     await dmChannel.send(
-      `Your post in the convention-questions forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>\n\nFor reference, your post was:\n> ${message.content}`,
+      `Your post in the convention-questions forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>\n\nFor reference, your post was:\n> ${starterMessage.content}`,
     );
     await threadChannel.delete();
     return;
   }
 
-  if (!isAllLinksEnclosed(message.content)) {
-    const dmChannel = await message.author.createDM();
+  if (!isAllLinksEnclosed(starterMessage.content)) {
+    const dmChannel = await starterMessage.author.createDM();
     await dmChannel.send(
-      `Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your links in \`<\` and \`>\` characters, like the following: \`<https://hanab.live/replay/123>\`\n\nFor reference, your post was:\n> ${message.content}`,
+      `Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your links in \`<\` and \`>\` characters, like the following: \`<https://hanab.live/replay/123>\`\n\nFor reference, your post was:\n> ${starterMessage.content}`,
     );
     await threadChannel.delete();
     return;
@@ -103,25 +137,21 @@ async function checkConventionProposals(
   conventionProposalsForumID: string,
   hGroupRoleID: string,
   openTagID: string,
+  starterMessage: Message,
 ) {
   if (threadChannel.parentId !== conventionProposalsForumID) {
     return;
   }
 
-  const message = await getStarterMessage(threadChannel);
-  if (message === undefined) {
-    return;
-  }
-
   const isHGroup = await memberHasRole(
     threadChannel.guild,
-    message.author.id,
+    starterMessage.author.id,
     hGroupRoleID,
   );
   if (!isHGroup) {
-    const dmChannel = await message.author.createDM();
+    const dmChannel = await starterMessage.author.createDM();
     await dmChannel.send(
-      `Your post in the convention-proposals forum has been deleted because you do not have the "H-Group" role. Do you regularly play pick-up games in this Discord server using the voice channels? If so, please send a direct message to a moderator to request the "H-Group" role. You can find the current list of moderators in the #role-explanations channel.\n\nFor reference, your post was:\n> ${message.content}`,
+      `Your post in the convention-proposals forum has been deleted because you do not have the "H-Group" role. Do you regularly play pick-up games in this Discord server using the voice channels? If so, please send a direct message to a moderator to request the "H-Group" role. You can find the current list of moderators in the #role-explanations channel.\n\nFor reference, your post was:\n> ${starterMessage.content}`,
     );
     await threadChannel.delete();
     return;
@@ -129,31 +159,4 @@ async function checkConventionProposals(
 
   await threadChannel.send(CONVENTION_PROPOSALS_MESSAGE);
   await threadChannel.setAppliedTags([openTagID]);
-}
-
-/**
- * There is a race condition where the `onThreadCreate` event can fire before the initial message
- * has loaded.
- *
- * @see https://github.com/discord/discord-api-docs/issues/6340
- */
-async function getStarterMessage(
-  threadChannel: ThreadChannel,
-): Promise<Message | undefined> {
-  for (let i = 0; i < MAX_STARTER_MESSAGE_FETCH_ATTEMPTS; i++) {
-    try {
-      // eslint-disable-next-line no-await-in-loop
-      const starterMessage = await threadChannel.fetchStarterMessage();
-      if (starterMessage !== null) {
-        return starterMessage;
-      }
-    } catch {
-      // Do nothing and try again.
-      logger.info(
-        `Failed to fetch starter message for thread ${threadChannel.id}. (On attempt ${i + 1} / ${MAX_STARTER_MESSAGE_FETCH_ATTEMPTS}.)`,
-      );
-    }
-  }
-
-  return undefined;
 }
