@@ -1,5 +1,6 @@
 import type { Message } from "discord.js";
 import { ChannelType } from "discord.js";
+import { sendDMWithDeletedMessage } from "../discordUtils.js";
 import { logger } from "../logger.js";
 import { ADDING_MEMBER_TO_THREAD_TEXT } from "./onThreadCreate.js";
 
@@ -38,7 +39,7 @@ async function checkBotMessages(
 ) {
   if (
     message.author.id === botID &&
-    message.content.startsWith(ADDING_MEMBER_TO_THREAD_TEXT)
+    message.content === ADDING_MEMBER_TO_THREAD_TEXT
   ) {
     const mentions = adminIDs.map((adminID) => `<@${adminID}>`);
     const mentionsMsg = mentions.join(" ");
@@ -54,9 +55,9 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
 
   if (!message.content.includes("https://hanab.live/replay/")) {
     const dmChannel = await message.author.createDM();
-    await dmChannel.send(
-      `Your post in the #replays channel has been deleted since it does not contain a replay. Please use threads to discuss a specific replay.\n\nFor reference, your post was:\n> ${message.content}`,
-    );
+    const dmMessage =
+      "Your post in the #replays channel has been deleted since it does not contain a replay. Please use threads to discuss a specific replay.";
+    await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
     await message.delete();
     return;
   }
@@ -64,21 +65,16 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
   // Ensure that replay's are surrounded by "<" and ">" to prevent the link preview.
   if (!message.content.includes("<https://hanab.live/replay/")) {
     const dmChannel = await message.author.createDM();
-    await dmChannel.send(
-      `Your post in the #replays channel has been deleted since you have not disabled the link preview. Please enclose your link in \`<\` and \`>\`, like the following: \`<https://hanab.live/replay/123>\`\n\nFor reference, your post was:\n> ${message.content}`,
-    );
+    const dmMessage =
+      "Your post in the #replays channel has been deleted since you have not disabled the link preview. Please enclose your link in `<` and `>`, like the following: `<https://hanab.live/replay/123>`";
+    await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
     await message.delete();
     return;
   }
 
-  const thread = await message.startThread({
+  await message.startThread({
     name: getThreadName(message, "replay"),
   });
-
-  // By default, the thread is not visible unless a message is sent. Thus, we arbitrarily send a
-  // message and then delete it.
-  const threadMessage = await thread.send("Starting a thread.");
-  await threadMessage.delete();
 }
 
 async function checkScreenshotsChannel(
@@ -91,9 +87,9 @@ async function checkScreenshotsChannel(
 
   if (message.attachments.size === 0) {
     const dmChannel = await message.author.createDM();
-    await dmChannel.send(
-      `Your post in the #screenshots channel has been deleted because it does not contain a screenshot. Please use threads to discuss a specific screenshot.\n\nFor reference, your post was:\n> ${message.content}`,
-    );
+    const dmMessage =
+      "Your post in the #screenshots channel has been deleted because it does not contain a screenshot. Please use threads to discuss a specific screenshot.";
+    await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
     await message.delete();
     return;
   }

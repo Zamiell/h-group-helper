@@ -1,4 +1,5 @@
 import type {
+  DMChannel,
   Guild,
   GuildBasedChannel,
   Role,
@@ -7,6 +8,8 @@ import type {
 import { DiscordAPIError, RESTJSONErrorCodes } from "discord.js";
 import { logger } from "./logger.js";
 import { isNotNullUndefined } from "./utils.js";
+
+const MAX_DISCORD_MESSAGE_LENGTH = 2000;
 
 export async function memberHasRole(
   guild: Guild,
@@ -73,4 +76,19 @@ export async function moveUserToVoiceChannel(
       );
     }
   }
+}
+
+export async function sendDMWithDeletedMessage(
+  dmChannel: DMChannel,
+  dmMessage: string,
+  deletedMessage: string,
+): Promise<void> {
+  const messageWithSuffix = `${dmMessage}\n\nFor reference, your post was:\n> `;
+  const maxLengthForDeletedMessage =
+    MAX_DISCORD_MESSAGE_LENGTH - messageWithSuffix.length;
+  const trimmedDeletedMessage = deletedMessage.slice(
+    maxLengthForDeletedMessage,
+  );
+  const fullMessage = messageWithSuffix + trimmedDeletedMessage;
+  await dmChannel.send(fullMessage);
 }

@@ -1,5 +1,5 @@
 import type { Message, ThreadChannel } from "discord.js";
-import { memberHasRole } from "../discordUtils.js";
+import { memberHasRole, sendDMWithDeletedMessage } from "../discordUtils.js";
 import { logger } from "../logger.js";
 
 export const ADDING_MEMBER_TO_THREAD_TEXT = "Adding member to thread.";
@@ -94,8 +94,12 @@ async function checkConventionQuestions(
 
   if (starterMessage.attachments.size > 0) {
     const dmChannel = await starterMessage.author.createDM();
-    await dmChannel.send(
-      `Your post in the convention-questions forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>\n\nFor reference, your post was:\n> ${starterMessage.content}`,
+    const dmMessage =
+      "Your post in the convention-questions forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>";
+    await sendDMWithDeletedMessage(
+      dmChannel,
+      dmMessage,
+      starterMessage.content,
     );
     await threadChannel.delete();
     return;
@@ -103,8 +107,12 @@ async function checkConventionQuestions(
 
   if (!isAllLinksEnclosed(starterMessage.content)) {
     const dmChannel = await starterMessage.author.createDM();
-    await dmChannel.send(
-      `Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your links in \`<\` and \`>\` characters, like the following: \`<https://hanab.live/replay/123>\`\n\nFor reference, your post was:\n> ${starterMessage.content}`,
+    const dmMessage =
+      "Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your links in `<` and `>` characters, like the following: `<https://hanab.live/replay/123>`";
+    await sendDMWithDeletedMessage(
+      dmChannel,
+      dmMessage,
+      starterMessage.content,
     );
     await threadChannel.delete();
     return;
@@ -150,8 +158,12 @@ async function checkConventionProposals(
   );
   if (!isHGroup) {
     const dmChannel = await starterMessage.author.createDM();
-    await dmChannel.send(
-      `Your post in the convention-proposals forum has been deleted because you do not have the "H-Group" role. Do you regularly play pick-up games in this Discord server using the voice channels? If so, please send a direct message to a moderator to request the "H-Group" role. You can find the current list of moderators in the #role-explanations channel.\n\nFor reference, your post was:\n> ${starterMessage.content}`,
+    const dmMessage =
+      'Your post in the convention-proposals forum has been deleted because you do not have the "H-Group" role. Do you regularly play pick-up games in this Discord server using the voice channels? If so, please send a direct message to a moderator to request the "H-Group" role. You can find the current list of moderators in the #role-explanations channel.';
+    await sendDMWithDeletedMessage(
+      dmChannel,
+      dmMessage,
+      starterMessage.content,
     );
     await threadChannel.delete();
     return;
