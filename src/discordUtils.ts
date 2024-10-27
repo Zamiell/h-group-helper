@@ -94,13 +94,14 @@ export async function sendDMWithDeletedMessage(
   const fullMessage = `${dmMessage}\n\nFor reference, your post was:`;
   await dmChannel.send(fullMessage);
 
-  const sizeOfSurroundingTicks = 8;
+  const ticks = "```\n";
+  const sizeOfSurroundingTicks = ticks.length * 2;
   const maxLengthOfDeletedMessage =
     MAX_DISCORD_MESSAGE_LENGTH - sizeOfSurroundingTicks;
   const trimmedDeletedMessage = deletedMessage.slice(
     0,
     maxLengthOfDeletedMessage,
   );
-  const fullDeletedMessage = `\`\`\`\n${trimmedDeletedMessage}\`\`\`\n`;
+  const fullDeletedMessage = ticks + trimmedDeletedMessage + ticks;
   await dmChannel.send(fullDeletedMessage);
 }
