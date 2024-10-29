@@ -2,6 +2,7 @@ import type {
   DMChannel,
   Guild,
   GuildBasedChannel,
+  Message,
   Role,
   VoiceBasedChannel,
 } from "discord.js";
@@ -104,4 +105,11 @@ export async function sendDMWithDeletedMessage(
   );
   const fullDeletedMessage = ticks + trimmedDeletedMessage + ticks;
   await dmChannel.send(fullDeletedMessage);
+}
+
+export async function sendNotHGroupDM(message: Message): Promise<void> {
+  const dmChannel = await message.author.createDM();
+  const dmMessage =
+    'Your post in the convention-proposals forum has been deleted because you do not have the "H-Group" role. Do you regularly play pick-up games in this Discord server using the voice channels? If so, please send a direct message to a moderator to request the "H-Group" role. You can find the current list of moderators in the #role-explanations channel.';
+  await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
 }

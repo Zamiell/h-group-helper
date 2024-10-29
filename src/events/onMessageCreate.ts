@@ -1,6 +1,10 @@
 import type { Message } from "discord.js";
 import { ChannelType } from "discord.js";
-import { sendDMWithDeletedMessage } from "../discordUtils.js";
+import {
+  memberHasRole,
+  sendDMWithDeletedMessage,
+  sendNotHGroupDM,
+} from "../discordUtils.js";
 import { logger } from "../logger.js";
 import { ADDING_MEMBER_TO_THREAD_TEXT } from "./onThreadCreate.js";
 
@@ -12,6 +16,8 @@ export async function onMessageCreate(
   screenshotsChannelID: string,
   videosChannelID: string,
   puzzlesChannelID: string,
+  conventionProposalsForumID: string,
+  hGroupRoleID: string,
 ): Promise<void> {
   logDiscordTextMessage(message);
 
@@ -20,6 +26,11 @@ export async function onMessageCreate(
   await checkScreenshotsChannel(message, screenshotsChannelID);
   await checkVideosChannel(message, videosChannelID);
   await checkPuzzlesChannel(message, puzzlesChannelID);
+  await checkConventionProposalsForum(
+    message,
+    conventionProposalsForumID,
+    hGroupRoleID,
+  );
 }
 
 function logDiscordTextMessage(message: Message) {
@@ -128,4 +139,28 @@ function getThreadName(message: Message, noun: string): string {
   }
 
   return `${possessive} ${noun}`;
+}
+
+async function checkConventionProposalsForum(
+  message: Message,
+  conventionProposalsForumID: string,
+  hGroupRoleID: string,
+) {
+  if (
+    message.thread === null ||
+    message.thread.parentId !== conventionProposalsForumID ||
+    message.guild === null
+  ) {
+    return;
+  }
+
+  const isHGroup = await memberHasRole(
+    message.guild,
+    message.author.id,
+    hGroupRoleID,
+  );
+  if (!isHGroup) {
+    await sendNotHGroupDM(message);
+    await message.delete();
+  }
 }

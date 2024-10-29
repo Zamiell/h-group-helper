@@ -145,6 +145,8 @@ export async function onClientReady(client: Client<true>): Promise<void> {
       screenshotsChannel.id,
       videosChannel.id,
       puzzlesChannel.id,
+      conventionProposals.id,
+      hGroupRole.id,
     );
   });
 

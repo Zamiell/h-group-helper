@@ -1,5 +1,9 @@
 import type { Message, ThreadChannel } from "discord.js";
-import { memberHasRole, sendDMWithDeletedMessage } from "../discordUtils.js";
+import {
+  memberHasRole,
+  sendDMWithDeletedMessage,
+  sendNotHGroupDM,
+} from "../discordUtils.js";
 import { logger } from "../logger.js";
 
 export const ADDING_MEMBER_TO_THREAD_TEXT = "Adding member to thread.";
@@ -157,14 +161,7 @@ async function checkConventionProposals(
     hGroupRoleID,
   );
   if (!isHGroup) {
-    const dmChannel = await starterMessage.author.createDM();
-    const dmMessage =
-      'Your post in the convention-proposals forum has been deleted because you do not have the "H-Group" role. Do you regularly play pick-up games in this Discord server using the voice channels? If so, please send a direct message to a moderator to request the "H-Group" role. You can find the current list of moderators in the #role-explanations channel.';
-    await sendDMWithDeletedMessage(
-      dmChannel,
-      dmMessage,
-      starterMessage.content,
-    );
+    await sendNotHGroupDM(starterMessage);
     await threadChannel.delete();
     return;
   }
