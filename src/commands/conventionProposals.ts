@@ -100,6 +100,10 @@ async function conventionProposalCommand(
 
   await channel.setAppliedTags([closedTagID]);
   await channel.setLocked();
+
+  // Setting to "archived" is the same as clicking on "Close Post" in the GUI, which makes the
+  // thread go to the bottom of the list.
+  await channel.setArchived();
 }
 
 function inConventionProposalsForum(
