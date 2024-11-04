@@ -147,8 +147,7 @@ async function checkConventionProposalsForum(
   hGroupRoleID: string,
 ) {
   console.log("GETTING HERE");
-  console.log("message.thread:", message.thread);
-  console.log("message.thread.parentId:", message.thread?.parentId);
+  console.log("message.channel.type:", message.channel.type);
   if (
     message.thread === null ||
     message.thread.parentId !== conventionProposalsForumID ||
