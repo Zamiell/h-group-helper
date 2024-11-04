@@ -146,6 +146,7 @@ async function checkConventionProposalsForum(
   conventionProposalsForumID: string,
   hGroupRoleID: string,
 ) {
+  console.log("GETTING HERE 1");
   if (
     message.thread === null ||
     message.thread.parentId !== conventionProposalsForumID ||
@@ -153,6 +154,7 @@ async function checkConventionProposalsForum(
   ) {
     return;
   }
+  console.log("GETTING HERE 2");
 
   const isHGroup = await memberHasRole(
     message.guild,
@@ -163,4 +165,5 @@ async function checkConventionProposalsForum(
     await sendNotHGroupDM(message);
     await message.delete();
   }
+  console.log("GETTING HERE 3");
 }
