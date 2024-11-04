@@ -22,7 +22,6 @@ const config = {
     // https://discord.js.org/docs/packages/discord.js/main
     "@discordjs/voice",
     "bufferutil",
-    "zlib-sync",
 
     // @template-customization-end
   ],
