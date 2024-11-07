@@ -64,6 +64,15 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
     return;
   }
 
+  if (message.content.includes("https://hanab.live/shared-replay/")) {
+    const dmChannel = await message.author.createDM();
+    const dmMessage =
+      "Your post in the #replays channel has been deleted since it links to a shared replay instead of a normal replay. Please fix your link and then re-post.";
+    await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
+    await message.delete();
+    return;
+  }
+
   if (!message.content.includes("https://hanab.live/replay/")) {
     const dmChannel = await message.author.createDM();
     const dmMessage =
