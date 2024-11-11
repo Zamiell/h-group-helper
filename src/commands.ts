@@ -1,3 +1,4 @@
+import { confusingCommand } from "./commands/confusing.js";
 import {
   acceptCommand,
   denyCommand,
@@ -8,6 +9,7 @@ import { undefinedCommand } from "./commands/undefined.js";
 import type { Command } from "./interfaces/Command.js";
 
 export const commandMap = new Map<string, Command>([
+  ["confusing", confusingCommand],
   ["replay", replayCommand],
   ["accept", acceptCommand],
   ["deny", denyCommand],

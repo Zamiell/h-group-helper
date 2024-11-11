@@ -30,16 +30,16 @@
     "discord.js": "^14.16.3",
     "fastq": "^1.17.1",
     "source-map-support": "^0.5.21",
-    "winston": "^3.16.0",
+    "winston": "^3.17.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^22.8.7",
+    "@types/node": "^22.9.0",
     "@types/source-map-support": "^0.5.10",
-    "complete-lint": "^1.10.1",
+    "complete-lint": "^1.11.1",
     "git-pull-run": "^1.4.0",
     "husky": "^9.1.6",
-    "isaacscript": "^5.2.1",
+    "isaacscript": "^5.2.4",
     "typescript": "5.5.4"
   }
 }
