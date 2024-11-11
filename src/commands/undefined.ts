@@ -15,9 +15,7 @@ The answer to "why isn't situation X defined" and "can I propose a convention fo
 export const undefinedCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("undefined")
-    .setDescription(
-      "Generate a reminder about why situations do not have to be undefined.",
-    ),
+    .setDescription("Generate a reminder about undefined situations."),
   execute: async (interaction: ChatInputCommandInteraction) => {
     await interaction.reply(UNDEFINED_MESSAGE);
   },
