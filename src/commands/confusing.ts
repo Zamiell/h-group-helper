@@ -8,7 +8,7 @@ const CONFUSING_MESSAGE =
 export const confusingCommand: Command = {
   data: new SlashCommandBuilder()
     .setName("confusing")
-    .setDescription("Generate a reminder about _Clarity Principle_."),
+    .setDescription("Generate a reminder about Clarity Principle."),
   execute: async (interaction: ChatInputCommandInteraction) => {
     await interaction.reply(CONFUSING_MESSAGE);
   },
