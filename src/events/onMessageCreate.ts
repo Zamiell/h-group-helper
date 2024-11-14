@@ -30,6 +30,7 @@ export async function onMessageCreate(
     message,
     conventionProposalsForumID,
     hGroupRoleID,
+    botID,
   );
 }
 
@@ -154,6 +155,7 @@ async function checkConventionProposalsForum(
   message: Message,
   conventionProposalsForumID: string,
   hGroupRoleID: string,
+  botID: string,
 ) {
   if (
     message.channel.type !== ChannelType.PublicThread ||
@@ -168,7 +170,7 @@ async function checkConventionProposalsForum(
     message.author.id,
     hGroupRoleID,
   );
-  if (!isHGroup) {
+  if (!isHGroup && message.author.id !== botID) {
     await sendNotHGroupDM(message);
     await message.delete();
   }
