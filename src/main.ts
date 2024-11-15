@@ -1,6 +1,7 @@
 import { Client, Events, GatewayIntentBits } from "discord.js";
 import sourceMapSupport from "source-map-support";
 import { PROJECT_NAME } from "./constants.js";
+import { getChannelByName } from "./discordUtils.js";
 import { env } from "./env.js";
 import { onClientReady } from "./events/onClientReady.js";
 import { logger } from "./logger.js";
@@ -11,6 +12,7 @@ async function main() {
   sourceMapSupport.install();
   logger.info(`${PROJECT_NAME} started.`);
 
+  // https://discordjs.guide/popular-topics/errors.html#how-to-diagnose-api-errors
   process.on("unhandledRejection", (error) => {
     logger.error("Unhandled promise rejection:", error);
   });
@@ -39,5 +41,27 @@ async function discordInit(): Promise<void> {
   disconnectedClient.on(Events.ClientReady, onClientReady);
 
   logger.info("Logging in to Discord...");
-  await disconnectedClient.login(env.DISCORD_TOKEN);
+
+  try {
+    await disconnectedClient.login(env.DISCORD_TOKEN);
+  } catch (error) {
+    await sendErrorToDiscordChannel(disconnectedClient, error);
+  }
+}
+
+/** We log all errors to a Discord channel for better visibility. */
+async function sendErrorToDiscordChannel(client: Client, error: unknown) {
+  if (!client.isReady()) {
+    return;
+  }
+
+  const guild = await client.guilds.fetch(env.DISCORD_SERVER_ID);
+
+  const botErrorsChannel = getChannelByName(guild, "bot-errors");
+  if (botErrorsChannel === undefined || !botErrorsChannel.isSendable()) {
+    return;
+  }
+
+  const errorMessage = JSON.stringify(error, undefined, 2);
+  await botErrorsChannel.send(`Error: ${errorMessage}`);
 }
