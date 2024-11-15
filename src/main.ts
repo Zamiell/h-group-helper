@@ -1,4 +1,5 @@
 import { Client, Events, GatewayIntentBits } from "discord.js";
+import { inspect } from "node:util";
 import sourceMapSupport from "source-map-support";
 import { PROJECT_NAME } from "./constants.js";
 import { getChannelByName } from "./discordUtils.js";
@@ -60,8 +61,7 @@ async function sendErrorToDiscordChannel(client: Client, error: Error) {
     return;
   }
 
-  console.log(error instanceof Error);
-  console.log(error);
-  const errorMessage = JSON.stringify(error, undefined, 2);
+  // eslint-disable-next-line unicorn/no-null
+  const errorMessage = inspect(error, { depth: null });
   await botErrorsChannel.send(errorMessage);
 }
