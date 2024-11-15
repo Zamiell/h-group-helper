@@ -11,12 +11,6 @@ await main();
 async function main() {
   sourceMapSupport.install();
   logger.info(`${PROJECT_NAME} started.`);
-
-  // https://discordjs.guide/popular-topics/errors.html#how-to-diagnose-api-errors
-  process.on("unhandledRejection", (error) => {
-    logger.error("Unhandled promise rejection:", error);
-  });
-
   await discordInit();
 }
 
@@ -42,11 +36,15 @@ async function discordInit(): Promise<void> {
 
   logger.info("Logging in to Discord...");
 
-  try {
-    await disconnectedClient.login(env.DISCORD_TOKEN);
-  } catch (error) {
-    await sendErrorToDiscordChannel(disconnectedClient, error);
-  }
+  // Log all errors to Discord.
+  process.on("uncaughtException", (error) => {
+    logger.error("Error:", error);
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    sendErrorToDiscordChannel(disconnectedClient, error);
+  });
+
+  await disconnectedClient.login(env.DISCORD_TOKEN);
 }
 
 /** We log all errors to a Discord channel for better visibility. */
