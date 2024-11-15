@@ -147,7 +147,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     const errorMessage = inspect(error, { depth: null });
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    botErrorsChannel.send(`\`\`\\n${errorMessage}\n\`\`\``);
+    botErrorsChannel.send(`\`\`\`\n${errorMessage}\n\`\`\``);
   });
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
