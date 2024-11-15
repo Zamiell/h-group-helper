@@ -37,18 +37,22 @@ async function discordInit(): Promise<void> {
   logger.info("Logging in to Discord...");
 
   // Log all errors to Discord.
-  process.on("uncaughtException", (error) => {
-    logger.error("Error:", error);
+  process.on("uncaughtException", (error, origin) => {
+    logger.error("uncaughtException:", error, origin);
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    sendErrorToDiscordChannel(disconnectedClient, error);
+    sendErrorToDiscordChannel(disconnectedClient, error, origin);
   });
 
   await disconnectedClient.login(env.DISCORD_TOKEN);
 }
 
 /** We log all errors to a Discord channel for better visibility. */
-async function sendErrorToDiscordChannel(client: Client, error: unknown) {
+async function sendErrorToDiscordChannel(
+  client: Client,
+  error: unknown,
+  origin: NodeJS.UncaughtExceptionOrigin,
+) {
   if (!client.isReady()) {
     return;
   }
@@ -60,6 +64,6 @@ async function sendErrorToDiscordChannel(client: Client, error: unknown) {
     return;
   }
 
-  const errorMessage = JSON.stringify(error, undefined, 2);
-  await botErrorsChannel.send(`Error: ${errorMessage}`);
+  const originMessage = JSON.stringify(origin, undefined, 2);
+  await botErrorsChannel.send(`Error: ${error}\n${originMessage}`);
 }
