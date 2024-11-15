@@ -29,11 +29,6 @@ export const replayCommand: Command = {
           .setMinValue(2), // Linking to the first turn would be superfluous.
     ),
   execute: async (interaction: ChatInputCommandInteraction) => {
-    // eslint-disable-next-line
-    if (1 === 1) {
-      throw new Error("foo");
-    }
-
     const databaseID = interaction.options.getInteger(DATABASE_ID_OPTION_NAME);
     if (databaseID === null) {
       await interaction.reply({
