@@ -60,6 +60,8 @@ async function sendErrorToDiscordChannel(client: Client, error: Error) {
     return;
   }
 
+  console.log(error instanceof Error);
+  console.log(error);
   const errorMessage = JSON.stringify(error, undefined, 2);
   await botErrorsChannel.send(errorMessage);
 }
