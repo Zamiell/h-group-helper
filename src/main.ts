@@ -1,8 +1,6 @@
 import { Client, Events, GatewayIntentBits } from "discord.js";
-import { inspect } from "node:util";
 import sourceMapSupport from "source-map-support";
 import { PROJECT_NAME } from "./constants.js";
-import { getChannelByName } from "./discordUtils.js";
 import { env } from "./env.js";
 import { onClientReady } from "./events/onClientReady.js";
 import { logger } from "./logger.js";
@@ -36,32 +34,5 @@ async function discordInit(): Promise<void> {
   disconnectedClient.on(Events.ClientReady, onClientReady);
 
   logger.info("Logging in to Discord...");
-
-  // Log all errors to Discord.
-  process.on("uncaughtException", (error) => {
-    logger.error("uncaughtException:", error);
-
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    sendErrorToDiscordChannel(disconnectedClient, error);
-  });
-
   await disconnectedClient.login(env.DISCORD_TOKEN);
-}
-
-/** We log all errors to a Discord channel for better visibility. */
-async function sendErrorToDiscordChannel(client: Client, error: Error) {
-  if (!client.isReady()) {
-    return;
-  }
-
-  const guild = await client.guilds.fetch(env.DISCORD_SERVER_ID);
-
-  const botErrorsChannel = getChannelByName(guild, "bot-errors");
-  if (botErrorsChannel === undefined || !botErrorsChannel.isSendable()) {
-    return;
-  }
-
-  // eslint-disable-next-line unicorn/no-null
-  const errorMessage = inspect(error, { depth: null });
-  await botErrorsChannel.send(errorMessage);
 }

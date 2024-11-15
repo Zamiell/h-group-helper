@@ -1,6 +1,7 @@
 import { assertDefined } from "complete-common";
 import type { Client } from "discord.js";
-import { Events, ForumChannel } from "discord.js";
+import { ChannelType, Events, ForumChannel } from "discord.js";
+import { inspect } from "node:util";
 import { getChannelByName, getRoleByName } from "../discordUtils.js";
 import { QueueType } from "../enums/QueueType.js";
 import { env } from "../env.js";
@@ -11,6 +12,7 @@ import { onMessageCreate } from "./onMessageCreate.js";
 import { onThreadCreate } from "./onThreadCreate.js";
 import { onVoiceStateUpdate } from "./onVoiceStatusUpdate.js";
 
+const BOT_ERRORS_CHANNEL_NAME = "bot-errors";
 const VOICE_CATEGORY_NAME = "H-Group Pickup Games";
 const CREATE_NEW_VOICE_CHANNEL_NAME = "Create New Voice Channel";
 const CONVENTION_QUESTIONS_FORUM_NAME = "convention-questions";
@@ -36,6 +38,18 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     guild.members.fetch(),
     guild.roles.fetch(),
   ]);
+
+  const botErrorsChannel = getChannelByName(guild, BOT_ERRORS_CHANNEL_NAME);
+  assertDefined(
+    botErrorsChannel,
+    `Failed to find the channel of: ${BOT_ERRORS_CHANNEL_NAME}`,
+  );
+
+  if (botErrorsChannel.type !== ChannelType.GuildText) {
+    throw new Error(
+      `The channel of "${BOT_ERRORS_CHANNEL_NAME}" is not a text channel.`,
+    );
+  }
 
   const voiceCategory = getChannelByName(guild, VOICE_CATEGORY_NAME);
   assertDefined(
@@ -124,6 +138,17 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   // Attach event handlers
   // https://github.com/discordjs/discord.js/issues/10279
   // ---------------------
+
+  // Log all errors to Discord for better visibility.
+  process.on("uncaughtException", (error) => {
+    logger.error("uncaughtException:", error);
+
+    // eslint-disable-next-line unicorn/no-null
+    const errorMessage = inspect(error, { depth: null });
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    botErrorsChannel.send(`\`\`\\n${errorMessage}\n\`\`\``);
+  });
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   client.on(Events.InteractionCreate, async (interaction) => {
