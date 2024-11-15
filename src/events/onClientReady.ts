@@ -143,6 +143,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
   process.on("uncaughtException", (error) => {
     logger.error("uncaughtException:", error);
 
+    // `JSON.stringify` will not work properly with errors, so we have to use `inspect`.
     // eslint-disable-next-line unicorn/no-null
     const errorMessage = inspect(error, { depth: null });
 
