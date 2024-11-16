@@ -114,10 +114,37 @@ async function checkConventionQuestions(
     return true;
   }
 
+  const replayCommandMatch = starterMessage.content.match(/\/replay \d+\s*\d*/);
+  if (replayCommandMatch !== null) {
+    const replayText = replayCommandMatch[0].trim();
+    const dmChannel = await starterMessage.author.createDM();
+    const dmMessage = `Your post in the convention-questions forum has been deleted because it contains the text of "${replayText}". Unfortunately, the "/replay" command cannot be combined with other text. If you want to generate a replay URL, please do it in the [#general-lobby channel](<https://discord.com/channels/140016142600241152/140016142600241152>) first, and then copy the resulting URL into your question.`;
+    await sendDMWithDeletedMessage(
+      dmChannel,
+      dmMessage,
+      starterMessage.content,
+    );
+    await threadChannel.delete();
+    return true;
+  }
+
   if (!isAllLinksEnclosed(starterMessage.content)) {
     const dmChannel = await starterMessage.author.createDM();
     const dmMessage =
       "Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your link(s) with the `<` and `>` characters to disable the link preview. In other words, convert this:\n```\nhttps://hanab.live/replay/123\n```\nTo this:\n```\n<https://hanab.live/replay/123>\n```";
+    await sendDMWithDeletedMessage(
+      dmChannel,
+      dmMessage,
+      starterMessage.content,
+    );
+    await threadChannel.delete();
+    return true;
+  }
+
+  if (starterMessage.content.includes("https://hanab.live/shared-replay/")) {
+    const dmChannel = await starterMessage.author.createDM();
+    const dmMessage =
+      'Your post in the convention-questions forum has been deleted because it contains a shared replay link instead of a normal replay link. Please get rid of the "shared-" part. In other words, convert this:\n```\n<https://hanab.live/shared-replay/123>\n```\nTo this:\n```\n<https://hanab.live/replay/123>\n```';
     await sendDMWithDeletedMessage(
       dmChannel,
       dmMessage,
