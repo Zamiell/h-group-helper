@@ -68,7 +68,7 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
   if (message.content.includes("https://hanab.live/shared-replay/")) {
     const dmChannel = await message.author.createDM();
     const dmMessage =
-      "Your post in the #replays channel has been deleted since it links to a shared replay instead of a normal replay. Please fix your link and then re-post.";
+      "Your post in the #replays channel has been deleted because it links to a shared replay instead of a normal replay. Please fix your link and then re-post.";
     await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
     await message.delete();
     return;
@@ -77,7 +77,7 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
   if (!message.content.includes("https://hanab.live/replay/")) {
     const dmChannel = await message.author.createDM();
     const dmMessage =
-      "Your post in the #replays channel has been deleted since it does not contain a replay. Please use threads to discuss a specific replay.";
+      "Your post in the #replays channel has been deleted because it does not contain a replay. Please use threads to discuss a specific replay.";
     await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
     await message.delete();
     return;
@@ -87,7 +87,7 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
   if (!message.content.includes("<https://hanab.live/replay/")) {
     const dmChannel = await message.author.createDM();
     const dmMessage =
-      "Your post in the #replays channel has been deleted since you have not disabled the link preview. Please enclose your link(s) in `<` and `>`. In other words, convert:\n`https://hanab.live/replay/123`\n-->\n`<https://hanab.live/replay/123>`";
+      "Your post in the #replays channel has been deleted because it contains a link with the preview enabled. Please enclose your link(s) in the `<` and `>` characters. In other words, convert:\n`https://hanab.live/replay/123`\n-->\n`<https://hanab.live/replay/123>`";
     await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
     await message.delete();
     return;
@@ -120,7 +120,7 @@ async function checkScreenshotsChannel(
   });
 }
 
-/** There is no validation logic for this channel, since detecting a video is non-trivial. */
+/** There is no validation logic for this channel because detecting a video is non-trivial. */
 async function checkVideosChannel(message: Message, videosChannelID: string) {
   if (message.channelId !== videosChannelID) {
     return;
@@ -131,7 +131,7 @@ async function checkVideosChannel(message: Message, videosChannelID: string) {
   });
 }
 
-/** There is no validation logic for this channel, since detecting a puzzle is non-trivial. */
+/** There is no validation logic for this channel because detecting a puzzle is non-trivial. */
 async function checkPuzzlesChannel(message: Message, puzzlesChannelID: string) {
   if (message.channelId !== puzzlesChannelID) {
     return;

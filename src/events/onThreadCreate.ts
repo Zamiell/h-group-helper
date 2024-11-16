@@ -117,7 +117,7 @@ async function checkConventionQuestions(
   if (!isAllLinksEnclosed(starterMessage.content)) {
     const dmChannel = await starterMessage.author.createDM();
     const dmMessage =
-      "Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your links in `<` and `>` characters, like the following: `<https://hanab.live/replay/123>`";
+      "Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your link(s) in the `<` and `>` characters. In other words, convert:\n`https://hanab.live/replay/123`\n-->\n`<https://hanab.live/replay/123>`";
     await sendDMWithDeletedMessage(
       dmChannel,
       dmMessage,
@@ -133,7 +133,7 @@ async function checkConventionQuestions(
 
 /**
  * In Discord, you can disable the automatic link preview by enclosing a link in < and > characters.
- * This is usually preferable since it reduces spam.
+ * This is usually preferable because it reduces spam.
  */
 function isAllLinksEnclosed(messageContent: string): boolean {
   const urls = messageContent.match(URL_REGEX);

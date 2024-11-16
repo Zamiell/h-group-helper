@@ -79,7 +79,7 @@ export async function moveUserToVoiceChannel(
       error.code === RESTJSONErrorCodes.TargetUserIsNotConnectedToVoice
     ) {
       logger.info(
-        `Failed to move user "${userID}" to channel "${newChannelID}" since they are no longer connected to voice.`,
+        `Failed to move user "${userID}" to channel "${newChannelID}" because they are no longer connected to voice.`,
       );
     } else {
       logger.error(
