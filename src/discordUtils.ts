@@ -89,27 +89,13 @@ export async function moveUserToVoiceChannel(
   }
 }
 
-/**
- * We only need to log direct messages, because messages that appear in channels will be logged as
- * part of the normal channel logging process.
- */
-export async function sendDM(
-  channel: Channel | ThreadChannel,
-  message: string,
-): Promise<void> {
-  if (channel.isSendable()) {
-    await channel.send(message);
-    logger.info(`Sent: ${message}`);
-  }
-}
-
 export async function sendDMWithDeletedMessage(
   dmChannel: DMChannel,
   dmMessage: string,
   deletedMessage: string,
 ): Promise<void> {
   const fullMessage = `${dmMessage}\n\nFor reference, your post was:`;
-  await sendDM(dmChannel, fullMessage);
+  await sendDMAndLog(dmChannel, fullMessage);
 
   const ticks = "```\n";
   const sizeOfSurroundingTicks = ticks.length * 2;
@@ -120,7 +106,7 @@ export async function sendDMWithDeletedMessage(
     maxLengthOfDeletedMessage,
   );
   const fullDeletedMessage = ticks + trimmedDeletedMessage + ticks;
-  await sendDM(dmChannel, fullDeletedMessage);
+  await sendDMAndLog(dmChannel, fullDeletedMessage);
 }
 
 export async function sendNotHGroupDM(message: Message): Promise<void> {
@@ -128,4 +114,18 @@ export async function sendNotHGroupDM(message: Message): Promise<void> {
   const dmMessage =
     'Your post in the convention-proposals forum has been deleted because you do not have the "H-Group" role. Do you regularly play pick-up games in this Discord server using the voice channels? If so, please send a direct message to a moderator to request the "H-Group" role. You can find the current list of moderators in the [#role-explanations](<https://discord.com/channels/140016142600241152/930525271780638791/930696130579283978>) channel.';
   await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
+}
+
+/**
+ * We only need to log direct messages, because messages that appear in channels will be logged as
+ * part of the normal channel logging process.
+ */
+async function sendDMAndLog(
+  channel: Channel | ThreadChannel,
+  message: string,
+): Promise<void> {
+  if (channel.isSendable()) {
+    await channel.send(message);
+    logger.info(`Sent: ${message}`);
+  }
 }
