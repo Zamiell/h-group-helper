@@ -94,7 +94,7 @@ export async function sendDMWithDeletedMessage(
   dmMessage: string,
   deletedMessage: string,
 ): Promise<void> {
-  const fullMessage = `${dmMessage}\n\nFor reference, your post was:`;
+  const fullMessage = `${dmMessage}\n\nFor reference, your deleted post was:`;
   await sendDMAndLog(dmChannel, fullMessage);
 
   const ticks = "```\n";

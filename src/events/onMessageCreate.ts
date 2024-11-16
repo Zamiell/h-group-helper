@@ -87,7 +87,7 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
   if (!message.content.includes("<https://hanab.live/replay/")) {
     const dmChannel = await message.author.createDM();
     const dmMessage =
-      "Your post in the #replays channel has been deleted because it contains a link with the preview enabled. Please enclose your link(s) with the `<` and `>` characters. In other words, convert:\n```\nhttps://hanab.live/replay/123\n```\n-->\n```\n<https://hanab.live/replay/123>\n```";
+      "Your post in the #replays channel has been deleted because it contains a link with the preview enabled. Please enclose your link(s) with the `<` and `>` characters. In other words, convert this:\n```\nhttps://hanab.live/replay/123\n```\nTo this:\n```\n<https://hanab.live/replay/123>\n```";
     await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
     await message.delete();
     return;
