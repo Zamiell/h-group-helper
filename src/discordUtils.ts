@@ -1,9 +1,11 @@
 import type {
+  Channel,
   DMChannel,
   Guild,
   GuildBasedChannel,
   Message,
   Role,
+  ThreadChannel,
   VoiceBasedChannel,
 } from "discord.js";
 import { DiscordAPIError, RESTJSONErrorCodes } from "discord.js";
@@ -87,13 +89,27 @@ export async function moveUserToVoiceChannel(
   }
 }
 
+/**
+ * We only need to log direct messages, because messages that appear in channels will be logged as
+ * part of the normal channel logging process.
+ */
+export async function sendDM(
+  channel: Channel | ThreadChannel,
+  message: string,
+): Promise<void> {
+  if (channel.isSendable()) {
+    await channel.send(message);
+    logger.info(`Sent: ${message}`);
+  }
+}
+
 export async function sendDMWithDeletedMessage(
   dmChannel: DMChannel,
   dmMessage: string,
   deletedMessage: string,
 ): Promise<void> {
   const fullMessage = `${dmMessage}\n\nFor reference, your post was:`;
-  await dmChannel.send(fullMessage);
+  await sendDM(dmChannel, fullMessage);
 
   const ticks = "```\n";
   const sizeOfSurroundingTicks = ticks.length * 2;
@@ -104,7 +120,7 @@ export async function sendDMWithDeletedMessage(
     maxLengthOfDeletedMessage,
   );
   const fullDeletedMessage = ticks + trimmedDeletedMessage + ticks;
-  await dmChannel.send(fullDeletedMessage);
+  await sendDM(dmChannel, fullDeletedMessage);
 }
 
 export async function sendNotHGroupDM(message: Message): Promise<void> {
