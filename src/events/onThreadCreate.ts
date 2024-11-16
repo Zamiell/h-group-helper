@@ -32,19 +32,23 @@ export async function onThreadCreate(
     return;
   }
 
-  await autoJoinAdminsToAllThreads(threadChannel);
-  await checkConventionQuestions(
+  const deleted1 = await checkConventionQuestions(
     threadChannel,
     conventionQuestionsForumID,
     starterMessage,
   );
-  await checkConventionProposals(
+  const deleted2 = await checkConventionProposals(
     threadChannel,
     conventionProposalsForumID,
     hGroupRoleID,
     openTagID,
     starterMessage,
   );
+
+  const deletingThread = deleted1 || deleted2;
+  if (!deletingThread) {
+    await autoJoinAdminsToAllThreads(threadChannel);
+  }
 }
 
 /**
@@ -87,13 +91,14 @@ async function autoJoinAdminsToAllThreads(threadChannel: ThreadChannel) {
   // (The message is edited and deleted later once it is received by the client.)
 }
 
+/** @returns True if the thread will be deleted. */
 async function checkConventionQuestions(
   threadChannel: ThreadChannel,
   conventionQuestionsForumID: string,
   starterMessage: Message,
-) {
+): Promise<boolean> {
   if (threadChannel.parentId !== conventionQuestionsForumID) {
-    return;
+    return false;
   }
 
   if (starterMessage.attachments.size > 0) {
@@ -106,7 +111,7 @@ async function checkConventionQuestions(
       starterMessage.content,
     );
     await threadChannel.delete();
-    return;
+    return true;
   }
 
   if (!isAllLinksEnclosed(starterMessage.content)) {
@@ -119,10 +124,11 @@ async function checkConventionQuestions(
       starterMessage.content,
     );
     await threadChannel.delete();
-    return;
+    return true;
   }
 
   await threadChannel.send(CONVENTION_QUESTIONS_MESSAGE);
+  return false;
 }
 
 /**
@@ -144,15 +150,16 @@ function isAllLinksEnclosed(messageContent: string): boolean {
   return true;
 }
 
+/** @returns True if the thread will be deleted. */
 async function checkConventionProposals(
   threadChannel: ThreadChannel,
   conventionProposalsForumID: string,
   hGroupRoleID: string,
   openTagID: string,
   starterMessage: Message,
-) {
+): Promise<boolean> {
   if (threadChannel.parentId !== conventionProposalsForumID) {
-    return;
+    return false;
   }
 
   const isHGroup = await memberHasRole(
@@ -163,9 +170,10 @@ async function checkConventionProposals(
   if (!isHGroup) {
     await sendNotHGroupDM(starterMessage);
     await threadChannel.delete();
-    return;
+    return true;
   }
 
   await threadChannel.send(CONVENTION_PROPOSALS_MESSAGE);
   await threadChannel.setAppliedTags([openTagID]);
+  return false;
 }
