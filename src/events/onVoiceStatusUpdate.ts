@@ -110,10 +110,16 @@ async function logVoiceStatusUpdate(
   verb: string,
 ) {
   const user = await client.users.fetch(userID);
-  const channel = await client.channels.fetch(channelID);
-  if (channel === null || !channel.isVoiceBased()) {
-    return;
-  }
 
-  logger.info(`${verb} voice channel: ${user.username} --> ${channel.name}`);
+  // There is a race condition where a channel can be deleted by the time we get here.
+  try {
+    const channel = await client.channels.fetch(channelID);
+    if (channel !== null && channel.isVoiceBased()) {
+      logger.info(
+        `${verb} voice channel: ${user.username} --> ${channel.name}`,
+      );
+    }
+  } catch {
+    // Do nothing if the channel has already been deleted.
+  }
 }
