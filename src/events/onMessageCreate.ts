@@ -1,10 +1,8 @@
 import type { Message } from "discord.js";
 import { ChannelType } from "discord.js";
-import {
-  memberHasRole,
-  sendDMWithDeletedMessage,
-  sendNotHGroupDM,
-} from "../discordUtils.js";
+import { REPLAY_REGEX, SHARED_REPLAY_REGEX } from "../constants.js";
+import { memberHasRole, sendDMWithDeletedMessage } from "../discordUtils.js";
+import { sendNotHGroupDM } from "../hGroup.js";
 import { logger } from "../logger.js";
 import { ADDING_MEMBER_TO_THREAD_TEXT } from "./onThreadCreate.js";
 
@@ -65,30 +63,44 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
     return;
   }
 
-  if (message.content.includes("https://hanab.live/shared-replay/")) {
-    const dmChannel = await message.author.createDM();
-    const dmMessage =
-      "Your post in the #replays channel has been deleted because it links to a shared replay instead of a normal replay. Please fix your link and then re-post.";
-    await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
+  const sharedReplayLinks = message.content.match(SHARED_REPLAY_REGEX);
+  if (sharedReplayLinks !== null) {
+    const sharedReplayLink = sharedReplayLinks[0];
+    const replayLink = sharedReplayLink.replace("shared-replay", "replay");
+    const dmMessage = `Your post in the [#replays](https://discord.com/channels/140016142600241152/465962599851491340) channel has been deleted because it contains a shared replay link instead of a normal replay link. Please get rid of the "shared-" part. In other words, convert this:
+  \`\`\`
+  <${sharedReplayLink}>
+  \`\`\`
+  To this:
+  \`\`\`
+  <${replayLink}>
+  \`\`\``;
+    await sendDMWithDeletedMessage(message.author, dmMessage, message.content);
     await message.delete();
     return;
   }
 
-  if (!message.content.includes("https://hanab.live/replay/")) {
-    const dmChannel = await message.author.createDM();
+  const replayLinks = message.content.match(REPLAY_REGEX);
+  if (replayLinks === null) {
     const dmMessage =
-      "Your post in the #replays channel has been deleted because it does not contain a replay. Please use threads to discuss a specific replay.";
-    await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
+      "Your post in the [#replays](https://discord.com/channels/140016142600241152/465962599851491340) channel has been deleted because it does not contain a valid replay link. If you are trying to discuss an existing replay, please use the corresponding thread.";
+    await sendDMWithDeletedMessage(message.author, dmMessage, message.content);
     await message.delete();
     return;
   }
 
   // Ensure that replay's are surrounded by "<" and ">" to prevent the link preview.
-  if (!message.content.includes("<https://hanab.live/replay/")) {
-    const dmChannel = await message.author.createDM();
-    const dmMessage =
-      "Your post in the #replays channel has been deleted because it contains a link with the preview enabled. Please enclose your link(s) with the `<` and `>` characters to disable the link preview. In other words, convert this:\n```\nhttps://hanab.live/replay/123\n```\nTo this:\n```\n<https://hanab.live/replay/123>\n```";
-    await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
+  const replayLink = replayLinks[0];
+  if (!message.content.includes(`<${replayLink}>`)) {
+    const dmMessage = `Your post in the [#replays](https://discord.com/channels/140016142600241152/465962599851491340) channel has been deleted because it contains a link with the preview enabled. Please enclose your link(s) with the \`<\` and \`>\` characters to disable the link preview. In other words, convert this:
+\`\`\`
+${replayLink}
+\`\`\`
+To this:
+\`\`\`
+<${replayLink}>
+\`\`\``;
+    await sendDMWithDeletedMessage(message.author, dmMessage, message.content);
     await message.delete();
     return;
   }
@@ -107,10 +119,9 @@ async function checkScreenshotsChannel(
   }
 
   if (message.attachments.size === 0) {
-    const dmChannel = await message.author.createDM();
     const dmMessage =
-      "Your post in the #screenshots channel has been deleted because it does not contain a screenshot. Please use threads to discuss a specific screenshot.";
-    await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
+      "Your post in the [#screenshots](https://discord.com/channels/140016142600241152/225437979085242369) channel has been deleted because it does not contain a screenshot. Please use threads to discuss a specific screenshot.";
+    await sendDMWithDeletedMessage(message.author, dmMessage, message.content);
     await message.delete();
     return;
   }

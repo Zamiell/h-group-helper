@@ -1,9 +1,11 @@
 import type { Message, ThreadChannel } from "discord.js";
+import { SHARED_REPLAY_REGEX } from "../constants.js";
 import {
+  getNonEnclosedLinks,
   memberHasRole,
   sendDMWithDeletedMessage,
-  sendNotHGroupDM,
 } from "../discordUtils.js";
+import { sendNotHGroupDM } from "../hGroup.js";
 import { logger } from "../logger.js";
 
 export const ADDING_MEMBER_TO_THREAD_TEXT = "Adding member to thread.";
@@ -16,8 +18,6 @@ const CONVENTION_PROPOSALS_MESSAGE =
   "If you are not already familiar with how this forum works, please review [the convention changes document](<https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-changes.md>) and [the goals for our conventions](<https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-goals.md>).";
 
 const MAX_STARTER_MESSAGE_FETCH_ATTEMPTS = 10;
-
-const URL_REGEX = /https?:\/\/[^\s<>]+/g;
 
 export async function onThreadCreate(
   threadChannel: ThreadChannel,
@@ -102,11 +102,10 @@ async function checkConventionQuestions(
   }
 
   if (starterMessage.attachments.size > 0) {
-    const dmChannel = await starterMessage.author.createDM();
     const dmMessage =
-      "Your post in the convention-questions forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>";
+      "Your post in the [convention-questions](https://discord.com/channels/140016142600241152/1200785057057611896) forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>";
     await sendDMWithDeletedMessage(
-      dmChannel,
+      starterMessage.author,
       dmMessage,
       starterMessage.content,
     );
@@ -117,10 +116,9 @@ async function checkConventionQuestions(
   const replayCommandMatch = starterMessage.content.match(/\/replay \d+\s*\d*/);
   if (replayCommandMatch !== null) {
     const replayText = replayCommandMatch[0].trim();
-    const dmChannel = await starterMessage.author.createDM();
-    const dmMessage = `Your post in the convention-questions forum has been deleted because it contains the text of "${replayText}". Unfortunately, the "/replay" command cannot be combined with other text. If you want to generate a replay URL, please do it in the [#general-lobby channel](<https://discord.com/channels/140016142600241152/140016142600241152>) first, and then copy the resulting URL into your question.`;
+    const dmMessage = `Your post in the [convention-questions](https://discord.com/channels/140016142600241152/1200785057057611896) forum has been deleted because it contains the text of "${replayText}". Unfortunately, the "/replay" command cannot be combined with other text. If you want to generate a replay URL, please do it in the [#general-lobby channel](<https://discord.com/channels/140016142600241152/140016142600241152>) first, and then copy the resulting URL into your question.`;
     await sendDMWithDeletedMessage(
-      dmChannel,
+      starterMessage.author,
       dmMessage,
       starterMessage.content,
     );
@@ -128,12 +126,21 @@ async function checkConventionQuestions(
     return true;
   }
 
-  if (!isAllLinksEnclosed(starterMessage.content)) {
-    const dmChannel = await starterMessage.author.createDM();
-    const dmMessage =
-      "Your post in the convention-questions forum has been deleted because it contains a link with the preview enabled. Please enclose your link(s) with the `<` and `>` characters to disable the link preview. In other words, convert this:\n```\nhttps://hanab.live/replay/123\n```\nTo this:\n```\n<https://hanab.live/replay/123>\n```";
+  const links = getNonEnclosedLinks(starterMessage.content);
+  const link = links[0];
+  if (link !== undefined) {
+    const numLinksText =
+      links.length === 1 ? "a link" : `${links.length} links`;
+    const dmMessage = `Your post in the [convention-questions](https://discord.com/channels/140016142600241152/1200785057057611896) forum has been deleted because it contains ${numLinksText} with the preview enabled. Please enclose your link(s) with the \`<\` and \`>\` characters to disable the link preview. In other words, convert this:
+\`\`\`
+${link}
+\`\`\`
+To this:
+\`\`\`
+<${link}>
+\`\`\``;
     await sendDMWithDeletedMessage(
-      dmChannel,
+      starterMessage.author,
       dmMessage,
       starterMessage.content,
     );
@@ -141,12 +148,20 @@ async function checkConventionQuestions(
     return true;
   }
 
-  if (starterMessage.content.includes("https://hanab.live/shared-replay/")) {
-    const dmChannel = await starterMessage.author.createDM();
-    const dmMessage =
-      'Your post in the convention-questions forum has been deleted because it contains a shared replay link instead of a normal replay link. Please get rid of the "shared-" part. In other words, convert this:\n```\n<https://hanab.live/shared-replay/123>\n```\nTo this:\n```\n<https://hanab.live/replay/123>\n```';
+  const sharedReplayLinks = starterMessage.content.match(SHARED_REPLAY_REGEX);
+  if (sharedReplayLinks !== null) {
+    const sharedReplayLink = sharedReplayLinks[0];
+    const replayLink = sharedReplayLink.replace("shared-replay", "replay");
+    const dmMessage = `Your post in the [convention-questions](https://discord.com/channels/140016142600241152/1200785057057611896) forum has been deleted because it contains a shared replay link instead of a normal replay link. Please get rid of the "shared-" part. In other words, convert this:
+  \`\`\`
+  <${sharedReplayLink}>
+  \`\`\`
+  To this:
+  \`\`\`
+  <${replayLink}>
+  \`\`\``;
     await sendDMWithDeletedMessage(
-      dmChannel,
+      starterMessage.author,
       dmMessage,
       starterMessage.content,
     );
@@ -156,25 +171,6 @@ async function checkConventionQuestions(
 
   await threadChannel.send(CONVENTION_QUESTIONS_MESSAGE);
   return false;
-}
-
-/**
- * In Discord, you can disable the automatic link preview by enclosing a link in < and > characters.
- * This is usually preferable because it reduces spam.
- */
-function isAllLinksEnclosed(messageContent: string): boolean {
-  const urls = messageContent.match(URL_REGEX);
-  if (urls === null) {
-    return true;
-  }
-
-  for (const url of urls) {
-    if (!messageContent.includes(`<${url}>`)) {
-      return false;
-    }
-  }
-
-  return true;
 }
 
 /** @returns True if the thread will be deleted. */

@@ -1,11 +1,11 @@
+import { filterMap } from "complete-common";
 import type {
   Channel,
-  DMChannel,
   Guild,
   GuildBasedChannel,
-  Message,
   Role,
   ThreadChannel,
+  User,
   VoiceBasedChannel,
 } from "discord.js";
 import { DiscordAPIError, RESTJSONErrorCodes } from "discord.js";
@@ -22,6 +22,8 @@ import { isNotNullUndefined } from "./utils.js";
  */
 const MAX_DISCORD_MESSAGE_LENGTH = 2000;
 
+const URL_REGEX = /https?:\/\/[^\s<>]+/g;
+
 export async function memberHasRole(
   guild: Guild,
   userID: string,
@@ -37,6 +39,21 @@ export function getChannelByName(
   channelName: string,
 ): GuildBasedChannel | undefined {
   return guild.channels.cache.find((channel) => channel.name === channelName);
+}
+
+/**
+ * In Discord, you can disable the automatic link preview by enclosing a link in < and > characters.
+ * This is usually preferable because it reduces spam.
+ */
+export function getNonEnclosedLinks(messageContent: string): readonly string[] {
+  const urls = messageContent.match(URL_REGEX);
+  if (urls === null) {
+    return [];
+  }
+
+  return filterMap(urls, (url) =>
+    messageContent.includes(`<${url}>`) ? undefined : url,
+  );
 }
 
 export function getRoleByName(
@@ -90,10 +107,12 @@ export async function moveUserToVoiceChannel(
 }
 
 export async function sendDMWithDeletedMessage(
-  dmChannel: DMChannel,
+  user: User,
   dmMessage: string,
   deletedMessage: string,
 ): Promise<void> {
+  const dmChannel = await user.createDM();
+
   const fullMessage = `${dmMessage}\n\nFor reference, your deleted post was:`;
   await sendDMAndLog(dmChannel, fullMessage);
 
@@ -107,13 +126,6 @@ export async function sendDMWithDeletedMessage(
   );
   const fullDeletedMessage = ticks + trimmedDeletedMessage + ticks;
   await sendDMAndLog(dmChannel, fullDeletedMessage);
-}
-
-export async function sendNotHGroupDM(message: Message): Promise<void> {
-  const dmChannel = await message.author.createDM();
-  const dmMessage =
-    'Your post in the convention-proposals forum has been deleted because you do not have the "H-Group" role. Do you regularly play pick-up games in this Discord server using the voice channels? If so, please send a direct message to a moderator to request the "H-Group" role. You can find the current list of moderators in the [#role-explanations](<https://discord.com/channels/140016142600241152/930525271780638791/930696130579283978>) channel.';
-  await sendDMWithDeletedMessage(dmChannel, dmMessage, message.content);
 }
 
 /**
