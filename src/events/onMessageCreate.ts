@@ -67,7 +67,7 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
   if (sharedReplayLinks !== null) {
     const sharedReplayLink = sharedReplayLinks[0];
     const replayLink = sharedReplayLink.replace("shared-replay", "replay");
-    const dmMessage = `Your post in the [#replays](https://discord.com/channels/140016142600241152/465962599851491340) channel has been deleted because it contains a shared replay link instead of a normal replay link. Please get rid of the "shared-" part. In other words, convert this:
+    const dmMessage = `Your post in the [#replays](<https://discord.com/channels/140016142600241152/465962599851491340>) channel has been deleted because it contains a shared replay link instead of a normal replay link. Please get rid of the "shared-" part. In other words, convert this:
   \`\`\`
   <${sharedReplayLink}>
   \`\`\`
@@ -83,7 +83,7 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
   const replayLinks = message.content.match(REPLAY_REGEX);
   if (replayLinks === null) {
     const dmMessage =
-      "Your post in the [#replays](https://discord.com/channels/140016142600241152/465962599851491340) channel has been deleted because it does not contain a valid replay link. If you are trying to discuss an existing replay, please use the corresponding thread.";
+      "Your post in the [#replays](<https://discord.com/channels/140016142600241152/465962599851491340>) channel has been deleted because it does not contain a valid replay link. If you are trying to discuss an existing replay, please use the corresponding thread.";
     await sendDMWithDeletedMessage(message.author, dmMessage, message.content);
     await message.delete();
     return;
@@ -92,7 +92,7 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
   // Ensure that replay's are surrounded by "<" and ">" to prevent the link preview.
   const replayLink = replayLinks[0];
   if (!message.content.includes(`<${replayLink}>`)) {
-    const dmMessage = `Your post in the [#replays](https://discord.com/channels/140016142600241152/465962599851491340) channel has been deleted because it contains a link with the preview enabled. Please enclose your link(s) with the \`<\` and \`>\` characters to disable the link preview. In other words, convert this:
+    const dmMessage = `Your post in the [#replays](<https://discord.com/channels/140016142600241152/465962599851491340>) channel has been deleted because it contains a link with the preview enabled. Please enclose your link(s) with the \`<\` and \`>\` characters to disable the link preview. In other words, convert this:
 \`\`\`
 ${replayLink}
 \`\`\`
@@ -120,7 +120,7 @@ async function checkScreenshotsChannel(
 
   if (message.attachments.size === 0) {
     const dmMessage =
-      "Your post in the [#screenshots](https://discord.com/channels/140016142600241152/225437979085242369) channel has been deleted because it does not contain a screenshot. Please use threads to discuss a specific screenshot.";
+      "Your post in the [#screenshots](<https://discord.com/channels/140016142600241152/225437979085242369>) channel has been deleted because it does not contain a screenshot. Please use threads to discuss a specific screenshot.";
     await sendDMWithDeletedMessage(message.author, dmMessage, message.content);
     await message.delete();
     return;

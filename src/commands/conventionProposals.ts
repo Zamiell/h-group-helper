@@ -27,7 +27,7 @@ const MESSAGES = new ReadonlyMap([
 ]);
 
 const FOOTER = `- This thread will now be closed. If you feel this was an error, contact a convention admin to re-open the thread.
-- For more information on how consensus is determined, please read the [Convention Changes document](https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-changes.md).`;
+- For more information on how consensus is determined, please read the [Convention Changes document](<https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-changes.md>).`;
 
 export const acceptCommand: Command = {
   data: new SlashCommandBuilder()

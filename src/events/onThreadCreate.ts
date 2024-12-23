@@ -103,7 +103,7 @@ async function checkConventionQuestions(
 
   if (starterMessage.attachments.size > 0) {
     const dmMessage =
-      "Your post in the [convention-questions](https://discord.com/channels/140016142600241152/1200785057057611896) forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>";
+      "Your post in the [convention-questions](<https://discord.com/channels/140016142600241152/1200785057057611896>) forum has been deleted because it contains a screenshot, which explicitly violates rule #2. Before you post in this forum, please make sure that your question satisfies all of the rules here: <https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-questions.md>";
     await sendDMWithDeletedMessage(
       starterMessage.author,
       dmMessage,
@@ -116,7 +116,7 @@ async function checkConventionQuestions(
   const replayCommandMatch = starterMessage.content.match(/\/replay \d+\s*\d*/);
   if (replayCommandMatch !== null) {
     const replayText = replayCommandMatch[0].trim();
-    const dmMessage = `Your post in the [convention-questions](https://discord.com/channels/140016142600241152/1200785057057611896) forum has been deleted because it contains the text of "${replayText}". Unfortunately, the "/replay" command cannot be combined with other text. If you want to generate a replay URL, please do it in the [#general-lobby channel](<https://discord.com/channels/140016142600241152/140016142600241152>) first, and then copy the resulting URL into your question.`;
+    const dmMessage = `Your post in the [convention-questions](<https://discord.com/channels/140016142600241152/1200785057057611896>) forum has been deleted because it contains the text of "${replayText}". Unfortunately, the "/replay" command cannot be combined with other text. If you want to generate a replay URL, please do it in the [#general-lobby channel](<https://discord.com/channels/140016142600241152/140016142600241152>) first, and then copy the resulting URL into your question.`;
     await sendDMWithDeletedMessage(
       starterMessage.author,
       dmMessage,
@@ -131,7 +131,7 @@ async function checkConventionQuestions(
   if (link !== undefined) {
     const numLinksText =
       links.length === 1 ? "a link" : `${links.length} links`;
-    const dmMessage = `Your post in the [convention-questions](https://discord.com/channels/140016142600241152/1200785057057611896) forum has been deleted because it contains ${numLinksText} with the preview enabled. Please enclose your link(s) with the \`<\` and \`>\` characters to disable the link preview. In other words, convert this:
+    const dmMessage = `Your post in the [convention-questions](<https://discord.com/channels/140016142600241152/1200785057057611896>) forum has been deleted because it contains ${numLinksText} with the preview enabled. Please enclose your link(s) with the \`<\` and \`>\` characters to disable the link preview. In other words, convert this:
 \`\`\`
 ${link}
 \`\`\`
@@ -152,7 +152,7 @@ To this:
   if (sharedReplayLinks !== null) {
     const sharedReplayLink = sharedReplayLinks[0];
     const replayLink = sharedReplayLink.replace("shared-replay", "replay");
-    const dmMessage = `Your post in the [convention-questions](https://discord.com/channels/140016142600241152/1200785057057611896) forum has been deleted because it contains a shared replay link instead of a normal replay link. Please get rid of the "shared-" part. In other words, convert this:
+    const dmMessage = `Your post in the [convention-questions](<https://discord.com/channels/140016142600241152/1200785057057611896>) forum has been deleted because it contains a shared replay link instead of a normal replay link. Please get rid of the "shared-" part. In other words, convert this:
   \`\`\`
   <${sharedReplayLink}>
   \`\`\`
