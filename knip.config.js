@@ -20,7 +20,6 @@ const config = {
     // Optional discord.js peer dependencies:
     // https://discord.js.org/docs/packages/discord.js/main
     "@discordjs/voice",
-    "bufferutil",
 
     // @template-customization-end
   ],

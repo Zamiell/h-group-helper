@@ -27,13 +27,13 @@ export async function deleteEmptyVoiceChannels(
   );
 
   if (emptyVoiceChannels.length > 0) {
-    const promises = emptyVoiceChannels.map(async (voiceChannel) =>
-      voiceChannel.delete(),
+    const promises = emptyVoiceChannels.map(
+      async (voiceChannel) => await voiceChannel.delete(),
     );
     await Promise.allSettled(promises);
   }
 
-  return renameAllChannelsAccordingToOrder(
+  return await renameAllChannelsAccordingToOrder(
     voiceChannels,
     createNewVoiceChannelID,
   );

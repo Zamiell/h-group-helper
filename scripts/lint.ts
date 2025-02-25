@@ -25,6 +25,7 @@ await lintScript(async () => {
     $`cspell-check-unused-words`,
 
     // Check for template updates.
-    $`isaacscript check-ts`,
+    // @template-ignore-next-line
+    $`complete-cli check --ignore LICENSE`,
   ]);
 });
