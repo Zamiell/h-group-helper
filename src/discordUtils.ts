@@ -92,8 +92,8 @@ export async function moveUserToVoiceChannel(
     await member.voice.setChannel(newChannelID);
   } catch (error) {
     if (
-      error instanceof DiscordAPIError &&
-      error.code === RESTJSONErrorCodes.TargetUserIsNotConnectedToVoice
+      error instanceof DiscordAPIError
+      && error.code === RESTJSONErrorCodes.TargetUserIsNotConnectedToVoice
     ) {
       logger.info(
         `Failed to move user "${userID}" to channel "${newChannelID}" because they are no longer connected to voice.`,

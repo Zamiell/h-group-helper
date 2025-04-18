@@ -48,8 +48,8 @@ async function checkBotMessages(
   adminIDs: readonly string[],
 ) {
   if (
-    message.author.id === botID &&
-    message.content === ADDING_MEMBER_TO_THREAD_TEXT
+    message.author.id === botID
+    && message.content === ADDING_MEMBER_TO_THREAD_TEXT
   ) {
     const mentions = adminIDs.map((adminID) => `<@${adminID}>`);
     const mentionsMsg = mentions.join(" ");
@@ -169,9 +169,9 @@ async function checkConventionProposalsForum(
   botID: string,
 ) {
   if (
-    message.channel.type !== ChannelType.PublicThread ||
-    message.channel.parentId !== conventionProposalsForumID ||
-    message.guild === null
+    message.channel.type !== ChannelType.PublicThread
+    || message.channel.parentId !== conventionProposalsForumID
+    || message.guild === null
   ) {
     return;
   }

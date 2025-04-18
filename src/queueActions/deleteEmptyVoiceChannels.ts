@@ -22,8 +22,8 @@ export async function deleteEmptyVoiceChannels(
 
   const emptyVoiceChannels = voiceChannels.filter(
     (voiceChannel) =>
-      voiceChannel.name.startsWith(VOICE_CHANNEL_PREFIX) &&
-      isVoiceChannelEmpty(voiceChannel),
+      voiceChannel.name.startsWith(VOICE_CHANNEL_PREFIX)
+      && isVoiceChannelEmpty(voiceChannel),
   );
 
   if (emptyVoiceChannels.length > 0) {

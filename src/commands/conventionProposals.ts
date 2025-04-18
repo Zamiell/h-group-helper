@@ -111,10 +111,10 @@ function inConventionProposalsForum(
   conventionProposalsID: string,
 ): channel is PublicThreadChannel<true> {
   return (
-    channel !== null &&
-    channel.type === ChannelType.PublicThread &&
-    channel.parent !== null &&
-    channel.parent.type === ChannelType.GuildForum &&
-    channel.parent.id === conventionProposalsID
+    channel !== null
+    && channel.type === ChannelType.PublicThread
+    && channel.parent !== null
+    && channel.parent.type === ChannelType.GuildForum
+    && channel.parent.id === conventionProposalsID
   );
 }
