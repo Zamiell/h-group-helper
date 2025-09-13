@@ -25,4 +25,5 @@ const envSchema = z.object({
   DISCORD_SERVER_ID: z.string().min(1),
 });
 
-export const env = getEnv(envSchema);
+await getEnv(import.meta.dirname);
+export const env = envSchema.parse(process.env);

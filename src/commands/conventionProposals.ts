@@ -53,12 +53,13 @@ export const staleCommand: Command = {
   execute: conventionProposalCommand,
 };
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 async function conventionProposalCommand(
   interaction: ChatInputCommandInteraction,
   conventionAdminRoleID: string,
   conventionProposalsID: string,
   closedTagID: string,
-): Promise<void> {
+) {
   if (interaction.guild === null) {
     return;
   }

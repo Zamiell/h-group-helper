@@ -132,10 +132,7 @@ export async function sendDMWithDeletedMessage(
  * We only need to log direct messages, because messages that appear in channels will be logged as
  * part of the normal channel logging process.
  */
-async function sendDMAndLog(
-  channel: Channel | ThreadChannel,
-  message: string,
-): Promise<void> {
+async function sendDMAndLog(channel: Channel | ThreadChannel, message: string) {
   if (channel.isSendable()) {
     await channel.send(message);
     logger.info(`Sent: ${message}`);

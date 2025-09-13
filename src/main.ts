@@ -13,7 +13,7 @@ async function main() {
   await discordInit();
 }
 
-async function discordInit(): Promise<void> {
+async function discordInit() {
   const disconnectedClient = new Client({
     // An intent is needed for each type of data that we need Discord to send to us.
     intents: [
