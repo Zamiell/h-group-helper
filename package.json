@@ -34,7 +34,7 @@
   "devDependencies": {
     "@types/node": "24.9.2",
     "@types/source-map-support": "0.5.10",
-    "complete-cli": "1.5.0",
+    "complete-cli": "1.5.1",
     "complete-lint": "4.2.7",
     "git-pull-run": "1.6.2",
     "husky": "9.1.7",
