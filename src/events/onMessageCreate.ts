@@ -89,22 +89,6 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
     return;
   }
 
-  // Ensure that replay's are surrounded by "<" and ">" to prevent the link preview.
-  const replayLink = replayLinks[0];
-  if (!message.content.includes(`<${replayLink}>`)) {
-    const dmMessage = `Your post in the [#replays](<https://discord.com/channels/140016142600241152/465962599851491340>) channel has been deleted because it contains a link with the preview enabled. Please enclose your link(s) with the \`<\` and \`>\` characters to disable the link preview. In other words, convert this:
-\`\`\`
-${replayLink}
-\`\`\`
-To this:
-\`\`\`
-<${replayLink}>
-\`\`\``;
-    await sendDMWithDeletedMessage(message.author, dmMessage, message.content);
-    await message.delete();
-    return;
-  }
-
   await message.startThread({
     name: getThreadName(message, "replay"),
   });
