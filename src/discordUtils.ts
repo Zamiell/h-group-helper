@@ -1,4 +1,3 @@
-import { filterMap } from "complete-common";
 import type {
   Channel,
   Guild,
@@ -22,8 +21,6 @@ import { isNotNullUndefined } from "./utils.js";
  */
 const MAX_DISCORD_MESSAGE_LENGTH = 2000;
 
-const URL_REGEX = /https?:\/\/[^\s<>]+/g;
-
 export async function memberHasRole(
   guild: Guild,
   userID: string,
@@ -39,21 +36,6 @@ export function getChannelByName(
   channelName: string,
 ): GuildBasedChannel | undefined {
   return guild.channels.cache.find((channel) => channel.name === channelName);
-}
-
-/**
- * In Discord, you can disable the automatic link preview by enclosing a link in < and > characters.
- * This is usually preferable because it reduces spam.
- */
-export function getNonEnclosedLinks(messageContent: string): readonly string[] {
-  const urls = messageContent.match(URL_REGEX);
-  if (urls === null) {
-    return [];
-  }
-
-  return filterMap(urls, (url) =>
-    messageContent.includes(`<${url}>`) ? undefined : url,
-  );
 }
 
 export function getRoleByName(

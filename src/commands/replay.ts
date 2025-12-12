@@ -41,7 +41,8 @@ export const replayCommand: Command = {
     const turn = interaction.options.getInteger(TURN_OPTION_NAME) ?? undefined;
     const url = getReplayURL(databaseID, turn);
 
-    // Enclose the URL in "<" and ">" to prevent Discord from generating a link preview.
+    // Enclose the URL in "<" and ">" to prevent Discord from generating a link preview. (Link
+    // previews should be disabled on the Discord server, but enclose the link anyway just in case.)
     await interaction.reply(`<${url}>`);
   },
 };

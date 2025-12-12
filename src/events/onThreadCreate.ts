@@ -1,10 +1,6 @@
 import type { Message, ThreadChannel } from "discord.js";
 import { SHARED_REPLAY_REGEX } from "../constants.js";
-import {
-  getNonEnclosedLinks,
-  memberHasRole,
-  sendDMWithDeletedMessage,
-} from "../discordUtils.js";
+import { memberHasRole, sendDMWithDeletedMessage } from "../discordUtils.js";
 import { sendNotHGroupDM } from "../hGroup.js";
 import { logger } from "../logger.js";
 
@@ -117,28 +113,6 @@ async function checkConventionQuestions(
   if (replayCommandMatch !== null) {
     const replayText = replayCommandMatch[0].trim();
     const dmMessage = `Your post in the [convention-questions](<https://discord.com/channels/140016142600241152/1200785057057611896>) forum has been deleted because it contains the text of "${replayText}". Unfortunately, the "/replay" command cannot be combined with other text. If you want to generate a replay URL, please do it in the [#general-lobby channel](<https://discord.com/channels/140016142600241152/140016142600241152>) first, and then copy the resulting URL into your question.`;
-    await sendDMWithDeletedMessage(
-      starterMessage.author,
-      dmMessage,
-      starterMessage.content,
-    );
-    await threadChannel.delete();
-    return true;
-  }
-
-  const links = getNonEnclosedLinks(starterMessage.content);
-  const link = links[0];
-  if (link !== undefined) {
-    const numLinksText =
-      links.length === 1 ? "a link" : `${links.length} links`;
-    const dmMessage = `Your post in the [convention-questions](<https://discord.com/channels/140016142600241152/1200785057057611896>) forum has been deleted because it contains ${numLinksText} with the preview enabled. Please enclose your link(s) with the \`<\` and \`>\` characters to disable the link preview. In other words, convert this:
-\`\`\`
-${link}
-\`\`\`
-To this:
-\`\`\`
-<${link}>
-\`\`\``;
     await sendDMWithDeletedMessage(
       starterMessage.author,
       dmMessage,
