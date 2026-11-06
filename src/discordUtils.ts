@@ -49,7 +49,7 @@ export function getVoiceChannelsInCategory(
   guild: Guild,
   categoryID: string,
 ): readonly VoiceBasedChannel[] {
-  const allChannels = [...guild.channels.cache.values()];
+  const allChannels = guild.channels.cache.values().toArray();
   const channels = allChannels.filter(isNotNullUndefined);
   const voiceChannels = channels.filter((channel) => channel.isVoiceBased());
 

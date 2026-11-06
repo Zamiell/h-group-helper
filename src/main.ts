@@ -29,8 +29,9 @@ async function discordInit() {
     logger.error("Websocket connection encountered an error:", error);
   });
 
-  // Other events are only attached once the client is connected.
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  // Other events are only attached once the client is connected. Discord.js captures rejections
+  // from async listeners despite their void return types.
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/strict-void-return
   disconnectedClient.on(Events.ClientReady, onClientReady);
 
   logger.info("Logging in to Discord...");

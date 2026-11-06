@@ -65,7 +65,7 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
     return;
   }
 
-  const sharedReplayLinks = message.content.match(SHARED_REPLAY_REGEX);
+  const sharedReplayLinks = SHARED_REPLAY_REGEX.exec(message.content);
   if (sharedReplayLinks !== null) {
     const sharedReplayLink = sharedReplayLinks[0];
     const replayLink = sharedReplayLink.replace("shared-replay", "replay");
@@ -82,7 +82,7 @@ async function checkReplaysChannel(message: Message, replaysChannelID: string) {
     return;
   }
 
-  const replayLinks = message.content.match(REPLAY_REGEX);
+  const replayLinks = REPLAY_REGEX.exec(message.content);
   if (replayLinks === null) {
     const dmMessage =
       "Your post in the [#replays](<https://discord.com/channels/140016142600241152/465962599851491340>) channel has been deleted because it does not contain a valid replay link. If you are trying to discuss an existing replay, please use the corresponding thread.";

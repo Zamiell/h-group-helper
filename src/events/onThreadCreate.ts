@@ -57,17 +57,20 @@ async function getStarterMessage(
   threadChannel: ThreadChannel,
 ): Promise<Message | undefined> {
   for (let i = 0; i < MAX_STARTER_MESSAGE_FETCH_ATTEMPTS; i++) {
+    let starterMessage: Message | null;
     try {
       // eslint-disable-next-line no-await-in-loop
-      const starterMessage = await threadChannel.fetchStarterMessage();
-      if (starterMessage !== null) {
-        return starterMessage;
-      }
+      starterMessage = await threadChannel.fetchStarterMessage();
     } catch {
       // Do nothing and try again.
       logger.info(
         `Failed to fetch starter message for thread ${threadChannel.id}. (On attempt ${i + 1} / ${MAX_STARTER_MESSAGE_FETCH_ATTEMPTS}.)`,
       );
+      continue;
+    }
+
+    if (starterMessage !== null) {
+      return starterMessage;
     }
   }
 
@@ -109,8 +112,7 @@ async function checkConventionQuestions(
     return true;
   }
 
-  const replayCommandMatch =
-    starterMessage.content.match(/\/replay \d+\s*\d*/v);
+  const replayCommandMatch = /\/replay \d+\s*\d*/v.exec(starterMessage.content);
   if (replayCommandMatch !== null) {
     const replayText = replayCommandMatch[0].trim();
     const dmMessage = `Your post in the [convention-questions](<https://discord.com/channels/140016142600241152/1200785057057611896>) forum has been deleted because it contains the text of "${replayText}". Unfortunately, the "/replay" command cannot be combined with other text. If you want to generate a replay URL, please do it in the [#general-lobby channel](<https://discord.com/channels/140016142600241152/140016142600241152>) first, and then copy the resulting URL into your question.`;
@@ -123,7 +125,7 @@ async function checkConventionQuestions(
     return true;
   }
 
-  const sharedReplayLinks = starterMessage.content.match(SHARED_REPLAY_REGEX);
+  const sharedReplayLinks = SHARED_REPLAY_REGEX.exec(starterMessage.content);
   if (sharedReplayLinks !== null) {
     const sharedReplayLink = sharedReplayLinks[0];
     const replayLink = sharedReplayLink.replace("shared-replay", "replay");

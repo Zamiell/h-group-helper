@@ -16,7 +16,7 @@ import type { QueueElementDeleteEmptyVoiceChannels } from "../enums/QueueType.js
 export async function deleteEmptyVoiceChannels(
   queueElement: QueueElementDeleteEmptyVoiceChannels,
 ): Promise<number> {
-  const { guild, voiceCategoryID, createNewVoiceChannelID } = queueElement;
+  const { guild, voiceCategoryID, voiceCreationChannelID } = queueElement;
 
   const voiceChannels = getVoiceChannelsInCategory(guild, voiceCategoryID);
 
@@ -35,27 +35,29 @@ export async function deleteEmptyVoiceChannels(
 
   return await renameAllChannelsAccordingToOrder(
     voiceChannels,
-    createNewVoiceChannelID,
+    voiceCreationChannelID,
   );
 }
 
 async function renameAllChannelsAccordingToOrder(
   voiceChannels: readonly VoiceBasedChannel[],
-  createNewVoiceChannelID: string,
+  voiceCreationChannelID: string,
 ): Promise<number> {
   const promises: Array<Promise<unknown>> = [];
 
   for (const voiceChannel of voiceChannels) {
     // Don't rename the "Create New Voice Channel" channel.
-    if (voiceChannel.id === createNewVoiceChannelID) {
+    if (voiceChannel.id === voiceCreationChannelID) {
       continue;
     }
 
     const correctName = `${VOICE_CHANNEL_PREFIX}${voiceChannel.position}`;
-    if (voiceChannel.name !== correctName) {
-      const promise = voiceChannel.setName(correctName);
-      promises.push(promise);
+    if (voiceChannel.name === correctName) {
+      continue;
     }
+
+    const promise = voiceChannel.setName(correctName);
+    promises.push(promise);
   }
 
   await Promise.allSettled(promises);

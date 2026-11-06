@@ -5,8 +5,8 @@ import type {
 } from "discord.js";
 
 export interface Command {
-  data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
-  execute: (
+  readonly data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
+  readonly execute: (
     interaction: ChatInputCommandInteraction,
     conventionAdminRoleID: string,
     conventionProposalsID: string,

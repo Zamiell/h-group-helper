@@ -5,9 +5,10 @@ import { REST, Routes } from "discord.js";
 import { commandMap } from "../src/commands.js";
 import { env } from "../src/env.js";
 
-const rest = new REST().setToken(env.DISCORD_TOKEN);
+const rest = new REST();
+rest.setToken(env.DISCORD_TOKEN);
 
-const commands = [...commandMap.values()];
+const commands = commandMap.values().toArray();
 const body = commands.map((command) => command.data.toJSON());
 
 await rest.put(

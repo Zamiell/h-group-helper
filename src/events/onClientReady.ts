@@ -57,12 +57,12 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     `Failed to find the channel of: ${VOICE_CATEGORY_NAME}`,
   );
 
-  const createNewVoiceChannel = getChannelByName(
+  const voiceCreationChannel = getChannelByName(
     guild,
     CREATE_NEW_VOICE_CHANNEL_NAME,
   );
   assertDefined(
-    createNewVoiceChannel,
+    voiceCreationChannel,
     `Failed to find the channel of: ${CREATE_NEW_VOICE_CHANNEL_NAME}`,
   );
 
@@ -115,7 +115,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
    * role, but instead we re-use the "Convention Admins" role, since not all of the official
    * moderators want to be pinged for every single thread.
    */
-  const adminIDs = [...conventionAdminRole.members.keys()];
+  const adminIDs = conventionAdminRole.members.keys().toArray();
   if (adminIDs.length === 0) {
     throw new Error(
       `Failed to find any members in the "${CONVENTION_ADMIN_ROLE_NAME}" role.`,
@@ -151,7 +151,8 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     botErrorsChannel.send(`\`\`\`\n${errorMessage}\n\`\`\``);
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  // Discord.js captures rejections from async listeners despite their void return types.
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/strict-void-return
   client.on(Events.InteractionCreate, async (interaction) => {
     await onInteractionCreate(
       interaction,
@@ -161,7 +162,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     );
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/strict-void-return
   client.on(Events.MessageCreate, async (message) => {
     await onMessageCreate(
       message,
@@ -176,7 +177,7 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     );
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/strict-void-return
   client.on(Events.ThreadCreate, async (threadChannel) => {
     await onThreadCreate(
       threadChannel,
@@ -187,14 +188,14 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     );
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises, @typescript-eslint/strict-void-return
   client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
     await onVoiceStateUpdate(
       oldState,
       newState,
       client,
       voiceCategory.id,
-      createNewVoiceChannel.id,
+      voiceCreationChannel.id,
     );
   });
 
@@ -206,6 +207,6 @@ export async function onClientReady(client: Client<true>): Promise<void> {
     type: QueueType.DeleteEmptyVoiceChannels,
     guild,
     voiceCategoryID: voiceCategory.id,
-    createNewVoiceChannelID: createNewVoiceChannel.id,
+    voiceCreationChannelID: voiceCreationChannel.id,
   });
 }

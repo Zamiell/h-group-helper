@@ -8,7 +8,7 @@ import { deleteEmptyVoiceChannels } from "./deleteEmptyVoiceChannels.js";
 export async function createNewVoiceChannel(
   queueElement: QueueElementCreateNewVoiceChannel,
 ): Promise<void> {
-  const { guild, userID, voiceCategoryID, createNewVoiceChannelID } =
+  const { guild, userID, voiceCategoryID, voiceCreationChannelID } =
     queueElement;
 
   // First, ensure that the existing channels are organized.
@@ -16,7 +16,7 @@ export async function createNewVoiceChannel(
     type: QueueType.DeleteEmptyVoiceChannels,
     guild,
     voiceCategoryID,
-    createNewVoiceChannelID,
+    voiceCreationChannelID,
   });
 
   const newChannel = await guild.channels.create({

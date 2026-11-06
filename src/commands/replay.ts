@@ -7,8 +7,10 @@ const BASE_URL = "https://hanab.live/replay";
 const DATABASE_ID_OPTION_NAME = "database-id";
 const TURN_OPTION_NAME = "turn";
 
+const commandData = new SlashCommandBuilder();
+
 export const replayCommand: Command = {
-  data: new SlashCommandBuilder()
+  data: commandData
     .setName("replay")
     .setDescription("Generate a link to a replay on Hanab Live.")
     .addIntegerOption((option) =>

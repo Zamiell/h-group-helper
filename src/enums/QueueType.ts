@@ -14,19 +14,23 @@ export enum QueueType {
 // Elements
 // --------
 
+// Queue entries retain the live, mutable Discord.js guild.
+// eslint-disable-next-line complete/type-declaration-immutability
 export interface QueueElementCreateNewVoiceChannel {
-  type: QueueType.CreateNewVoiceChannel;
-  guild: Guild;
-  userID: string;
-  voiceCategoryID: string;
-  createNewVoiceChannelID: string;
+  readonly type: QueueType.CreateNewVoiceChannel;
+  readonly guild: Guild;
+  readonly userID: string;
+  readonly voiceCategoryID: string;
+  readonly voiceCreationChannelID: string;
 }
 
+// Queue entries retain the live, mutable Discord.js guild.
+// eslint-disable-next-line complete/type-declaration-immutability
 export interface QueueElementDeleteEmptyVoiceChannels {
-  type: QueueType.DeleteEmptyVoiceChannels;
-  guild: Guild;
-  voiceCategoryID: string;
-  createNewVoiceChannelID: string;
+  readonly type: QueueType.DeleteEmptyVoiceChannels;
+  readonly guild: Guild;
+  readonly voiceCategoryID: string;
+  readonly voiceCreationChannelID: string;
 }
 
 // ---------

@@ -12,25 +12,29 @@ const MESSAGES = new ReadonlyMap([
   [
     "accept",
     `- Some time has passed since this issue was opened and the group appears to have reached a consensus.
-- ✅ This change will be integrated into the official reference document.`,
+- \u{2705} This change will be integrated into the official reference document.`,
   ],
   [
     "deny",
     `- Some time has passed since this thread was opened and the group appears to have reached a consensus.
-- ❌ This change will **not** be integrated into the official reference document.`,
+- \u{274C} This change will **not** be integrated into the official reference document.`,
   ],
   [
     "stale",
     `- Some time has passed since this issue was opened and the discussion appears to have died down.
-- 💤 Either the document has already been updated or no additional changes need to be made.`,
+- \u{1F4A4} Either the document has already been updated or no additional changes need to be made.`,
   ],
 ]);
 
 const FOOTER = `- This thread will now be closed. If you feel this was an error, contact a convention admin to re-open the thread.
 - For more information on how consensus is determined, please read the [Convention Changes document](<https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-changes.md>).`;
 
+const acceptCommandData = new SlashCommandBuilder();
+const denyCommandData = new SlashCommandBuilder();
+const staleCommandData = new SlashCommandBuilder();
+
 export const acceptCommand: Command = {
-  data: new SlashCommandBuilder()
+  data: acceptCommandData
     .setName("accept")
     .setDescription("Accepts a convention proposal.")
     .setDefaultMemberPermissions(0), // Hide the command from everyone except the server owner.
@@ -38,7 +42,7 @@ export const acceptCommand: Command = {
 };
 
 export const denyCommand: Command = {
-  data: new SlashCommandBuilder()
+  data: denyCommandData
     .setName("deny")
     .setDescription("Denies a convention proposal.")
     .setDefaultMemberPermissions(0), // Hide the command from everyone except the server owner.
@@ -46,7 +50,7 @@ export const denyCommand: Command = {
 };
 
 export const staleCommand: Command = {
-  data: new SlashCommandBuilder()
+  data: staleCommandData
     .setName("stale")
     .setDescription("Closes a convention proposal due to being stale.")
     .setDefaultMemberPermissions(0), // Hide the command from everyone except the server owner.

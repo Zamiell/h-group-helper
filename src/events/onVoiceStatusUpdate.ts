@@ -1,4 +1,4 @@
-import type { Client, Guild, VoiceState } from "discord.js";
+import type { Channel, Client, Guild, VoiceState } from "discord.js";
 import { QueueType } from "../enums/QueueType.js";
 import { logger } from "../logger.js";
 import { addQueue } from "../queue.js";
@@ -8,7 +8,7 @@ export async function onVoiceStateUpdate(
   newState: VoiceState,
   client: Client<true>,
   voiceCategoryID: string,
-  createNewVoiceChannelID: string,
+  voiceCreationChannelID: string,
 ): Promise<void> {
   const { guild } = newState;
   const userID = newState.id;
@@ -29,7 +29,7 @@ export async function onVoiceStateUpdate(
       userID,
       newChannelID,
       voiceCategoryID,
-      createNewVoiceChannelID,
+      voiceCreationChannelID,
     );
   } else if (oldChannelID !== null && newChannelID === null) {
     // something --> null
@@ -39,7 +39,7 @@ export async function onVoiceStateUpdate(
       userID,
       oldChannelID,
       voiceCategoryID,
-      createNewVoiceChannelID,
+      voiceCreationChannelID,
     );
   } else if (oldChannelID !== null && newChannelID !== null) {
     // something --> something
@@ -49,7 +49,7 @@ export async function onVoiceStateUpdate(
       userID,
       oldChannelID,
       voiceCategoryID,
-      createNewVoiceChannelID,
+      voiceCreationChannelID,
     );
     await onJoinedVoiceChannel(
       client,
@@ -57,7 +57,7 @@ export async function onVoiceStateUpdate(
       userID,
       newChannelID,
       voiceCategoryID,
-      createNewVoiceChannelID,
+      voiceCreationChannelID,
     );
   }
 }
@@ -68,17 +68,17 @@ async function onJoinedVoiceChannel(
   userID: string,
   channelID: string,
   voiceCategoryID: string,
-  createNewVoiceChannelID: string,
+  voiceCreationChannelID: string,
 ) {
   await logVoiceStatusUpdate(client, userID, channelID, "Joined");
 
-  if (channelID === createNewVoiceChannelID) {
+  if (channelID === voiceCreationChannelID) {
     addQueue({
       type: QueueType.CreateNewVoiceChannel,
       guild,
       userID,
       voiceCategoryID,
-      createNewVoiceChannelID,
+      voiceCreationChannelID,
     });
   }
 }
@@ -89,16 +89,16 @@ async function onLeftVoiceChannel(
   userID: string,
   channelID: string,
   voiceCategoryID: string,
-  createNewVoiceChannelID: string,
+  voiceCreationChannelID: string,
 ) {
   await logVoiceStatusUpdate(client, userID, channelID, "Left");
 
-  if (channelID !== createNewVoiceChannelID) {
+  if (channelID !== voiceCreationChannelID) {
     addQueue({
       type: QueueType.DeleteEmptyVoiceChannels,
       guild,
       voiceCategoryID,
-      createNewVoiceChannelID,
+      voiceCreationChannelID,
     });
   }
 }
@@ -112,14 +112,15 @@ async function logVoiceStatusUpdate(
   const user = await client.users.fetch(userID);
 
   // There is a race condition where a channel can be deleted by the time we get here.
+  let channel: Channel | null;
   try {
-    const channel = await client.channels.fetch(channelID);
-    if (channel !== null && channel.isVoiceBased()) {
-      logger.info(
-        `${verb} voice channel: ${user.username} --> ${channel.name}`,
-      );
-    }
+    channel = await client.channels.fetch(channelID);
   } catch {
     // Do nothing if the channel has already been deleted.
+    return;
+  }
+
+  if (channel !== null && channel.isVoiceBased()) {
+    logger.info(`${verb} voice channel: ${user.username} --> ${channel.name}`);
   }
 }
