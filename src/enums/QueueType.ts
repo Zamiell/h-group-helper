@@ -34,7 +34,6 @@ export interface QueueElementDeleteEmptyVoiceChannels {
 // ---------
 
 export type QueueElement =
-  | QueueElementCreateNewVoiceChannel
-  | QueueElementDeleteEmptyVoiceChannels;
+  QueueElementCreateNewVoiceChannel | QueueElementDeleteEmptyVoiceChannels;
 
 type _Test = CompositionTypeSatisfiesEnum<QueueElement, QueueType>;

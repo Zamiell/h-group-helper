@@ -47,8 +47,10 @@ async function checkBotMessages(
   botID: string,
   adminIDs: readonly string[],
 ) {
-  if (!(message.author.id === botID
-    && message.content === ADDING_MEMBER_TO_THREAD_TEXT)) {
+  if (!(
+    message.author.id === botID
+    && message.content === ADDING_MEMBER_TO_THREAD_TEXT
+  )) {
     return;
   }
 
