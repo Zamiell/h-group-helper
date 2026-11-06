@@ -3,21 +3,34 @@
 
 // @ts-check
 
+/* eslint perfectionist/sort-arrays: ["error", { "useConfigurationIf": { "matchesAstSelector": "ArrayExpression" } }] */
+
 /** @type {import("prettier").Config} */
 const config = {
-  plugins: [
-    "prettier-plugin-organize-imports", // Prettier does not format imports by default.
-    "prettier-plugin-packagejson", // Prettier does not format "package.json" by default.
-  ],
-
   overrides: [
     // Allow proper formatting of JSONC files that have JSON file extensions.
     {
-      files: ["**/.vscode/*.json", "**/tsconfig.json", "**/tsconfig.*.json"],
+      files: ["**/.vscode/*.json", "**/tsconfig.*.json", "**/tsconfig.json"],
       options: {
         parser: "jsonc",
       },
     },
+
+    // By default, Prettier will not break long lines in Markdown files:
+    // https://prettier.io/docs/options#prose-wrap
+    // We only want this setting to apply to Markdown files because it causes weird glitches in YAML
+    // files.
+    {
+      files: ["**/*.md"],
+      options: {
+        proseWrap: "always",
+      },
+    },
+  ],
+
+  plugins: [
+    "prettier-plugin-organize-imports", // Prettier does not format imports by default.
+    "prettier-plugin-packagejson", // Prettier does not format "package.json" by default.
   ],
 
   // We break from the default Prettier config for only a single option: operator position. There
