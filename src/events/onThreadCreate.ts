@@ -109,7 +109,7 @@ async function checkConventionQuestions(
     return true;
   }
 
-  const replayCommandMatch = starterMessage.content.match(/\/replay \d+\s*\d*/);
+  const replayCommandMatch = starterMessage.content.match(/\/replay \d+\s*\d*/v);
   if (replayCommandMatch !== null) {
     const replayText = replayCommandMatch[0].trim();
     const dmMessage = `Your post in the [convention-questions](<https://discord.com/channels/140016142600241152/1200785057057611896>) forum has been deleted because it contains the text of "${replayText}". Unfortunately, the "/replay" command cannot be combined with other text. If you want to generate a replay URL, please do it in the [#general-lobby channel](<https://discord.com/channels/140016142600241152/140016142600241152>) first, and then copy the resulting URL into your question.`;

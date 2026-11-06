@@ -115,8 +115,10 @@ export async function sendDMWithDeletedMessage(
  * part of the normal channel logging process.
  */
 async function sendDMAndLog(channel: Channel | ThreadChannel, message: string) {
-  if (channel.isSendable()) {
-    await channel.send(message);
-    logger.info(`Sent: ${message}`);
+  if (!channel.isSendable()) {
+    return;
   }
+
+  await channel.send(message);
+  logger.info(`Sent: ${message}`);
 }

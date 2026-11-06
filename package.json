@@ -14,11 +14,11 @@
   "author": "Zamiell",
   "type": "module",
   "scripts": {
-    "build": "tsx ./scripts/build.ts",
-    "deploy-commands": "tsx ./scripts/deployCommands.ts",
-    "lint": "tsx ./scripts/lint.ts",
+    "build": "bun run ./scripts/build.ts",
+    "deploy-commands": "bun run ./scripts/deployCommands.ts",
+    "lint": "bun run ./scripts/lint.ts",
     "prepare": "husky",
-    "start": "tsx ./src/main.ts",
+    "start": "bun run ./src/main.ts",
     "update": "complete-cli update"
   },
   "dependencies": {

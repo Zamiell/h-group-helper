@@ -71,8 +71,8 @@ async function conventionProposalCommand(
   );
   if (!isConventionAdmin) {
     await interaction.reply({
-      content: "You are not authorized to perform this command.",
       ephemeral: true,
+      content: "You are not authorized to perform this command.",
     });
     return;
   }
@@ -81,8 +81,8 @@ async function conventionProposalCommand(
 
   if (!inConventionProposalsForum(channel, conventionProposalsID)) {
     await interaction.reply({
-      content: 'You must use this command in the "convention-proposals" forum.',
       ephemeral: true,
+      content: 'You must use this command in the "convention-proposals" forum.',
     });
     return;
   }
@@ -90,8 +90,8 @@ async function conventionProposalCommand(
   const baseMessage = MESSAGES.get(interaction.commandName);
   if (baseMessage === undefined) {
     await interaction.reply({
-      content: `Failed to find a message for the command of: ${interaction.commandName}`,
       ephemeral: true,
+      content: `Failed to find a message for the command of: ${interaction.commandName}`,
     });
     return;
   }

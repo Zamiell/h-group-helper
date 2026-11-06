@@ -21,8 +21,8 @@ export async function createNewVoiceChannel(
 
   const newChannel = await guild.channels.create({
     name: `${VOICE_CHANNEL_PREFIX}${numChannels + 1}`,
-    type: ChannelType.GuildVoice,
     parent: voiceCategoryID,
+    type: ChannelType.GuildVoice,
   });
 
   await moveUserToVoiceChannel(guild, userID, newChannel.id);

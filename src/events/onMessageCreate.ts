@@ -47,15 +47,15 @@ async function checkBotMessages(
   botID: string,
   adminIDs: readonly string[],
 ) {
-  if (
-    message.author.id === botID
-    && message.content === ADDING_MEMBER_TO_THREAD_TEXT
-  ) {
-    const mentions = adminIDs.map((adminID) => `<@${adminID}>`);
-    const mentionsMsg = mentions.join(" ");
-    await message.edit(mentionsMsg);
-    await message.delete();
+  if (!(message.author.id === botID
+    && message.content === ADDING_MEMBER_TO_THREAD_TEXT)) {
+    return;
   }
+
+  const mentions = adminIDs.map((adminID) => `<@${adminID}>`);
+  const mentionsMsg = mentions.join(" ");
+  await message.edit(mentionsMsg);
+  await message.delete();
 }
 
 async function checkReplaysChannel(message: Message, replaysChannelID: string) {
@@ -165,8 +165,10 @@ async function checkConventionProposalsForum(
     message.author.id,
     hGroupRoleID,
   );
-  if (!isHGroup && message.author.id !== botID) {
-    await sendNotHGroupDM(message);
-    await message.delete();
+  if (isHGroup || message.author.id === botID) {
+    return;
   }
+
+  await sendNotHGroupDM(message);
+  await message.delete();
 }

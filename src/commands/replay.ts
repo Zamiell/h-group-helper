@@ -32,8 +32,8 @@ export const replayCommand: Command = {
     const databaseID = interaction.options.getInteger(DATABASE_ID_OPTION_NAME);
     if (databaseID === null) {
       await interaction.reply({
-        content: "The database ID is required as the first argument.",
         ephemeral: true,
+        content: "The database ID is required as the first argument.",
       });
       return;
     }
