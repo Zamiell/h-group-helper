@@ -8,23 +8,25 @@ import { ChannelType, SlashCommandBuilder } from "discord.js";
 import { memberHasRole } from "../discordUtils.js";
 import type { Command } from "../interfaces/Command.js";
 
+/* eslint-disable complete/require-ascii */
 const MESSAGES = new ReadonlyMap([
   [
     "accept",
     `- Some time has passed since this issue was opened and the group appears to have reached a consensus.
-- \u{2705} This change will be integrated into the official reference document.`,
+- ✅ This change will be integrated into the official reference document.`,
   ],
   [
     "deny",
     `- Some time has passed since this thread was opened and the group appears to have reached a consensus.
-- \u{274C} This change will **not** be integrated into the official reference document.`,
+- ❌ This change will **not** be integrated into the official reference document.`,
   ],
   [
     "stale",
     `- Some time has passed since this issue was opened and the discussion appears to have died down.
-- \u{1F4A4} Either the document has already been updated or no additional changes need to be made.`,
+- 💤 Either the document has already been updated or no additional changes need to be made.`,
   ],
 ]);
+/* eslint-enable complete/require-ascii */
 
 const FOOTER = `- This thread will now be closed. If you feel this was an error, contact a convention admin to re-open the thread.
 - For more information on how consensus is determined, please read the [Convention Changes document](<https://github.com/hanabi/hanabi.github.io/blob/main/misc/convention-changes.md>).`;
