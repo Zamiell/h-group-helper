@@ -49,3 +49,10 @@ systemctl enable --now h-group-helper
 ```
 
 View the logs with `journalctl --unit=h-group-helper`.
+
+To update to the latest version:
+
+```sh
+runuser -u hanabi -- env HOME=/home/hanabi bash -c "cd ~/h-group-helper && git pull && ~/.bun/bin/bun install --frozen-lockfile --ignore-scripts"
+systemctl restart h-group-helper
+```
