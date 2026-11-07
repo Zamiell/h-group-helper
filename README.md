@@ -48,7 +48,9 @@ systemctl daemon-reload
 systemctl enable --now h-group-helper
 ```
 
-View the logs with `journalctl --unit=h-group-helper`.
+## Other
+
+View the logs with: `journalctl --unit=h-group-helper`
 
 To update to the latest version:
 
